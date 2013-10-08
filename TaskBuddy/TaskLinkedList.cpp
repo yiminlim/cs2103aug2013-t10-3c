@@ -45,21 +45,27 @@ void TaskLinkedList::convertDate(std::string date, int *day, int *month, int *ye
 	return;
 }
 
+//Check whether the task has a starting date and time or due date and time and return the respective one
+void TaskLinkedList::getTimeAndDate(const Task & curTask, int *day, int *month, int *year, int *time){
+
+}
+
 //Returns the index at which a Task is to be added
 int TaskLinkedList::getAddingIndex(const Task & curTask){
 	ListNode *cur = _head;
-	int i=1;
+	int i=1, *day, *month, *year;
 
 	if (curTask.getStartingDate != NULL){
-		std::string date = curTask.getStartingDate;
+		convertDate(curTask.getStartingDate, day, month, year);
 		int time = curTask.getStartingTime;
 	}
 	else{
-		std::string date = curTask.getDeadlineDate;
+		convertDate(curTask.getDeadlineDate, day, month, year);
 		int time = curTask.getDeadlineTime;
 	}
 
 	do{
+		if (
 
 	
 }
