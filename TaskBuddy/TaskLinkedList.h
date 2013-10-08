@@ -29,11 +29,11 @@ public:
 	//Returns number of tasks in linked list
 	int getSize();
 
-	//Check whether the task has a starting date and time or due date and time and return the respective one
-	void getTimeAndDate(Task &, int*, int*, int*, int*);
+	//Returns true if the curTask is of an earlier date and time than listTask
+	bool compareDateAndTime(const Task &, const Task &);
 
 	//Returns the index at which a Task is to be added
-	int getAddingIndex(const Task &);
+	int getInsertIndex(const Task &);
 	
 	//Returns true if task is added to linked list
 	bool insert(const Task &);
