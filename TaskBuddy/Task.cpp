@@ -10,54 +10,52 @@ Task::Task(std::string, std::string, std::string, Date, int, Date, int, Date, in
 
 //returns task
 std::string Task::getTask(){
-	return "";
+	return _task;
 }
 
 //returns task action
 std::string Task::getAction(){
-	return "";
+	return _action;
 }
 
 //returns task location
 std::string Task::getLocation(){
-	return "";
+	return _location;
 }
 
 //returns task starting date
 Task::Date Task::getStartingDate(){
-	Date date;
-	return date;
+	return _startingDate;
 }
 
 //returns task starting time
 int Task::getStartingTime(){
-	return 0;
+	return _startingTime;
 }
 
 //returns tsak ending date
 Task::Date Task::getEndingDate(){
-	Date date;
-	return date;
+	return _endingDate;
 }
 
 //returns task ending time
 int Task::getEndingTime(){
-	return 0;
+	return _endingTime;
 }
 
 //returns task deadline date
 Task::Date Task::getDeadlineDate(){
-	Date date;
-	return date;
+	return _deadlineDate;
 }
 
 //returns task deadline time
 int Task::getDeadlineTime(){
-	return 0;
+	return _deadlineTime;
 }
 
 //returns task status
-char Task::getStatus(){
+/*char Task::getStatus(){
 	char temp = ' ';
 	return temp;
 }
+*/
