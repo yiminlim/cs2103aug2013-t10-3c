@@ -34,7 +34,7 @@ public:
 	void convertDate(const std::string, int*, int*, int*);
 
 	//Check whether the task has a starting date and time or due date and time and return the respective one
-	void getTimeAndDate(Task &, int*, int*, int*, std::string*);
+	void getTimeAndDate(Task &, int*, int*, int*, int*);
 
 	//Returns the index at which a Task is to be added
 	int getAddingIndex(Task &);

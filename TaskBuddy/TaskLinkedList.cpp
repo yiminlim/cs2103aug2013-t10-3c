@@ -46,7 +46,7 @@ void TaskLinkedList::convertDate(const std::string date, int *day, int *month, i
 }
 
 //Check whether the task has a starting date and time or due date and time and return the respective one
-void TaskLinkedList::getTimeAndDate(Task & task, int *day, int *month, int *year, std::string *time){
+void TaskLinkedList::getTimeAndDate(Task & task, int *day, int *month, int *year, int *time){
 	if (task.getStartingDate() != "NULL"){
 		convertDate(task.getStartingDate(), day, month, year);
 		*time = task.getStartingTime();

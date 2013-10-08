@@ -50,7 +50,7 @@ public:
 	std::string getDeadlineDate();
 
 	//returns task deadline time
-	std::string getDeadlineTime();
+	int getDeadlineTime();
 
 	//returns task status
 	char getStatus();

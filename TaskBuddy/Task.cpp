@@ -49,8 +49,8 @@ std::string Task::getDeadlineDate(){
 }
 
 //returns task deadline time
-std::string Task::getDeadlineTime(){
-	return "";
+int Task::getDeadlineTime(){
+	return 0;
 }
 
 //returns task status
