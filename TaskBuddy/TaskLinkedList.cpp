@@ -7,8 +7,23 @@ TaskLinkedList::TaskLinkedList(){
 	
 //destructor for linked list
 TaskLinkedList::~TaskLinkedList(){
-	while (!isEmpty()) {
+	while (!isEmpty()){
 		remove(1);
+	}
+}
+
+//Returns a ListNode pointer that will traverse to the position given by the index
+TaskLinkedList::ListNode* TaskLinkedList::traverseTo(int index){
+	if ( (index < 1) || (index > getSize()) ){
+		return NULL;
+	}
+
+	else{
+		ListNode *cur = _head;
+		for (int skip=1; skip<index; skip++){
+			cur = cur->next;
+		}
+		return cur;
 	}
 }
 	
