@@ -29,12 +29,12 @@ TaskLinkedList::ListNode* TaskLinkedList::traverseTo(int index){
 	
 //Returns true if the linked list is empty
 bool TaskLinkedList::isEmpty(){
-	return true;
+	return _size==0;
 }
 	
 //Returns number of tasks in linked list
 int TaskLinkedList::getSize(){
-	return 0;
+	return _size;
 }
 	
 //initialisation by inserting all task into program at the start
