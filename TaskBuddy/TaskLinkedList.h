@@ -31,7 +31,7 @@ public:
 	int getSize();
 
 	//Convert the date from a string to int
-	void convertDate(std::string, int, int, int);
+	void convertDate(std::string, int*, int*, int*);
 
 	//Returns the index at which a Task is to be added
 	int getAddingIndex(const Task &);
