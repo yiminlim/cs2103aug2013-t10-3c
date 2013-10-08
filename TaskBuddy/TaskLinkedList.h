@@ -3,6 +3,12 @@
 
 #include "Task.h"
 
+struct Date{
+		int day;
+		int month;
+		int year;
+	};
+
 class TaskLinkedList{
 private:
 	struct ListNode {
@@ -28,6 +34,9 @@ public:
 	
 	//Returns number of tasks in linked list
 	int getSize();
+
+	//determine if the task has a starting date and time or deadline date and time and pass back the one with the value
+	void obtainDateAndTime(const Task &, Date*, int*);
 
 	//Returns true if the curTask is of an earlier date and time than listTask
 	bool compareDateAndTime(const Task &, const Task &);
