@@ -37,14 +37,6 @@ int TaskLinkedList::getSize(){
 	return _size;
 }
 
-//Convert the date from a string to int
-void TaskLinkedList::convertDate(const std::string date, int *day, int *month, int *year){
-	*day = (date[0]-'0')*10 + (date[1]-'0');
-	*month = (date[3]-'0')*10 + (date[4]-'0');
-	*year = (date[6]-'0')*10 + (date[7]-'0');
-	return;
-}
-
 //Check whether the task has a starting date and time or due date and time and return the respective one
 void TaskLinkedList::getTimeAndDate(Task & task, int *day, int *month, int *year, int *time){
 	/*if (task.getStartingDate() != NULL){
@@ -60,7 +52,7 @@ void TaskLinkedList::getTimeAndDate(Task & task, int *day, int *month, int *year
 }
 
 //Returns the index at which a Task is to be added
-int TaskLinkedList::getAddingIndex(Task & curTask){
+int TaskLinkedList::getAddingIndex(const Task & curTask){
 	ListNode *cur = _head;
 	int i=1, *day, *month, *year, *time;
 	int *listDay, *listMonth, *listYear, *listTime;
@@ -86,7 +78,28 @@ int TaskLinkedList::getAddingIndex(Task & curTask){
 }
 
 //Returns true if task is added to linked list
-bool TaskLinkedList::insert(const Task &){
+bool TaskLinkedList::insert(const Task & curTask){
+	int newSize = getSize() + 1;
+	int index = getAddingIndex(curTask);
+
+	if ( (index < 1) || (index > newSize) ){
+		return false;
+	}
+	else{
+		ListNode *newTask = new ListNode;
+		newTask->item = curTask;
+		newTask->next = NULL;
+		_size = newSize;
+
+		if (index == 1){
+			newTask->next = _head;
+			_head = newTask;
+		} else{
+			ListNode *prev = traverseTo(index-1);
+			newTask->next = prev->next;
+			prev->next = newTask;
+		}
+	}
 	return true;
 }
 	
