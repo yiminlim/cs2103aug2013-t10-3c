@@ -37,15 +37,39 @@ int TaskLinkedList::getSize(){
 	return _size;
 }
 
+//determine if the task has a starting date and time or deadline date and time and pass back the one with the value
+void TaskLinkedList::obtainDateAndTime(const Task & task, Date *date, int *time){
+
+}
+
 //Returns true if the curTask is of an earlier date and time than listTask
 bool TaskLinkedList::compareDateAndTime(const Task & curTask, const Task & listTask){
+		Date *curDate, *listDate;
+		int *curTime, *listTime;
+		obtainDateAndTime(curTask, curDate, curTime);
+		obtainDateAndTime(listTask, listDate, listTime);
 
+		if (curDate->year < listDate->year){
+			return true;
+		} else if(curDate->month < listDate->month){
+			return true;
+		} else if(curDate->day < listDate->day){
+			return true;
+		} else if(curTime < listTime){
+			return true;
+		} else{
+			return false;
+		}
 }
 
 //Returns the index at which a Task is to be added
 int TaskLinkedList::getInsertIndex(const Task & curTask){
 	ListNode *cur = _head;
 	int i = 1;
+
+	if (isEmpty()){
+		return i;
+	}
 
 	do{
 		if (compareDateAndTime(curTask, cur->item)){
