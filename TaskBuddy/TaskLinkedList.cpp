@@ -36,9 +36,14 @@ bool TaskLinkedList::isEmpty(){
 int TaskLinkedList::getSize(){
 	return _size;
 }
-	
+
+int TaskLinkedList::getIndex(const Task &){
+	return 0;
+}
+
 //initialisation by inserting all task into program at the start
 void TaskLinkedList::initialInsert(const Task &){
+	
 }
 	
 //sort tasks in list according to date and time
@@ -46,7 +51,7 @@ void TaskLinkedList::mergeSort(int, int){
 }
 	
 //Returns true if task is added to linked list
-bool TaskLinkedList::insert(int, const Task &){
+bool TaskLinkedList::insert(const Task &){
 	return true;
 }
 	

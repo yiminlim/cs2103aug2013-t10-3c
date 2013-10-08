@@ -29,6 +29,9 @@ public:
 	
 	//Returns number of tasks in linked list
 	int getSize();
+
+	//Returns the index at which a Task is edited, added or removed
+	int getIndex(const Task &);
 	
 	//initialisation by inserting all task into program at the start
 	void initialInsert(const Task &);
@@ -37,7 +40,7 @@ public:
 	void mergeSort(int, int); 
 	
 	//Returns true if task is added to linked list
-	bool insert(int, const Task &);
+	bool insert(const Task &);
 	
 	//Returns true if task is remove from linked list
 	bool remove(int);
