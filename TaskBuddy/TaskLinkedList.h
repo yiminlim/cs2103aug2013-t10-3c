@@ -51,7 +51,7 @@ public:
 	//Returns true if task is remove from linked list
 	bool remove(int);
 	
-	//Returns the task in the linked list as given by the index
+	//Returns the task in the linked list as given by the index, put in vector form and return 
 	Task retrieve(int);
 	
 	//Returns true if task is edited successfully in linked list
