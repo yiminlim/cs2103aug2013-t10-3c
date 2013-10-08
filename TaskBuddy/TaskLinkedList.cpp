@@ -37,9 +37,28 @@ int TaskLinkedList::getSize(){
 	return _size;
 }
 
+//Convert the date from a string to int
+void TaskLinkedList::convertDate(std::string date, int *day, int *month, int *year){
+
+}
+
 //Returns the index at which a Task is to be added
-int TaskLinkedList::getAddingIndex(const Task &){
-	return 0;
+int TaskLinkedList::getAddingIndex(const Task & curTask){
+	ListNode *cur = _head;
+	int i=1;
+
+	if (curTask.getStartingDate != NULL){
+		std::string date = curTask.getStartingDate;
+		int time = curTask.getStartingTime;
+	}
+	else{
+		std::string date = curTask.getDeadlineDate;
+		int time = curTask.getDeadlineTime;
+	}
+
+	do{
+
+	
 }
 
 //initialisation by inserting all task into program at the start
