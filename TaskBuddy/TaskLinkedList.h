@@ -31,13 +31,13 @@ public:
 	int getSize();
 
 	//Convert the date from a string to int
-	void convertDate(std::string, int*, int*, int*);
+	void convertDate(const std::string, int*, int*, int*);
 
 	//Check whether the task has a starting date and time or due date and time and return the respective one
-	void getTimeAndDate(const Task &, int*, int*, int*, int*);
+	void getTimeAndDate(Task &, int*, int*, int*, std::string*);
 
 	//Returns the index at which a Task is to be added
-	int getAddingIndex(const Task &);
+	int getAddingIndex(Task &);
 	
 	//initialisation by inserting all task into program at the start
 	void initialInsert(const Task &);
