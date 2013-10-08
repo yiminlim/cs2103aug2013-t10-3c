@@ -30,8 +30,8 @@ public:
 	//Returns number of tasks in linked list
 	int getSize();
 
-	//Returns the index at which a Task is edited, added or removed
-	int getIndex(const Task &);
+	//Returns the index at which a Task is to be added
+	int getAddingIndex(const Task &);
 	
 	//initialisation by inserting all task into program at the start
 	void initialInsert(const Task &);

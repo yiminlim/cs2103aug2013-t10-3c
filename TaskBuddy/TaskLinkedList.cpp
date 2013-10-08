@@ -37,7 +37,8 @@ int TaskLinkedList::getSize(){
 	return _size;
 }
 
-int TaskLinkedList::getIndex(const Task &){
+//Returns the index at which a Task is to be added
+int TaskLinkedList::getAddingIndex(const Task &){
 	return 0;
 }
 
