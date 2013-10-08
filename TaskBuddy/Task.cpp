@@ -5,12 +5,16 @@ Task::Task(){
 }
 
 //constructor
-Task::Task(std::string, std::string, std::string, Date, int, Date, int, Date, int){
+Task::Task(std::string, std:: string, std::string, std::string, Date, int, Date, int, Date, int){
 }
 
 //returns task
-std::string Task::getTask(){
-	return _task;
+std::string Task::getOriginalTask(){
+	return _originalTask;
+}
+
+std::string Task::getFormattedTask(){
+	return _formattedTask;
 }
 
 //returns task action

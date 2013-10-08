@@ -6,14 +6,15 @@
 
 
 class Task{
-private:
+public:
 	struct Date{
 		int day;
 		int month;
 		int year;
 	};
-
-	std::string _task; //whole line in proper format
+private:
+	std::string _originalTask;	//whole line in original input format
+	std::string _formattedTask;	//whole line in proper output format 
 	std::string _action; 
 	std::string _location;
 	Date _startingDate;
@@ -30,10 +31,13 @@ public:
 	Task();
 
 	//constructor
-	Task(std::string, std::string, std::string, Date, int, Date, int, Date, int);
+	Task(std::string, std::string, std::string, std::string, Date, int, Date, int, Date, int);
 
-	//returns task
-	std::string getTask();
+	//returns original task input string
+	std::string getOriginalTask();
+
+	//returns formatted task output string
+	std::string getFormattedTask();
 
 	//returns task action
 	std::string getAction();
