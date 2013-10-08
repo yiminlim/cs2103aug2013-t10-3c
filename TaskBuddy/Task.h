@@ -4,14 +4,15 @@
 #include <string>
 #include <vector>
 
-struct Date{
-	int day;
-	int month;
-	int year;
-};
 
 class Task{
 private:
+	struct Date{
+		int day;
+		int month;
+		int year;
+	};
+
 	std::string _task; //whole line in proper format
 	std::string _action; 
 	std::string _location;
@@ -29,7 +30,7 @@ public:
 	Task();
 
 	//constructor
-	Task(std::string, std::string, std::string, std::string, int, std::string, int, std::string, char, std::vector<std::string>);
+	Task(std::string, std::string, std::string, Date, int, Date, int, Date, int);
 
 	//returns task
 	std::string getTask();
@@ -41,19 +42,19 @@ public:
 	std::string getLocation();
 
 	//returns task starting date
-	std::string getStartingDate();
+	Date getStartingDate();
 
 	//returns task starting time
 	int getStartingTime();
 
 	//returns tsak ending date
-	std::string getEndingDate();
+	Date getEndingDate();
 
 	//returns task ending time
 	int getEndingTime();
 
 	//returns task deadline date
-	std::string getDeadlineDate();
+	Date getDeadlineDate();
 
 	//returns task deadline time
 	int getDeadlineTime();

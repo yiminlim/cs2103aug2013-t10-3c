@@ -22,6 +22,7 @@ public:
 	//void initialAdd(const Task &);
 		
 	Task createTask(std::string);
+	
 	//sort all tasks in program
 	//void initialSort();
 	
@@ -32,10 +33,10 @@ public:
 	bool del(const std::string);
 	
 	//return all tasks in the list that contains keyword and copy these tasks into vector parameter
-	bool generalSearch(std::string, std::vector<Task> &);
+	bool generalSearch(std::string, std::vector<std::string> &);
 	
 	//returns all tasks in the list that has the same date and copy these tasks into vector parameter
-	bool daySearch(std::string, std::vector<Task> &);
+	bool daySearch(std::string, std::vector<std::string> &);
 	
 	//edit a task from the list at the index given
 	//bool edit(int, std::string, std::vector<Task> &);

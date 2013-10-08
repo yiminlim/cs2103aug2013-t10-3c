@@ -5,7 +5,7 @@ Task::Task(){
 }
 
 //constructor
-Task::Task(std::string, std::string, std::string, std::string, int, std::string, int, std::string, char, std::vector<std::string>){
+Task::Task(std::string, std::string, std::string, Date, int, Date, int, Date, int){
 }
 
 //returns task
@@ -24,8 +24,9 @@ std::string Task::getLocation(){
 }
 
 //returns task starting date
-std::string Task::getStartingDate(){
-	return "";
+Task::Date Task::getStartingDate(){
+	Date date;
+	return date;
 }
 
 //returns task starting time
@@ -34,8 +35,9 @@ int Task::getStartingTime(){
 }
 
 //returns tsak ending date
-std::string Task::getEndingDate(){
-	return "";
+Task::Date Task::getEndingDate(){
+	Date date;
+	return date;
 }
 
 //returns task ending time
@@ -44,8 +46,9 @@ int Task::getEndingTime(){
 }
 
 //returns task deadline date
-std::string Task::getDeadlineDate(){
-	return "";
+Task::Date Task::getDeadlineDate(){
+	Date date;
+	return date;
 }
 
 //returns task deadline time

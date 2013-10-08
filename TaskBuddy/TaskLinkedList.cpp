@@ -8,7 +8,7 @@ TaskLinkedList::TaskLinkedList(){
 //destructor for linked list
 TaskLinkedList::~TaskLinkedList(){
 	while (!isEmpty()){
-		remove(1);
+		remove("1");
 	}
 }
 
@@ -47,7 +47,7 @@ void TaskLinkedList::convertDate(const std::string date, int *day, int *month, i
 
 //Check whether the task has a starting date and time or due date and time and return the respective one
 void TaskLinkedList::getTimeAndDate(Task & task, int *day, int *month, int *year, int *time){
-	if (task.getStartingDate() != "NULL"){
+	/*if (task.getStartingDate() != NULL){
 		convertDate(task.getStartingDate(), day, month, year);
 		*time = task.getStartingTime();
 	}
@@ -55,6 +55,7 @@ void TaskLinkedList::getTimeAndDate(Task & task, int *day, int *month, int *year
 		convertDate(task.getDeadlineDate(), day, month, year);
 		*time = task.getDeadlineTime();
 	}
+	return;*/
 	return;
 }
 
@@ -84,29 +85,19 @@ int TaskLinkedList::getAddingIndex(Task & curTask){
 	return i;
 }
 
-//initialisation by inserting all task into program at the start
-void TaskLinkedList::initialInsert(const Task &){
-	
-}
-	
-//sort tasks in list according to date and time
-void TaskLinkedList::mergeSort(int, int){
-}
-	
 //Returns true if task is added to linked list
 bool TaskLinkedList::insert(const Task &){
 	return true;
 }
 	
 //Returns true if task is remove from linked list
-bool TaskLinkedList::remove(int){
+bool TaskLinkedList::remove(std::string){
 	return true;
 }
 	
 //Returns the task in the linked list as given by the index
-Task TaskLinkedList::retrieve(int){
-	Task temp;
-	return temp;
+bool TaskLinkedList::retrieve(const std::vector<std::string>, std::vector<std::string> &){
+	return true;
 }
 	
 //Returns true if task is edited successfully in linked list
