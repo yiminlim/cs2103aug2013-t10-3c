@@ -61,21 +61,27 @@ void TaskLinkedList::getTimeAndDate(const Task & task, int *day, int *month, int
 //Returns the index at which a Task is to be added
 int TaskLinkedList::getAddingIndex(const Task & curTask){
 	ListNode *cur = _head;
-	int i=1, *day, *month, *year;
-
-	if (curTask.getStartingDate != NULL){
-		convertDate(curTask.getStartingDate, day, month, year);
-		int time = curTask.getStartingTime;
-	}
-	else{
-		convertDate(curTask.getDeadlineDate, day, month, year);
-		int time = curTask.getDeadlineTime;
-	}
+	int i=1, *day, *month, *year, *time;
+	int *listDay, *listMonth, *listYear, *listTime;
+	getTimeAndDate(curTask, day, month, year, time);
 
 	do{
-		if (
+		getTimeAndDate(cur->item, listDay, listMonth, listYear, listTime);
+		if (*year < *listYear){
+			return i;
+		} else if (*month < *listMonth){
+			return i;
+		} else if (*day < *listDay){
+			return i;
+		} else if (*time < *listTime){
+			return i;
+		} else {
+			cur = cur->next;
+		}
+		i++;
+	} while (cur != _head);
 
-	
+	return i;
 }
 
 //initialisation by inserting all task into program at the start
