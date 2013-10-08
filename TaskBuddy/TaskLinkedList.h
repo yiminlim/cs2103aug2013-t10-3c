@@ -39,20 +39,14 @@ public:
 	//Returns the index at which a Task is to be added
 	int getAddingIndex(Task &);
 	
-	//initialisation by inserting all task into program at the start
-	void initialInsert(const Task &);
-	
-	//sort tasks in list according to date and time
-	void mergeSort(int, int); 
-	
 	//Returns true if task is added to linked list
 	bool insert(const Task &);
 	
 	//Returns true if task is remove from linked list
-	bool remove(int);
+	bool remove(std::string);
 	
-	//Returns the task in the linked list as given by the index, put in vector form and return 
-	Task retrieve(int);
+	//Pass over a vector of keywords and an empty vector of string for me to return those strings with the words in it
+	bool retrieve(const std::vector<std::string>, std::vector<std::string> &);
 	
 	//Returns true if task is edited successfully in linked list
 	bool edit(int, Task);

@@ -4,19 +4,25 @@
 #include <string>
 #include <vector>
 
+struct Date{
+	int day;
+	int month;
+	int year;
+};
+
 class Task{
 private:
-	std::string _task;
+	std::string _task; //whole line in proper format
 	std::string _action; 
 	std::string _location;
-	std::string _startingDate;
+	Date _startingDate;
 	int	_startingTime;
-	std::string _endingDate;
+	Date _endingDate;
 	int _endingTime;
-	std::string _deadlineDate;
+	Date _deadlineDate;
 	int	_deadlineTime;
-	char _status;
-	std::vector <std::string> _block;
+	//char _status;
+	//std::vector <std::string> _block;
 
 public:
 	//empty constructor
