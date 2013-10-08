@@ -39,7 +39,10 @@ int TaskLinkedList::getSize(){
 
 //Convert the date from a string to int
 void TaskLinkedList::convertDate(std::string date, int *day, int *month, int *year){
-
+	*day = date[0]*10 + date[1];
+	*month = date[3]*10 + date[4];
+	*year = date[6]*10 + date[7];
+	return;
 }
 
 //Returns the index at which a Task is to be added
