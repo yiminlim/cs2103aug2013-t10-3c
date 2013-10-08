@@ -1,10 +1,15 @@
 #include "TaskLinkedList.h"
 
 TaskLinkedList::TaskLinkedList(){
+	_head = NULL;
+	_size = 0;
 }
 	
 //destructor for linked list
 TaskLinkedList::~TaskLinkedList(){
+	while (!isEmpty()) {
+		remove(1);
+	}
 }
 	
 //Returns true if the linked list is empty
