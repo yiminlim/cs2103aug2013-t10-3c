@@ -1,11 +1,11 @@
-#ifndef _PASSER_H_
-#define _PASSER_H_
+#ifndef _PARSE_H_
+#define _PARSE_H_
 
 #include <string>
 #include <sstream>
 #include "Task.h"
 
-class Passer{
+class Parse{
 private:
 
 
