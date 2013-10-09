@@ -85,14 +85,14 @@ int TaskLinkedList::getInsertIndex(Task & curTask){
 		return i;
 	}
 
-	do{
+	while (cur != NULL){
 		if (compareDateAndTime(curTask, cur->item)){
 			return i;
 		} else{
 			cur = cur->next;
 			i++;
 		}
-	} while (cur != _head);
+	} 
 
 	return i;
 }
