@@ -83,9 +83,31 @@ bool Parse::isKeyword(std::string word) {
 }
 
 std::string Parse::formatTask(std::string action, std::string location, Task::Date startingDate, int startingTime, Task::Date endingDate, int endingTime, Task::Date deadlineDate, int deadlineTime) {
-//	std::ostringstream output;
-//	if (deadlineDate 
-	return "";
+	std::ostringstream output;
+	if (deadlineDate.day && deadlineDate.month && deadlineDate.year) {
+		output << "by " << deadlineDate.day << "/" << deadlineDate.month << "/" << deadlineDate.year;
+		output << " " << deadlineTime << " hrs";
+		output << ": " << action;
+		if (location.size() > 0) {
+			output << " at " << location;
+		}
+	}
+	else {
+		output << startingDate.day << "/" << startingDate.month << "/" << startingDate.year;
+		output << " " << startingTime << " hrs";
+		if (endingDate.day && endingDate.month && endingDate.year) {
+			output << " - " << endingDate.day << "/" << endingDate.month << "/" << endingDate.year;
+			output << " " << endingTime << " hrs";
+			output << ": " << action;
+			if (location.size() > 0) {
+				output << " at " << location;
+			}
+		}
+	}
+
+	output << "\n";
+	
+	return output.str();
 }
 
 Task Parse::retrieveTask(std::string){
