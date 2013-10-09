@@ -3,6 +3,7 @@
 
 #include <string>
 #include <sstream>
+#include <vector>
 #include "Task.h"
 
 class Parse{
@@ -16,10 +17,11 @@ public:
 	static const std::string KEYWORD_ENDING;
 	static const std::string KEYWORD_DEADLINE;
 
-	//splits original task string into various parts
+	
 	Task generateTaskFromUserInput(std::string);
+	bool isKeyword(std::string word);
+	std::string formatTask(std::string, std::string, Task::Date, int, Task::Date, int, Task::Date, int);
 	Task retrieveTask(std::string);
-	void splitTaskString(std::string);
 	Task::Date convertToDate(std::string);
 	int convertToTime(std::string);
 };
