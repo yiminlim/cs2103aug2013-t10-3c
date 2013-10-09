@@ -135,9 +135,13 @@ Task::Date Parse::convertToDate(std::string dateString){
 	yearInput >> date.year;
 
 	return date;
-
 }
 
-int Parse::convertToTime(std::string){
-	return 0;
+int Parse::convertToTime(std::string timeString){
+	int time;
+	std::istringstream timeInput(timeString);
+	
+	timeInput >> time;
+
+	return time;
 }
