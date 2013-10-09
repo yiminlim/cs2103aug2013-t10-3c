@@ -163,8 +163,28 @@ bool TaskLinkedList::remove(std::string task){
 	
 //Returns the task in the linked list as given by the index
 bool TaskLinkedList::retrieve(const std::vector<std::string> keywords, std::vector<std::string> & taskList){
+	ListNode *cur;
+	size_t pos;
 
-	return true;
+	while (cur != NULL){
+		int count = 0;
+		for (int i=0; i<keywords.size(); i++){
+			pos = (cur->item.getTask()).find(keywords[i]);
+			if (pos != std::string::npos){
+				count++;
+			}
+		}
+		if (count == keywords.size()){
+			taskList.push_back(cur->item.getTask());
+		}
+		cur = cur->next;
+	}
+
+	if (taskList.empty()){
+		return false;
+	} else{
+		return true;
+	}
 }
 	
 //Returns true if task is edited successfully in linked list
