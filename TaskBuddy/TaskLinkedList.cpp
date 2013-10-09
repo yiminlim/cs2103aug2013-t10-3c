@@ -123,9 +123,34 @@ bool TaskLinkedList::insert(Task & curTask){
 	return true;
 }
 	
+//Returns the index of the task to be removed
+int TaskLinkedList::getRemoveIndex(std::string task){
+	return 0;
+}
+
 //Returns true if task is remove from linked list
-bool TaskLinkedList::remove(std::string){
-	return true;
+bool TaskLinkedList::remove(std::string task){
+	std::vector <std::string> vectorTask, temp;
+	vectorTask.push_back(task);
+
+	if (retrieve(vectorTask, temp)){
+		int index = getRemoveIndex(task);
+		ListNode *cur;
+
+		--_size;
+		if (index == 1){
+			cur = _head;
+			_head = _head->next;
+		} else{
+			ListNode *prev = traverseTo(index-1);
+			cur = prev->next;
+			prev->next = cur->next;
+		}
+		delete cur;
+		cur = NULL;
+		return true;
+	}
+	return false;
 }
 	
 //Returns the task in the linked list as given by the index

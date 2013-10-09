@@ -46,6 +46,9 @@ public:
 	
 	//Returns true if task is added to linked list
 	bool insert(Task &);
+
+	//Returns the index of the task to be removed
+	int getRemoveIndex(std::string);
 	
 	//Returns true if task is remove from linked list
 	bool remove(std::string);
