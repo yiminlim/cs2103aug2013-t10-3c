@@ -11,11 +11,11 @@ Task Parse::generateTaskFromUserInput(std::string taskString){
 	std::string task = "";
 	std::string action = "";
 	std::string location = "";
-	Task::Date startingDate;
+	Task::Date startingDate = Task::Date();
 	int startingTime = 0;
-	Task::Date endingDate;
+	Task::Date endingDate = Task::Date();
 	int endingTime = 0;
-	Task::Date deadlineDate;
+	Task::Date deadlineDate = Task::Date();
 	int deadlineTime = 0;
 
 	std::istringstream userInput(taskString);
@@ -83,7 +83,8 @@ bool Parse::isKeyword(std::string word) {
 }
 
 std::string Parse::formatTask(std::string action, std::string location, Task::Date startingDate, int startingTime, Task::Date endingDate, int endingTime, Task::Date deadlineDate, int deadlineTime) {
-
+//	std::ostringstream output;
+//	if (deadlineDate 
 	return "";
 }
 
