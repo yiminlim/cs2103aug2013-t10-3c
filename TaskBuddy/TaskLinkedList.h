@@ -36,16 +36,16 @@ public:
 	int getSize();
 
 	//determine if the task has a starting date and time or deadline date and time and pass back the one with the value
-	void obtainDateAndTime(const Task &, Date*, int*);
+	void obtainDateAndTime(Task &, Date*, int*);
 
 	//Returns true if the curTask is of an earlier date and time than listTask
-	bool compareDateAndTime(const Task &, const Task &);
+	bool compareDateAndTime(Task &, Task &);
 
 	//Returns the index at which a Task is to be added
-	int getInsertIndex(const Task &);
+	int getInsertIndex(Task &);
 	
 	//Returns true if task is added to linked list
-	bool insert(const Task &);
+	bool insert(Task &);
 	
 	//Returns true if task is remove from linked list
 	bool remove(std::string);

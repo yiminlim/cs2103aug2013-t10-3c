@@ -38,13 +38,27 @@ int TaskLinkedList::getSize(){
 }
 
 //determine if the task has a starting date and time or deadline date and time and pass back the one with the value
-void TaskLinkedList::obtainDateAndTime(const Task & task, Date *date, int *time){
+void TaskLinkedList::obtainDateAndTime(Task & task, Date *date, int *time){
+	if (task.getDeadlineDate().day == NULL){
+		date->day = task.getStartingDate().day;
+		date->month = task.getStartingDate().month;
+		date->year = task.getStartingDate().year;
+		*time = task.getStartingTime();
+	}
 
+	else{
+		date->day = task.getDeadlineDate().day;
+		date->month = task.getDeadlineDate().month;
+		date->year = task.getDeadlineDate().year;
+		*time = task.getDeadlineTime();
+	}
+	return;
 }
 
 //Returns true if the curTask is of an earlier date and time than listTask
-bool TaskLinkedList::compareDateAndTime(const Task & curTask, const Task & listTask){
-		Date *curDate, *listDate;
+bool TaskLinkedList::compareDateAndTime(Task & curTask, Task & listTask){
+		Date *curDate = new Date;
+		Date *listDate = new Date;
 		int *curTime, *listTime;
 		obtainDateAndTime(curTask, curDate, curTime);
 		obtainDateAndTime(listTask, listDate, listTime);
@@ -63,7 +77,7 @@ bool TaskLinkedList::compareDateAndTime(const Task & curTask, const Task & listT
 }
 
 //Returns the index at which a Task is to be added
-int TaskLinkedList::getInsertIndex(const Task & curTask){
+int TaskLinkedList::getInsertIndex(Task & curTask){
 	ListNode *cur = _head;
 	int i = 1;
 
@@ -84,7 +98,7 @@ int TaskLinkedList::getInsertIndex(const Task & curTask){
 }
 
 //Returns true if task is added to linked list
-bool TaskLinkedList::insert(const Task & curTask){
+bool TaskLinkedList::insert(Task & curTask){
 	int newSize = getSize() + 1;
 	int index = getInsertIndex(curTask);
 
