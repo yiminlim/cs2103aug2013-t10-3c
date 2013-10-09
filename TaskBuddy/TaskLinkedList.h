@@ -48,7 +48,7 @@ public:
 	bool insert(Task &);
 
 	//Returns the index of the task to be removed
-	int getRemoveIndex(std::string);
+	bool getRemoveIndex(std::string, int*);
 	
 	//Returns true if task is remove from linked list
 	bool remove(std::string);
