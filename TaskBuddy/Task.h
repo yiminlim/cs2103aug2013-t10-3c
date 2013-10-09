@@ -8,6 +8,7 @@
 class Task{
 public:
 	struct Date{
+		Date() : day(0), month(0), year(0) {}
 		int day;
 		int month;
 		int year;

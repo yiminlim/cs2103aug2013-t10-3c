@@ -5,7 +5,16 @@ Task::Task(){
 }
 
 //constructor
-Task::Task(std::string, std::string, std::string, Date, int, Date, int, Date, int){
+Task::Task(std::string task, std::string action, std::string location, Date startingDate, int startingTime, Date endingDate, int endingTime, Date deadlineDate, int deadlineTime){
+	_task = task;
+	_action = action;
+	_location = location;
+	_startingDate = startingDate;
+	_startingTime = startingTime;
+	_endingDate = endingDate;
+	_endingTime = endingTime;
+	_deadlineDate = deadlineDate;
+	_deadlineTime = deadlineTime;
 }
 
 //returns task
