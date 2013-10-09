@@ -115,11 +115,25 @@ Task Parse::retrieveTask(std::string){
 	return taskObject;
 }
 
-Task::Date Parse::convertToDate(std::string){
-	Task::Date date;
-	date.day = 1;
-	date.month = 1;
-	date.year = 1;
+Task::Date Parse::convertToDate(std::string dateString){
+	Task::Date date; 
+	char dateSeparator = '/';
+
+	size_t posFirstDateSeparator = dateString.find(dateSeparator);
+	size_t posSecondDateSeparator = dateString.find(dateSeparator, posFirstDateSeparator+1);
+
+	std::string dayString = dateString.substr(0, posFirstDateSeparator-0); 
+	std::string monthString = dateString.substr(posFirstDateSeparator+1, posSecondDateSeparator-posFirstDateSeparator-1);
+	std::string yearString = dateString.substr(posSecondDateSeparator+1);
+
+	std::istringstream dayInput(dayString);
+	std::istringstream monthInput(monthString);
+	std::istringstream yearInput(yearString);
+
+	dayInput >> date.day;
+	monthInput >> date.month;
+	yearInput >> date.year;
+
 	return date;
 
 }
