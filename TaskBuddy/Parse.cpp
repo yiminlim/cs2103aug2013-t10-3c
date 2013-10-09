@@ -110,8 +110,86 @@ std::string Parse::formatTask(std::string action, std::string location, Task::Da
 	return output.str();
 }
 
-Task Parse::retrieveTask(std::string){
-	Task taskObject;
+Task Parse::retrieveTask(std::string taskString){
+	std::string task = "";
+	std::string action = "";
+	std::string location = "";
+	Task::Date startingDate = Task::Date();
+	int startingTime = 0;
+	Task::Date endingDate = Task::Date();
+	int endingTime = 0;
+	Task::Date deadlineDate = Task::Date();
+	int deadlineTime = 0;
+
+	std::istringstream retrievedTask(taskString);
+	std::string word;
+	std::vector<std::string> taskDetails;
+
+	while (retrievedTask) {
+		retrievedTask >> word; 
+		taskDetails.push_back(word);
+	}
+
+	if (taskDetails[0] == KEYWORD_DEADLINE) {
+		deadlineDate = convertToDate(taskDetails[1]);
+		deadlineTime = convertToTime(taskDetails[2]);
+		int i = 4;
+		while (i < taskDetails.size() && taskDetails[i] != KEYWORD_LOCATION) {
+			if (action != "") {
+				action += " ";
+			}
+			action += taskDetails[i];
+			i++;
+		}
+		
+		if (i < taskDetails.size() && taskDetails[i] == KEYWORD_LOCATION) {
+			i++;
+		}
+
+		while (i < taskDetails.size()) {
+			if (location != "") {
+				location += " ";
+			}
+			location += taskDetails[i];
+			i++;
+		}
+	}
+
+	else {
+		startingDate = convertToDate(taskDetails[0]);
+		startingTime = convertToTime(taskDetails[1]);
+		int i = 3;
+		if (taskDetails[3] == "-") {
+			endingDate = convertToDate(taskDetails[4]);
+			endingTime = convertToTime(taskDetails[5]);
+			i = 7;
+		}
+
+		while (i < taskDetails.size() && taskDetails[i] != KEYWORD_LOCATION) {
+			if (action != "") {
+				action += " ";
+			}
+			action += taskDetails[i];
+			i++;
+		}
+		
+		if (i < taskDetails.size() && taskDetails[i] == KEYWORD_LOCATION) {
+			i++;
+		}
+
+		while (i < taskDetails.size()) {
+			if (location != "") {
+				location += " ";
+			}
+			location += taskDetails[i];
+			i++;
+		}
+	}
+
+	task = formatTask(action, location, startingDate, startingTime, endingDate, endingTime, deadlineDate, deadlineTime);
+
+	Task taskObject(task, action, location, startingDate, startingTime, endingDate, endingTime, deadlineDate, deadlineTime);
+	
 	return taskObject;
 }
 
