@@ -13,8 +13,7 @@ public:
 		int year;
 	};
 private:
-	std::string _originalTask;	//whole line in original input format
-	std::string _formattedTask;	//whole line in proper output format 
+	std::string _task;	//whole line in proper output format 
 	std::string _action; 
 	std::string _location;
 	Date _startingDate;
@@ -31,13 +30,10 @@ public:
 	Task();
 
 	//constructor
-	Task(std::string, std::string, std::string, std::string, Date, int, Date, int, Date, int);
-
-	//returns original task input string
-	std::string getOriginalTask();
+	Task(std::string, std::string, std::string, Date, int, Date, int, Date, int);
 
 	//returns formatted task output string
-	std::string getFormattedTask();
+	std::string getTask();
 
 	//returns task action
 	std::string getAction();
