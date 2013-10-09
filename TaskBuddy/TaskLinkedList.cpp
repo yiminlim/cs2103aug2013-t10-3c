@@ -129,7 +129,7 @@ int TaskLinkedList::getRemoveIndex(std::string task){
 	ListNode *cur = _head;
 	int index = 1; 
 
-	while (cur->item.getTask != task){
+	while (cur->item.getTask() != task){
 		cur = cur->next;
 		index++;
 	}
