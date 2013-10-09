@@ -125,35 +125,32 @@ bool TaskLinkedList::insert(Task & curTask){
 	
 //Returns the index of the task to be removed
 //Assume that the index returned have to be within the index range. If there is an error, it will return 0
-int TaskLinkedList::getRemoveIndex(std::string task){
+bool TaskLinkedList::getRemoveIndex(std::string task, int *index){
 	ListNode *cur = _head;
-	int index = 1; 
 
 	while (cur->item.getTask() != task){
 		cur = cur->next;
-		index++;
+		(*index)++;
 	}
 	if (cur != NULL){
-		return index;
+		return true;
 	}
-	return 0;
+	return false;
 }
 
 //Returns true if task is remove from linked list
 bool TaskLinkedList::remove(std::string task){
-	std::vector <std::string> vectorTask, temp;
-	vectorTask.push_back(task);
-
-	if (retrieve(vectorTask, temp)){
-		int index = getRemoveIndex(task);
+	int *index;
+	*index = 1;
+	if (getRemoveIndex(task,index)){
 		ListNode *cur;
-
 		--_size;
-		if (index == 1){
+
+		if (*index == 1){
 			cur = _head;
 			_head = _head->next;
 		} else{
-			ListNode *prev = traverseTo(index-1);
+			ListNode *prev = traverseTo(*index-1);
 			cur = prev->next;
 			prev->next = cur->next;
 		}
@@ -165,7 +162,8 @@ bool TaskLinkedList::remove(std::string task){
 }
 	
 //Returns the task in the linked list as given by the index
-bool TaskLinkedList::retrieve(const std::vector<std::string>, std::vector<std::string> &){
+bool TaskLinkedList::retrieve(const std::vector<std::string> keywords, std::vector<std::string> & taskList){
+
 	return true;
 }
 	
