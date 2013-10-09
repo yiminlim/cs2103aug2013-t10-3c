@@ -124,7 +124,18 @@ bool TaskLinkedList::insert(Task & curTask){
 }
 	
 //Returns the index of the task to be removed
+//Assume that the index returned have to be within the index range. If there is an error, it will return 0
 int TaskLinkedList::getRemoveIndex(std::string task){
+	ListNode *cur = _head;
+	int index = 1; 
+
+	while (cur->item.getTask != task){
+		cur = cur->next;
+		index++;
+	}
+	if (cur != NULL){
+		return index;
+	}
 	return 0;
 }
 
