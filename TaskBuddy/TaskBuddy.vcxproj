@@ -76,6 +76,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Parse.h" />
     <ClInclude Include="Storage.h" />
     <ClInclude Include="Task.h" />
     <ClInclude Include="TaskLinkedList.h" />
@@ -83,6 +84,7 @@
     <ClInclude Include="UserInterface.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Parse.cpp" />
     <ClCompile Include="Storage.cpp" />
     <ClCompile Include="Task.cpp" />
     <ClCompile Include="TaskBuddy.cpp" />
