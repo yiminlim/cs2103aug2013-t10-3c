@@ -39,7 +39,7 @@ int TaskLinkedList::getSize(){
 
 //determine if the task has a starting date and time or deadline date and time and pass back the one with the value
 void TaskLinkedList::obtainDateAndTime(Task & task, Date *date, int *time){
-	if (task.getDeadlineDate().day == NULL){
+	if (task.getDeadlineDate().day == 0){
 		date->day = task.getStartingDate().day;
 		date->month = task.getStartingDate().month;
 		date->year = task.getStartingDate().year;
@@ -59,21 +59,31 @@ void TaskLinkedList::obtainDateAndTime(Task & task, Date *date, int *time){
 bool TaskLinkedList::compareDateAndTime(Task & curTask, Task & listTask){
 		Date *curDate = new Date;
 		Date *listDate = new Date;
-		int *curTime, *listTime;
+		int *curTime = new int, *listTime = new int;
+		bool condition = false;
 		obtainDateAndTime(curTask, curDate, curTime);
 		obtainDateAndTime(listTask, listDate, listTime);
 
 		if (curDate->year < listDate->year){
-			return true;
+			condition = true;
 		} else if(curDate->month < listDate->month){
-			return true;
+			condition = true;
 		} else if(curDate->day < listDate->day){
-			return true;
+			condition = true;
 		} else if(curTime < listTime){
-			return true;
-		} else{
-			return false;
+			condition = true;
 		}
+
+		delete curDate;
+		curDate = NULL;
+		delete listDate;
+		listDate = NULL;
+		delete curTime;
+		curTime = NULL;
+		delete listTime;
+		listTime = NULL;
+
+		return condition;		
 }
 
 //Returns the index at which a Task is to be added
@@ -140,8 +150,8 @@ bool TaskLinkedList::getRemoveIndex(std::string task, int *index){
 
 //Returns true if task is remove from linked list
 bool TaskLinkedList::remove(std::string task){
-	int *index;
-	*index = 1;
+	int *index = new int;
+	bool condition = false;
 	if (getRemoveIndex(task,index)){
 		ListNode *cur;
 		--_size;
@@ -156,21 +166,21 @@ bool TaskLinkedList::remove(std::string task){
 		}
 		delete cur;
 		cur = NULL;
-		return true;
+		condition = true;
 	}
-	return false;
+	delete index;
+	index = NULL;
+	return condition;
 }
 	
 //Returns the task in the linked list as given by the index
 bool TaskLinkedList::retrieve(const std::vector<std::string> keywords, std::vector<std::string> & taskList){
-	ListNode *cur;
-	size_t pos;
+	ListNode *cur = _head;
 
 	while (cur != NULL){
 		int count = 0;
-		for (int i=0; i<keywords.size(); i++){
-			pos = (cur->item.getTask()).find(keywords[i]);
-			if (pos != std::string::npos){
+		for (unsigned int i=0; i<keywords.size(); i++){
+			if ((cur->item.getTask()).find(keywords[i]) != std::string::npos){
 				count++;
 			}
 		}

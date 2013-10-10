@@ -1,5 +1,4 @@
-#ifndef _TASKLINKEDLIST_H_
-#define _TASKLINKEDLIST_H_
+#pragma once
 
 #include "Task.h"
 
@@ -59,4 +58,3 @@ public:
 	//Returns true if task is edited successfully in linked list
 	bool edit(int, Task);
 };
-#endif;

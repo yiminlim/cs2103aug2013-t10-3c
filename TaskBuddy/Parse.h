@@ -1,5 +1,4 @@
-#ifndef _PARSE_H_
-#define _PARSE_H_
+#pragma once
 
 #include <string>
 #include <sstream>
@@ -7,8 +6,6 @@
 #include "Task.h"
 
 class Parse{
-private:
-
 
 public:
 	static const std::string KEYWORD_ADD;
@@ -20,9 +17,8 @@ public:
 	
 	Task generateTaskFromUserInput(std::string);
 	bool isKeyword(std::string word);
-	std::string formatTask(std::string, std::string, Task::Date, int, Task::Date, int, Task::Date, int);
+	std::string formatTask(std::string, std::string, Task::Date, int, Task::Date, int, Task::Date, int, bool);
 	Task retrieveTask(std::string);
 	Task::Date convertToDate(std::string);
 	int convertToTime(std::string);
 };
-#endif;
