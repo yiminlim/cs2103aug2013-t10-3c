@@ -1,5 +1,4 @@
-#ifndef _TASKLOGIC_H_
-#define _TASKLOGIC_H_
+#pragma once
 
 #include <fstream>
 #include "TaskLinkedList.h"
@@ -60,4 +59,3 @@ public:
 
 
 };
-#endif;
