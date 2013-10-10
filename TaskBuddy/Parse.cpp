@@ -100,13 +100,13 @@ std::string Parse::formatTask(std::string action, std::string location, Task::Da
 		if (endingDate.day && endingDate.month && endingDate.year) {
 			output << " - " << endingDate.day << "/" << endingDate.month << "/" << endingDate.year;
 			output << " " << endingTime << " hrs";
-			output << ": " << action;
-			if (location.size() > 0) {
-				output << " at " << location;
-			}
+		}
+		output << ": " << action;
+		if (location.size() > 0) {
+		output << " at " << location;
 		}
 	}
-	
+
 	return output.str();
 }
 
