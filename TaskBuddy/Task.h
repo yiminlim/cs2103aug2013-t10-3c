@@ -1,11 +1,11 @@
-#ifndef _TASK_H_
-#define _TASK_H_
+#pragma once
 
 #include <string>
 #include <vector>
 
 
 class Task{
+
 public:
 	struct Date{
 		Date() : day(0), month(0), year(0) {}
@@ -13,6 +13,7 @@ public:
 		int month;
 		int year;
 	};
+
 private:
 	std::string _task;	//whole line in proper output format 
 	std::string _action; 
@@ -63,4 +64,3 @@ public:
 	//returns task status
 	char getStatus();
 };
-#endif;

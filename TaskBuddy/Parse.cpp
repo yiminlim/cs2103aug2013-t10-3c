@@ -1,4 +1,5 @@
 #include "Parse.h" 
+#include <iostream>
 
 const std::string Parse::KEYWORD_ADD = "add";
 const std::string Parse::KEYWORD_LOCATION = "at";
@@ -18,18 +19,19 @@ Task Parse::generateTaskFromUserInput(std::string taskString){
 	Task::Date deadlineDate = Task::Date();
 	int deadlineTime = 0;
 
+	bool isDeadLineType = false; //type is to show if its deadline type or not. true if it is deadline type
+
 	std::istringstream userInput(taskString);
 	std::string word;
 	std::vector<std::string> input;
 
-	while (userInput) {
-		userInput >> word; 
+	while (userInput >> word) {
 		input.push_back(word);
 	}
 
 	std::string keyword = "";
 
-	for (int i = 0; i < input.size(); i++) {
+	for (unsigned int i = 0; i < input.size(); i++) { //must always start with command
 		if (isKeyword(input[i])) {
 			keyword = input[i];
 		}
@@ -46,7 +48,7 @@ Task Parse::generateTaskFromUserInput(std::string taskString){
 			location += input[i];
 		}
 		else if (keyword == KEYWORD_STARTING) {
-			if (input[i].find("/")) {
+			if (input[i].find("/") != std::string::npos) {
 				startingDate = convertToDate(input[i]);
 			}
 			else {
@@ -54,7 +56,7 @@ Task Parse::generateTaskFromUserInput(std::string taskString){
 			}
 		}
 		else if (keyword == KEYWORD_ENDING) {
-			if (input[i].find("/")) {
+			if (input[i].find("/") != std::string::npos) {
 				endingDate = convertToDate(input[i]);
 			}
 			else {
@@ -62,16 +64,16 @@ Task Parse::generateTaskFromUserInput(std::string taskString){
 			}
 		}
 		else if (keyword == KEYWORD_DEADLINE) {
-			if (input[i].find("/")) {
+			if (input[i].find("/") != std::string::npos) {
 				deadlineDate = convertToDate(input[i]);
 			}
 			else {
 				deadlineTime = convertToTime(input[i]);
 			}
+			isDeadLineType = true;
 		}
 	}
-
-	task = formatTask(action, location, startingDate, startingTime, endingDate, endingTime, deadlineDate, deadlineTime);
+	task = formatTask(action, location, startingDate, startingTime, endingDate, endingTime, deadlineDate, deadlineTime, isDeadLineType);
 
 	Task taskObject(task, action, location, startingDate, startingTime, endingDate, endingTime, deadlineDate, deadlineTime);
 	
@@ -82,9 +84,9 @@ bool Parse::isKeyword(std::string word) {
 	return word == KEYWORD_ADD || word == KEYWORD_DEADLINE || word == KEYWORD_ENDING || word == KEYWORD_LOCATION || word == KEYWORD_STARTING;
 }
 
-std::string Parse::formatTask(std::string action, std::string location, Task::Date startingDate, int startingTime, Task::Date endingDate, int endingTime, Task::Date deadlineDate, int deadlineTime) {
+std::string Parse::formatTask(std::string action, std::string location, Task::Date startingDate, int startingTime, Task::Date endingDate, int endingTime, Task::Date deadlineDate, int deadlineTime, bool isDeadLineType) {
 	std::ostringstream output;
-	if (deadlineDate.day && deadlineDate.month && deadlineDate.year) {
+	if (isDeadLineType) {
 		output << "by " << deadlineDate.day << "/" << deadlineDate.month << "/" << deadlineDate.year;
 		output << " " << deadlineTime << " hrs";
 		output << ": " << action;
@@ -104,8 +106,6 @@ std::string Parse::formatTask(std::string action, std::string location, Task::Da
 			}
 		}
 	}
-
-	output << "\n";
 	
 	return output.str();
 }
@@ -121,19 +121,21 @@ Task Parse::retrieveTask(std::string taskString){
 	Task::Date deadlineDate = Task::Date();
 	int deadlineTime = 0;
 
+	bool isDeadLineType = false; //CHECK LATER!!
+
 	std::istringstream retrievedTask(taskString);
 	std::string word;
 	std::vector<std::string> taskDetails;
 
-	while (retrievedTask) {
-		retrievedTask >> word; 
+	while (retrievedTask >> word) {
 		taskDetails.push_back(word);
 	}
 
 	if (taskDetails[0] == KEYWORD_DEADLINE) {
+		isDeadLineType = true; //NOTE!!
 		deadlineDate = convertToDate(taskDetails[1]);
 		deadlineTime = convertToTime(taskDetails[2]);
-		int i = 4;
+		unsigned int i = 4;
 		while (i < taskDetails.size() && taskDetails[i] != KEYWORD_LOCATION) {
 			if (action != "") {
 				action += " ";
@@ -158,7 +160,7 @@ Task Parse::retrieveTask(std::string taskString){
 	else {
 		startingDate = convertToDate(taskDetails[0]);
 		startingTime = convertToTime(taskDetails[1]);
-		int i = 3;
+		unsigned int i = 3;
 		if (taskDetails[3] == "-") {
 			endingDate = convertToDate(taskDetails[4]);
 			endingTime = convertToTime(taskDetails[5]);
@@ -186,16 +188,19 @@ Task Parse::retrieveTask(std::string taskString){
 		}
 	}
 
-	task = formatTask(action, location, startingDate, startingTime, endingDate, endingTime, deadlineDate, deadlineTime);
+	task = formatTask(action, location, startingDate, startingTime, endingDate, endingTime, deadlineDate, deadlineTime, isDeadLineType);
 
 	Task taskObject(task, action, location, startingDate, startingTime, endingDate, endingTime, deadlineDate, deadlineTime);
 	
 	return taskObject;
+
 }
+
 
 Task::Date Parse::convertToDate(std::string dateString){
 	Task::Date date; 
 	char dateSeparator = '/';
+
 
 	size_t posFirstDateSeparator = dateString.find(dateSeparator);
 	size_t posSecondDateSeparator = dateString.find(dateSeparator, posFirstDateSeparator+1);
@@ -214,6 +219,7 @@ Task::Date Parse::convertToDate(std::string dateString){
 
 	return date;
 }
+
 
 int Parse::convertToTime(std::string timeString){
 	int time;

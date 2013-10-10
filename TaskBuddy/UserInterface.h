@@ -1,5 +1,4 @@
-#ifndef _USERINTERFACE_H_
-#define _USERINTERFACE_H_
+#pragma once
 
 #include <iostream>
 #include "TaskLogic.h"
@@ -23,11 +22,11 @@ public:
 	//Given different commands, it calls out the corresponding function in tbLogic.
 	void commandUI();
 	
-	//To read in all details of task, creates a task and passes it to TaskList to be added
-	std::string readTask();
+	//To read in the task details
+	std::string readTask(std::string);
 	
-	//To read in date of task, for a search for relevant task
-	std::string readDate();
+	/*To read in date of task, for a search for relevant task
+	std::string readDate();*/
 	
 	//To display main menu
 	void displayMainMenu();
@@ -38,4 +37,3 @@ public:
 	//To send a command to tbLogic to write the taskLinkedList to a text file
 	void exitUI();
 };
-#endif;
