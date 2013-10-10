@@ -59,8 +59,9 @@ bool TaskLogic::del(const std::string taskString){
 //return all tasks in the list that contains keyword and copy these tasks into vector parameter
 bool TaskLogic::generalSearch(std::string userInput, std::vector<std::string>& vectorOutput){
 	std::vector<std::string> keywordVector;
-	std::istringstream iss;
-	std:: string keyword;
+	std::stringstream iss;
+	std::string keyword;
+	iss << userInput;
 	while (iss >> keyword)
 		keywordVector.push_back(keyword);
 

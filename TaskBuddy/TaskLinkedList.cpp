@@ -151,6 +151,7 @@ bool TaskLinkedList::getRemoveIndex(std::string task, int *index){
 //Returns true if task is remove from linked list
 bool TaskLinkedList::remove(std::string task){
 	int *index = new int;
+	*index = 1;
 	bool condition = false;
 	if (getRemoveIndex(task,index)){
 		ListNode *cur;
