@@ -39,17 +39,17 @@ int TaskLinkedList::getSize(){
 
 //determine if the task has a starting date and time or deadline date and time and pass back the one with the value
 void TaskLinkedList::obtainDateAndTime(Task & task, Date *date, int *time){
-	if (task.getDeadlineDate().day == 0){
-		date->day = task.getStartingDate().day;
-		date->month = task.getStartingDate().month;
-		date->year = task.getStartingDate().year;
+	if (task.getDeadlineDate()._day == 0){
+		date->_day = task.getStartingDate()._day;
+		date->_month = task.getStartingDate()._month;
+		date->_year = task.getStartingDate()._year;
 		*time = task.getStartingTime();
 	}
 
 	else{
-		date->day = task.getDeadlineDate().day;
-		date->month = task.getDeadlineDate().month;
-		date->year = task.getDeadlineDate().year;
+		date->_day = task.getDeadlineDate()._day;
+		date->_month = task.getDeadlineDate()._month;
+		date->_year = task.getDeadlineDate()._year;
 		*time = task.getDeadlineTime();
 	}
 	return;
@@ -64,11 +64,11 @@ bool TaskLinkedList::compareDateAndTime(Task & curTask, Task & listTask){
 		obtainDateAndTime(curTask, curDate, curTime);
 		obtainDateAndTime(listTask, listDate, listTime);
 
-		if (curDate->year < listDate->year){
+		if (curDate->_year < listDate->_year){
 			condition = true;
-		} else if(curDate->month < listDate->month){
+		} else if(curDate->_month < listDate->_month){
 			condition = true;
-		} else if(curDate->day < listDate->day){
+		} else if(curDate->_day < listDate->_day){
 			condition = true;
 		} else if(curTime < listTime){
 			condition = true;
