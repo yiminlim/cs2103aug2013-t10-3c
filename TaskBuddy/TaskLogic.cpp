@@ -1,5 +1,6 @@
 #include "TaskLogic.h"
 #include <sstream>
+#include <iostream>
 
 TaskLogic::TaskLogic(){
 }
@@ -11,7 +12,7 @@ TaskLogic::~TaskLogic(){
 void TaskLogic::initLogic(){
 	tbStorage.getExistingTasks(tbVector);
 	Task task;
-	for(unsigned int i=0; i < tbVector.size() ; i++){
+	for (unsigned int i=0; i < tbVector.size() ; i++){
 		task = createTask(tbVector[i], 2); // retrieveTask method, only used at the start
 		add(task); 
 	}
@@ -24,10 +25,12 @@ void TaskLogic::initLogic(){
 	
 Task TaskLogic::createTask(std::string taskString, int method){
 	Task task;
-	if(method == 1)
+	if (method == 1){
 		task = taskParse.generateTaskFromUserInput(taskString);
-	else if(method == 2)
+		tbVector.push_back(task.getTask());
+	}else if (method == 2)
 		task = taskParse.retrieveTask(taskString);
+	
 	//add exceptions for error:
 	return task;
 }
@@ -58,7 +61,7 @@ bool TaskLogic::generalSearch(std::string userInput, std::vector<std::string>& v
 	std::vector<std::string> keywordVector;
 	std::istringstream iss;
 	std:: string keyword;
-	while(iss >> keyword)
+	while (iss >> keyword)
 		keywordVector.push_back(keyword);
 
 	return tbLinkedList.retrieve(keywordVector,vectorOutput);
