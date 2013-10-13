@@ -15,23 +15,32 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Parse.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Storage.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="Task.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="TaskLinkedList.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="UserInterface.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Storage.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="TaskLogic.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="UserInterface.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Parse.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Storage.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="Task.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -41,13 +50,10 @@
     <ClCompile Include="TaskLinkedList.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="UserInterface.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Storage.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="TaskLogic.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="UserInterface.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
