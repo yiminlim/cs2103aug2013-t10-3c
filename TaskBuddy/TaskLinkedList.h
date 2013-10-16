@@ -1,12 +1,7 @@
 #pragma once
 
 #include "Task.h"
-
-struct Date{
-		int day;
-		int month;
-		int year;
-	};
+#include "Date.h"
 
 class TaskLinkedList{
 private:

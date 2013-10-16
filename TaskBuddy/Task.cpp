@@ -33,7 +33,7 @@ std::string Task::getLocation(){
 }
 
 //returns task starting date
-Task::Date Task::getStartingDate(){
+Date Task::getStartingDate(){
 	return _startingDate;
 }
 
@@ -43,7 +43,7 @@ int Task::getStartingTime(){
 }
 
 //returns tsak ending date
-Task::Date Task::getEndingDate(){
+Date Task::getEndingDate(){
 	return _endingDate;
 }
 
@@ -53,7 +53,7 @@ int Task::getEndingTime(){
 }
 
 //returns task deadline date
-Task::Date Task::getDeadlineDate(){
+Date Task::getDeadlineDate(){
 	return _deadlineDate;
 }
 
