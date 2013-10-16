@@ -1,5 +1,6 @@
 #include "Parse.h" 
 #include <iostream>
+#include <assert.h>
 
 const std::string Parse::KEYWORD_ADD = "add";
 const std::string Parse::KEYWORD_LOCATION = "at";
@@ -87,6 +88,7 @@ bool Parse::isKeyword(std::string word) {
 std::string Parse::formatTask(std::string action, std::string location, Date startingDate, int startingTime, Date endingDate, int endingTime, Date deadlineDate, int deadlineTime, bool isDeadLineType) {
 	std::ostringstream output;
 	if (isDeadLineType) {
+		assert (deadlineTime >= 0 && deadlineTime <= 2400);
 		output << "by " << deadlineDate._day << "/" << deadlineDate._month << "/" << deadlineDate._year;
 		output << " " << deadlineTime << " hrs";
 		output << ": " << action;
@@ -95,9 +97,11 @@ std::string Parse::formatTask(std::string action, std::string location, Date sta
 		}
 	}
 	else {
+		assert (startingTime >= 0 && startingTime <= 2400);
 		output << startingDate._day << "/" << startingDate._month << "/" << startingDate._year;
 		output << " " << startingTime << " hrs";
 		if (endingDate._day && endingDate._month && endingDate._year) {
+			assert (endingTime >= 0 && endingTime <= 2400);
 			output << " - " << endingDate._day << "/" << endingDate._month << "/" << endingDate._year;
 			output << " " << endingTime << " hrs";
 		}
