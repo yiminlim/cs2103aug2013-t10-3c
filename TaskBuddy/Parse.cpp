@@ -90,7 +90,7 @@ std::string Parse::formatTask(std::string action, std::string location, Date sta
 	if (isDeadLineType) {
 		assert (deadlineTime >= 0 && deadlineTime <= 2359);
 		output << "by " << deadlineDate._day << "/" << deadlineDate._month << "/" << deadlineDate._year;
-		output << " " << deadlineTime << " hrs";
+		output << " " << formatTimeOutputString(deadlineTime) << " hrs";
 		output << ": " << action;
 		if (location.size() > 0) {
 			output << " at " << location;
@@ -98,10 +98,10 @@ std::string Parse::formatTask(std::string action, std::string location, Date sta
 	}
 	else {
 		output << startingDate._day << "/" << startingDate._month << "/" << startingDate._year;
-		output << " " << startingTime << " hrs";
+		output << " " << formatTimeOutputString(startingTime) << " hrs";
 		if (endingDate._day && endingDate._month && endingDate._year) {
 			output << " - " << endingDate._day << "/" << endingDate._month << "/" << endingDate._year;
-			output << " " << endingTime << " hrs";
+			output << " " << formatTimeOutputString(endingTime) << " hrs";
 		}
 		output << ": " << action;
 		if (location.size() > 0) {
@@ -195,7 +195,6 @@ Task Parse::retrieveTask(std::string taskString){
 	Task taskObject(task, action, location, startingDate, startingTime, endingDate, endingTime, deadlineDate, deadlineTime);
 	
 	return taskObject;
-
 }
 
 
@@ -230,4 +229,21 @@ int Parse::convertToTime(std::string timeString){
 	timeInput >> time;
 
 	return time;
+}
+
+std::string Parse::formatTimeOutputString(int time){
+	std::ostringstream timeString;
+
+	if (time < 1000) {
+		timeString << "0";
+	}
+	if (time < 100) {
+		timeString << "0";
+	}
+	if (time < 10) {
+		timeString << "0";
+	}
+	timeString << time;
+
+	return timeString.str();
 }

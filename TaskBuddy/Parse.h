@@ -21,4 +21,5 @@ public:
 	Task retrieveTask(std::string);
 	Date convertToDate(std::string);
 	int convertToTime(std::string);
+	std::string Parse::formatTimeOutputString(int time);
 };
