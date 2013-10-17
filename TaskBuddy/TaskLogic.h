@@ -1,13 +1,16 @@
-#ifndef _TASKLOGIC_H_
-#define _TASKLOGIC_H_
+#pragma once
 
 #include <fstream>
 #include "TaskLinkedList.h"
+#include "Storage.h"
+#include "Parse.h"
 
 class TaskLogic{
 private:
 	TaskLinkedList tbLinkedList; // all the commands will be going through tbLogic to change the TaskLinkedList
-//  Storage tbStorage;
+    Storage tbStorage;
+	std::vector<std::string> tbVector;
+	Parse taskParse;
 
 public:
 
@@ -16,19 +19,21 @@ public:
 	~TaskLogic();
 
 	//Takes in filename and takes all existing tasks inside file into tbLinkedList
-	void initLogic(std::string);
+	void initLogic();
 
 	//initialisation by adding new task from text file to list
 	//void initialAdd(const Task &);
 		
-	Task createTask(std::string);
+	Task createTask(std::string, int);
 	
 	//sort all tasks in program
 	//void initialSort();
 	
 	//add a new task to the list (search for correct index first)
-	bool add(const Task &);
+	bool add(const std::string);
 	
+	void add(Task); //for initLogic use only
+
 	//delete a task from the list at the index given
 	bool del(const std::string);
 	
@@ -54,4 +59,3 @@ public:
 
 
 };
-#endif;
