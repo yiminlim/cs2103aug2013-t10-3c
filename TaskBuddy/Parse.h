@@ -17,8 +17,8 @@ public:
 	
 	Task generateTaskFromUserInput(std::string);
 	bool isKeyword(std::string word);
-	std::string formatTask(std::string, std::string, Task::Date, int, Task::Date, int, Task::Date, int, bool);
+	std::string formatTask(std::string, std::string, Date, int, Date, int, Date, int, bool);
 	Task retrieveTask(std::string);
-	Task::Date convertToDate(std::string);
+	Date convertToDate(std::string);
 	int convertToTime(std::string);
 };

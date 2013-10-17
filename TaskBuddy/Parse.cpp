@@ -1,5 +1,6 @@
 #include "Parse.h" 
 #include <iostream>
+#include <assert.h>
 
 const std::string Parse::KEYWORD_ADD = "add";
 const std::string Parse::KEYWORD_LOCATION = "at";
@@ -12,11 +13,11 @@ Task Parse::generateTaskFromUserInput(std::string taskString){
 	std::string task = "";
 	std::string action = "";
 	std::string location = "";
-	Task::Date startingDate = Task::Date();
+	Date startingDate;
 	int startingTime = 0;
-	Task::Date endingDate = Task::Date();
+	Date endingDate;
 	int endingTime = 0;
-	Task::Date deadlineDate = Task::Date();
+	Date deadlineDate;
 	int deadlineTime = 0;
 
 	bool isDeadLineType = false; //type is to show if its deadline type or not. true if it is deadline type
@@ -84,10 +85,11 @@ bool Parse::isKeyword(std::string word) {
 	return word == KEYWORD_ADD || word == KEYWORD_DEADLINE || word == KEYWORD_ENDING || word == KEYWORD_LOCATION || word == KEYWORD_STARTING;
 }
 
-std::string Parse::formatTask(std::string action, std::string location, Task::Date startingDate, int startingTime, Task::Date endingDate, int endingTime, Task::Date deadlineDate, int deadlineTime, bool isDeadLineType) {
+std::string Parse::formatTask(std::string action, std::string location, Date startingDate, int startingTime, Date endingDate, int endingTime, Date deadlineDate, int deadlineTime, bool isDeadLineType) {
 	std::ostringstream output;
 	if (isDeadLineType) {
-		output << "by " << deadlineDate.day << "/" << deadlineDate.month << "/" << deadlineDate.year;
+		assert (deadlineTime >= 0 && deadlineTime <= 2400);
+		output << "by " << deadlineDate._day << "/" << deadlineDate._month << "/" << deadlineDate._year;
 		output << " " << deadlineTime << " hrs";
 		output << ": " << action;
 		if (location.size() > 0) {
@@ -95,10 +97,12 @@ std::string Parse::formatTask(std::string action, std::string location, Task::Da
 		}
 	}
 	else {
-		output << startingDate.day << "/" << startingDate.month << "/" << startingDate.year;
+		assert (startingTime >= 0 && startingTime <= 2400);
+		output << startingDate._day << "/" << startingDate._month << "/" << startingDate._year;
 		output << " " << startingTime << " hrs";
-		if (endingDate.day && endingDate.month && endingDate.year) {
-			output << " - " << endingDate.day << "/" << endingDate.month << "/" << endingDate.year;
+		if (endingDate._day && endingDate._month && endingDate._year) {
+			assert (endingTime >= 0 && endingTime <= 2400);
+			output << " - " << endingDate._day << "/" << endingDate._month << "/" << endingDate._year;
 			output << " " << endingTime << " hrs";
 		}
 		output << ": " << action;
@@ -114,11 +118,11 @@ Task Parse::retrieveTask(std::string taskString){
 	std::string task = "";
 	std::string action = "";
 	std::string location = "";
-	Task::Date startingDate = Task::Date();
+	Date startingDate;
 	int startingTime = 0;
-	Task::Date endingDate = Task::Date();
+	Date endingDate;
 	int endingTime = 0;
-	Task::Date deadlineDate = Task::Date();
+	Date deadlineDate;
 	int deadlineTime = 0;
 
 	bool isDeadLineType = false; //CHECK LATER!!
@@ -197,8 +201,8 @@ Task Parse::retrieveTask(std::string taskString){
 }
 
 
-Task::Date Parse::convertToDate(std::string dateString){
-	Task::Date date; 
+Date Parse::convertToDate(std::string dateString){
+	Date date; 
 	char dateSeparator = '/';
 
 
@@ -213,9 +217,9 @@ Task::Date Parse::convertToDate(std::string dateString){
 	std::istringstream monthInput(monthString);
 	std::istringstream yearInput(yearString);
 
-	dayInput >> date.day;
-	monthInput >> date.month;
-	yearInput >> date.year;
+	dayInput >> date._day;
+	monthInput >> date._month;
+	yearInput >> date._year;
 
 	return date;
 }
