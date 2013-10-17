@@ -1,20 +1,13 @@
-#ifndef _TASK_H_
-#define _TASK_H_
+#pragma once
 
 #include <string>
 #include <vector>
+#include "Date.h"
 
 
 class Task{
-public:
-	struct Date{
-		int day;
-		int month;
-		int year;
-	};
 private:
-	std::string _originalTask;	//whole line in original input format
-	std::string _formattedTask;	//whole line in proper output format 
+	std::string _task;	//whole line in proper output format 
 	std::string _action; 
 	std::string _location;
 	Date _startingDate;
@@ -31,13 +24,10 @@ public:
 	Task();
 
 	//constructor
-	Task(std::string, std::string, std::string, std::string, Date, int, Date, int, Date, int);
-
-	//returns original task input string
-	std::string getOriginalTask();
+	Task(std::string, std::string, std::string, Date, int, Date, int, Date, int);
 
 	//returns formatted task output string
-	std::string getFormattedTask();
+	std::string getTask();
 
 	//returns task action
 	std::string getAction();
@@ -66,4 +56,3 @@ public:
 	//returns task status
 	char getStatus();
 };
-#endif;
