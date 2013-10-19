@@ -1,6 +1,7 @@
 #pragma once
 
 #include <fstream>
+#include <assert.h>
 #include "TaskLinkedList.h"
 #include "Storage.h"
 #include "Parse.h"
@@ -31,6 +32,8 @@ public:
 	
 	//add a new task to the list (search for correct index first)
 	bool add(const std::string);
+
+	bool checkIsValidInput(std::string);
 	
 	void add(Task); //for initLogic use only
 
