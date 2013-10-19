@@ -1,6 +1,7 @@
 #include "TaskLogic.h"
-#include <sstream>
-#include <iostream>
+#include <typeinfo>
+#include <exception>
+#include <iostream>    
 
 TaskLogic::TaskLogic(){
 }
@@ -23,8 +24,15 @@ void TaskLogic::initLogic(){
 //void TaskLogic::initialAdd(const Task &){
 //}
 	
-Task TaskLogic::createTask(std::string taskString, int method){
+Task TaskLogic::createTask(std::string taskString, int method)throw (std::string){
 	Task task;
+
+	//int method must be either 1 or 2 from the caller function
+	//assert(method == 1 || method == 2);
+
+	if(method==3)
+		throw "Empty string";
+
 	if (method == 1){
 		task = taskParse.generateTaskFromUserInput(taskString);
 		tbVector.push_back(task.getTask());
@@ -42,9 +50,27 @@ Task TaskLogic::createTask(std::string taskString, int method){
 //add a new task to the list (search for correct index first)
 bool TaskLogic::add(const std::string taskString){
 	Task task;
-	task = createTask(taskString, 1); //generating task from user input.
+	if(!checkIsValidInput(taskString))
+		return false;
+	try{
+		task = createTask(taskString, 1); //generating task from user input.
+	    //task = createTask(taskString, 3);
+	}
+	catch(std::string e)
+	{
+		std::cout << "Exception caught: " << e << std::endl ;
+	}
 	return tbLinkedList.insert(task);
 }
+
+bool TaskLogic::checkIsValidInput(std::string taskString){
+	//check that if there is "at" then there must be a location string behind it.
+	//check that if there is "by" then there should not be any timing after that.
+	//check that if there is "from" there must be a "to"
+
+	return true;
+}
+
 
 void TaskLogic::add(Task task){
 	tbLinkedList.insert(task);
@@ -53,6 +79,16 @@ void TaskLogic::add(Task task){
 	
 //delete a task from the list at the index given
 bool TaskLogic::del(const std::string taskString){
+	std::vector<std::string>::iterator delIter;
+
+	for(delIter = tbVector.begin(); delIter!=tbVector.end(); delIter++){
+		if(*delIter == taskString){
+			tbVector.erase(delIter);
+		    break;
+		}
+	}
+	//Should we check all occurences instead?
+
 	return tbLinkedList.remove(taskString);
 }
 	
