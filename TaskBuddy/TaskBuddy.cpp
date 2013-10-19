@@ -1,6 +1,6 @@
 #include "UserInterface.h"
 #include <ctime>
-
+/*
 void printCurrentDateTime(){
    time_t now = time(0);
    std::cout << "Number of sec since January 1,1970:" << now << std::endl;
@@ -15,10 +15,10 @@ void printCurrentDateTime(){
    std::cout << ltm->tm_min << ":";
    std::cout << ltm->tm_sec << std::endl;
 
-   /* Code is referrenced from http://www.tutorialspoint.com/cplusplus/cpp_date_time.htm */
+   // Code is referrenced from http://www.tutorialspoint.com/cplusplus/cpp_date_time.htm 
 
 }
-
+*/
 int main(){
 	UserInterface taskBuddyUI;
 	taskBuddyUI.initUI();
@@ -28,7 +28,7 @@ int main(){
 	std::string currentDateTime = ctime(&now);
 	std::cout << "Local Date and Time now is: " << currentDateTime << std::endl;
 	*/
-	printCurrentDateTime();
+	//printCurrentDateTime();
 
 	taskBuddyUI.commandUI();
 	return 0;

@@ -2,6 +2,8 @@
 
 #include <string>
 #include <vector>
+#include <sstream>
+#include <assert.h>
 #include "Date.h"
 
 
@@ -24,7 +26,7 @@ public:
 	Task();
 
 	//constructor
-	Task(std::string, std::string, std::string, Date, int, Date, int, Date, int);
+	Task(std::string, std::string, Date, int, Date, int, Date, int);
 
 	//returns formatted task output string
 	std::string getTask();
@@ -55,4 +57,9 @@ public:
 
 	//returns task status
 	char getStatus();
+
+	//returns task string in the desired format
+	std::string formatTask(std::string, std::string, Date, int, Date, int, Date, int, bool);
+
+	std::string formatTimeOutputString(int time);
 };

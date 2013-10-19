@@ -2,6 +2,8 @@
 
 #include <fstream>
 #include <assert.h>
+#include "Date.h"
+#include "Task.h"
 #include "TaskLinkedList.h"
 #include "Storage.h"
 #include "Parse.h"
@@ -11,8 +13,9 @@ private:
 	TaskLinkedList tbLinkedList; // all the commands will be going through tbLogic to change the TaskLinkedList
     Storage tbStorage;
 	std::vector<std::string> tbVector;
+	std::vector<Date> dateVector;
 	Parse taskParse;
-
+	std::vector<std::string> dateVector; //dateVector[0] : today, dateVector[1] : coming Monday, ....dateVector[7] : coming Sunday (all in the form : dd/mm/yy)
 public:
 
 	TaskLogic();
@@ -22,23 +25,24 @@ public:
 	//Takes in filename and takes all existing tasks inside file into tbLinkedList
 	void initLogic();
 
-	//initialisation by adding new task from text file to list
-	//void initialAdd(const Task &);
+	void initDate();
+
+	void stringParse(const std::string, const int, std::string &, std::string &, Date &, int &, Date &, int &, Date &, int &);
+	//converts userInput String into various components from existing
 		
 	Task createTask(std::string, int);
-	
-	//sort all tasks in program
-	//void initialSort();
-	
+
 	//add a new task to the list (search for correct index first)
+	void addExistingTask(const std::string); //for initLogic use only
+	
 	bool add(const std::string);
 
 	bool checkIsValidInput(std::string);
 	
-	void add(Task); //for initLogic use only
-
 	//delete a task from the list at the index given
 	bool del(const std::string);
+
+	bool delFromVector(const std::string);
 	
 	//return all tasks in the list that contains keyword and copy these tasks into vector parameter
 	bool generalSearch(std::string, std::vector<std::string> &);
@@ -47,7 +51,12 @@ public:
 	bool daySearch(std::string, std::vector<std::string> &);
 	
 	//edit a task from the list at the index given
-	//bool edit(int, std::string, std::vector<Task> &);
+	bool edit(std::string);
+	
+	//checks which type of edit to use in LinkedList
+	std::string TaskLogic::checkEditType(const std::string, const std::string, const std::string, const Date, const int, const Date, const int, const Date, const int);
+
+
 	
 	//returns number of tasks in the list
 	//int getNumTasks();
@@ -60,5 +69,5 @@ public:
 	
 	void exitLogic();
 
-
+	std::string extractDate(std::string);
 };
