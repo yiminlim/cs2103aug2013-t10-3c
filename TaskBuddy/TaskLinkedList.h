@@ -51,5 +51,6 @@ public:
 	bool retrieve(const std::vector<std::string>, std::vector<std::string> &);
 	
 	//Returns true if task is edited successfully in linked list
-	bool edit(int, Task);
+	std::string edit(std::string, std::string, std::string, Date, int, Date, int, Date, int);
+
 };

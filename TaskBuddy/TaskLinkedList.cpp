@@ -199,7 +199,8 @@ bool TaskLinkedList::retrieve(const std::vector<std::string> keywords, std::vect
 }
 	
 //Returns true if task is edited successfully in linked list
-bool TaskLinkedList::edit(int, Task){
-	return true;
+std::string TaskLinkedList::edit(std::string taskString,std::string newAction,std::string newLocation,Date newStartingDate,int newStartingTime,Date newEndingDate,int newEndingTime,Date newDeadlineDate,int newDeadlineTime){
+	//search for that task, pass everything to that task and the task will change itself and return back the new task string (updated)
+	return NULL;
 }
 
