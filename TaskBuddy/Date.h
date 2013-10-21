@@ -8,4 +8,5 @@ public:
 
 	Date();
 	Date(int, int, int);
+	bool isValidDate();
 };
