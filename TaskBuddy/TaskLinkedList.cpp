@@ -206,3 +206,43 @@ bool TaskLinkedList::retrieve(const std::vector<std::string> keywords, std::vect
 		return true;
 	}
 }
+
+bool TaskLinkedList::removeBlockings(const std::vector<std::string> taskToBeDeleted){
+	bool isRemoved = false;
+
+	for(unsigned int i=0; i<taskToBeDeleted.size(); i++){
+		remove(taskToBeDeleted[i]);
+		isRemoved = true;
+	}
+
+	return isRemoved;
+}
+
+bool TaskLinkedList::finaliseBlocking(const std::vector<std::string> tasks){
+	ListNode *cur = _head;
+	std::vector<std::string> taskToBeDeleted;
+
+	while (cur != NULL){
+		bool finBlocks = false;
+
+		if (cur->item.getBlock()){
+			for(unsigned int i=0; i<tasks.size(); i++){
+				if (cur->item.getTask() == tasks[i]){
+					finBlocks = true;
+				}
+			}
+		}
+
+		if (finBlocks == false){
+			taskToBeDeleted.push_back(cur->item.getTask());
+		}
+		
+		cur = cur->next;
+	}
+
+	if(removeBlockings(taskToBeDeleted)){
+		return true;
+	} else{
+		return false;
+	}
+}	
