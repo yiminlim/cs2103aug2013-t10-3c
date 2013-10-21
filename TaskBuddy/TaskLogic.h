@@ -46,6 +46,8 @@ public:
 	
 	//return all tasks in the list that contains keyword and copy these tasks into vector parameter
 	bool generalSearch(std::string, std::vector<std::string> &);
+
+	bool isDay(std::string &);
 	
 	//returns all tasks in the list that has the same date and copy these tasks into vector parameter
 	bool daySearch(std::string, std::vector<std::string> &);

@@ -4,6 +4,7 @@
 #include <iostream>
 #include <ctime>
 
+
 TaskLogic::TaskLogic(){
 
 }
@@ -26,10 +27,10 @@ void TaskLogic::initLogic(){
 //method 1 : User Input ; Method 2 : Pre-Existing Task in file
 void TaskLogic::stringParse(const std::string taskString, const int method, std::string &action, std::string &location, Date &startingDate, int &startingTime, Date &endingDate, int &endingTime, Date &deadlineDate, int &deadlineTime){
 	if(method == 1)
-		taskParse.formatTaskStringFromUI(taskString,action,location,startingDate,startingTime,endingDate,endingTime,deadlineDate,deadlineTime);
+		taskParse.formatTaskStringFromUI(taskString,action,location,startingDate,startingTime,endingDate,endingTime,deadlineDate,deadlineTime,dateVector);
 	else if(method == 2)
-		taskParse.formatTaskStringFromFile(taskString,action,location,startingDate,startingTime,endingDate,endingTime,deadlineDate,deadlineTime);
-	
+		taskParse.formatTaskStringFromFile(taskString,action,location,startingDate,startingTime,endingDate,endingTime,deadlineDate,deadlineTime,dateVector);	
+
 	//add in exceptions
 	return;
 }
@@ -102,10 +103,32 @@ bool TaskLogic::generalSearch(std::string userInput, std::vector<std::string>& v
 	std::stringstream iss;
 	std::string keyword;
 	iss << userInput;
-	while (iss >> keyword)
+	// check that userInput not empty
+	while (iss >> keyword){
+		if(isDay(keyword))
+			keyword = taskParse.changeDayToDate(keyword);
 		keywordVector.push_back(keyword);
-
+	}
 	return tbLinkedList.retrieve(keywordVector,vectorOutput);
+}
+
+bool TaskLogic::isDay(std::string& keyword){
+	std::string possibleDay[17] = {"today","mon","monday","tue","tues","tuesday","wed","wednesday","thur","thurs","thursday","fri","friday","sat","saturday","sun","sunday"};
+	bool keyWordIsDay = false;
+    std::string lowerCaseKeyWord = keyword;
+		
+	for(int i = 0; lowerCaseKeyWord[i] != '\0'; i++){
+		lowerCaseKeyWord[i] = tolower(lowerCaseKeyWord[i]);
+	}
+
+	for(int i = 0; i<17; i++){
+		if(lowerCaseKeyWord == possibleDay[i])
+		{
+			keyWordIsDay == true;
+			keyword = lowerCaseKeyWord;
+		}
+	}
+	return keyWordIsDay;
 }
 	
 	
