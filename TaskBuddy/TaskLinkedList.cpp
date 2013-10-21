@@ -173,6 +173,13 @@ bool TaskLinkedList::remove(std::string task){
 	index = NULL;
 	return condition;
 }
+
+std::string TaskLinkedList::toLowerCase(std::string line){
+	for (unsigned int i=0; line[i] != '\0'; i++){
+		line[i] = tolower(line[i]);
+	}
+	return line;
+}
 	
 //Returns the task in the linked list as given by the index
 bool TaskLinkedList::retrieve(const std::vector<std::string> keywords, std::vector<std::string> & taskList){
@@ -181,7 +188,9 @@ bool TaskLinkedList::retrieve(const std::vector<std::string> keywords, std::vect
 	while (cur != NULL){
 		int count = 0;
 		for (unsigned int i=0; i<keywords.size(); i++){
-			if ((cur->item.getTask()).find(keywords[i]) != std::string::npos){
+			std::string tempTask = toLowerCase(cur->item.getTask());
+			std::string tempKeyword = toLowerCase(keywords[i]);
+			if ((tempTask).find(tempKeyword) != std::string::npos){
 				count++;
 			}
 		}
@@ -197,10 +206,3 @@ bool TaskLinkedList::retrieve(const std::vector<std::string> keywords, std::vect
 		return true;
 	}
 }
-	
-//Returns true if task is edited successfully in linked list
-std::string TaskLinkedList::edit(std::string taskString,std::string newAction,std::string newLocation,Date newStartingDate,int newStartingTime,Date newEndingDate,int newEndingTime,Date newDeadlineDate,int newDeadlineTime){
-	//search for that task, pass everything to that task and the task will change itself and return back the new task string (updated)
-	return NULL;
-}
-
