@@ -181,7 +181,7 @@ std::string TaskLinkedList::toLowerCase(std::string line){
 	return line;
 }
 	
-//Returns the task in the linked list as given by the index
+//Returns the task through taskList if all keywords are found in the task
 bool TaskLinkedList::retrieve(const std::vector<std::string> keywords, std::vector<std::string> & taskList){
 	ListNode *cur = _head;
 
@@ -202,7 +202,8 @@ bool TaskLinkedList::retrieve(const std::vector<std::string> keywords, std::vect
 
 	if (taskList.empty()){
 		return false;
-	} else{
+	} 
+	else{
 		return true;
 	}
 }

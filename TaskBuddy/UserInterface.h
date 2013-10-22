@@ -42,7 +42,4 @@ public:
 	
 	//To display main menu
 	void displayMainMenu();
-	
-	//To send a command to tbLogic to write the taskLinkedList to a text file
-	void exitUI();
 };
