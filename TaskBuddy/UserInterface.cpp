@@ -70,7 +70,8 @@ void UserInterface::commandUI(){
 			tbLogic.save();
 		}
 		else if(command == COMMAND_EXIT){
-			exitUI();
+			tbLogic.exitLogic();
+			displaySuccessfulMessage(COMMAND_EXIT);
 			contProgram = false;
 		}
 		else{
@@ -97,6 +98,9 @@ void UserInterface::displaySuccessfulMessage(std::string command){
 	else if (command == COMMAND_DELETE){
 		std::cout << MESSAGE_DELETE;
 	}
+	else if (command == COMMAND_EXIT){
+		std::cout << MESSAGE_EXIT;
+	}
 	std::cout << std::endl;
 }
 
@@ -108,10 +112,4 @@ void UserInterface::displayFailMessage(){
 //To display main menu
 void UserInterface::displayMainMenu(){
 
-}
-	
-//To send a command to tbLogic to write the taskLinkedList to a text file
-void UserInterface::exitUI(){
-	tbLogic.exitLogic();
-	std::cout << MESSAGE_EXIT;
 }

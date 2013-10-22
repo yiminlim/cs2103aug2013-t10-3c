@@ -71,9 +71,6 @@ bool TaskLogic::checkIsValidInput(std::string taskString){
 
 	return true;
 }
-
-
-
 	
 //delete a task from the list at the index given
 bool TaskLogic::del(const std::string taskString){
@@ -103,11 +100,12 @@ bool TaskLogic::generalSearch(std::string userInput, std::vector<std::string>& v
 	iss << userInput;
 	// check that userInput not empty
 	while (iss >> keyword){
-		if(isDay(keyword))
+		if(isDay(keyword)){
 			keyword = taskParse.changeDayToDate(keyword);
+		}
 		keywordVector.push_back(keyword);
 	}
-	return tbLinkedList.retrieve(keywordVector,vectorOutput);
+	return tbLinkedList.retrieve(keywordVector, vectorOutput);
 }
 
 bool TaskLogic::isDay(std::string& keyword){
@@ -120,8 +118,7 @@ bool TaskLogic::isDay(std::string& keyword){
 	}
 
 	for(int i = 0; i<17; i++){
-		if(lowerCaseKeyWord == possibleDay[i])
-		{
+		if(lowerCaseKeyWord == possibleDay[i]){
 			keyWordIsDay = true;
 			keyword = lowerCaseKeyWord;
 		}
@@ -237,7 +234,4 @@ std::string TaskLogic::extractDate(std::string currentDateTime){
 	std::ostringstream oss;
 	oss << date << "/" << monthNum << "/" << year; 
 	return oss.str();
-}
-
-
-   
+}   
