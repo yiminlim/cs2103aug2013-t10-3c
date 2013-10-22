@@ -207,6 +207,7 @@ bool TaskLinkedList::retrieve(const std::vector<std::string> keywords, std::vect
 	}
 }
 
+/*
 bool TaskLinkedList::removeBlockings(const std::vector<std::string> taskToBeDeleted){
 	bool isRemoved = false;
 
@@ -246,3 +247,4 @@ bool TaskLinkedList::finaliseBlocking(const std::vector<std::string> tasks){
 		return false;
 	}
 }	
+*/
