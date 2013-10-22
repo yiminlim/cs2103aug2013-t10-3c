@@ -160,7 +160,8 @@ bool TaskLinkedList::remove(std::string task){
 		if (*index == 1){
 			cur = _head;
 			_head = _head->next;
-		} else{
+		} 
+		else{
 			ListNode *prev = traverseTo(*index-1);
 			cur = prev->next;
 			prev->next = cur->next;
