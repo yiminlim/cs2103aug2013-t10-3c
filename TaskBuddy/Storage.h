@@ -10,6 +10,7 @@ private:
 	std::string _fileName;
 
 public:
+
 	Storage();
 
 	void getExistingTasks(std::vector<std::string> &);

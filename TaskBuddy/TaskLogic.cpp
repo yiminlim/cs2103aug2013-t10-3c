@@ -16,18 +16,20 @@ TaskLogic::~TaskLogic(){
 void TaskLogic::initLogic(){
 	initDate();
 	tbStorage.getExistingTasks(tbVector);
-	for (unsigned int i=0; i < tbVector.size() ; i++)
+	for (unsigned int i = 0; i < tbVector.size(); i++){
 		addExistingTask(tbVector[i]); 
-	
+	}
 	return;
 }
 
 //method 1 : User Input ; Method 2 : Pre-Existing Task in file
 void TaskLogic::stringParse(const std::string taskString, const int method, std::string &action, std::string &location, Date &startingDate, int &startingTime, Date &endingDate, int &endingTime, Date &deadlineDate, int &deadlineTime){
-	if(method == 1)
+	if(method == 1){
 		taskParse.processTaskStringFromUI(taskString,action,location,startingDate,startingTime,endingDate,endingTime,deadlineDate,deadlineTime,dateVector);
-	else if(method == 2)
-		taskParse.processTaskStringFromFile(taskString,action,location,startingDate,startingTime,endingDate,endingTime,deadlineDate,deadlineTime,dateVector);	
+	}
+	else if(method == 2){
+		taskParse.processTaskStringFromFile(taskString,action,location,startingDate,startingTime,endingDate,endingTime,deadlineDate,deadlineTime,dateVector);
+	}
 
 	//add in exceptions
 	return;
@@ -46,7 +48,6 @@ Task TaskLogic::createTask(std::string taskString, int method){
 	return taskObject;
 }
 	
-
 bool TaskLogic::add(const std::string taskString){
 	Task taskObject; 
     taskObject = createTask(taskString, 1); //generating task from user input.
@@ -81,7 +82,7 @@ bool TaskLogic::del(const std::string taskString){
 bool TaskLogic::delFromVector(const std::string taskString){
 	std::vector<std::string>::iterator delIter;
 
-	for(delIter = tbVector.begin(); delIter!=tbVector.end(); delIter++){
+	for(delIter = tbVector.begin(); delIter != tbVector.end(); delIter++){
 		if(*delIter == taskString){
 			tbVector.erase(delIter); //problem with this
 		    return true;
@@ -117,7 +118,7 @@ bool TaskLogic::isDay(std::string& keyword){
 		lowerCaseKeyWord[i] = tolower(lowerCaseKeyWord[i]);
 	}
 
-	for(int i = 0; i<17; i++){
+	for(int i = 0; i < 17; i++){
 		if(lowerCaseKeyWord == possibleDay[i]){
 			keyWordIsDay = true;
 			keyword = lowerCaseKeyWord;
@@ -140,18 +141,24 @@ bool TaskLogic::edit(std::string taskString, std::string editString){
 	
 	newAction = currentAction + newAction;
 	newLocation = currentLocation + newLocation;
-	if(!newStartingDate.isValidDate())
+	if(!newStartingDate.isValidDate()){
 		newStartingDate = currentStartingDate;
-	if(!newEndingDate.isValidDate())
+	}
+	if(!newEndingDate.isValidDate()){
 		newEndingDate = currentEndingDate;
-	if(!newDeadlineDate.isValidDate())
+	}
+	if(!newDeadlineDate.isValidDate()){
 		newDeadlineDate = currentDeadlineDate;
-	if(newStartingTime == -1)
+	}
+	if(newStartingTime == -1){
 		newStartingTime = currentStartingTime;
-	if(newEndingTime == -1)
+	}
+	if(newEndingTime == -1){
 		newEndingTime = currentEndingTime;
-	if(newDeadlineTime == -1)
+	}
+	if(newDeadlineTime == -1){
 		newDeadlineTime = currentDeadlineTime;
+	}
 
 	Task taskObject(newAction,newLocation,newStartingDate,newStartingTime,newEndingDate,newEndingTime,newDeadlineDate,newDeadlineTime);
 
@@ -206,7 +213,7 @@ void TaskLogic::initDate(){
    dateArray[0] = extractDate(currentDateTime);
    
    // goes to next week's today
-   for(int j=1; j <= 7; j++){
+   for(int j = 1; j <= 7; j++){
 		current += 86400;
 		currentDateTime = ctime(&current);
 		i++;
@@ -215,7 +222,7 @@ void TaskLogic::initDate(){
 		dateArray[i] = extractDate(currentDateTime);
    }
 
-   for(i=0; i<=7 ; i++)
+   for(i = 0; i <= 7 ; i++)
 	   dateVector.push_back(dateArray[i]);
 
    return;

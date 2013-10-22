@@ -18,8 +18,9 @@ void Storage::saveTasksIntoFile(std::vector<std::string>& taskStorage){
 	std::ofstream writeFile(_fileName);
 	writeFile.clear();
 	
-	for(unsigned int i=0; i< taskStorage.size(); i++)
+	for(unsigned int i=0; i< taskStorage.size(); i++){
 		writeFile << taskStorage[i] << std::endl;
+	}
 	
 	writeFile.close();
 }

@@ -49,7 +49,7 @@ void UserInterface::commandUI(){
 		else if (command == COMMAND_SEARCH){
 			display.clear();
 			if (tbLogic.generalSearch(readTask(command), display)){
-				for (unsigned int i=0; i<display.size(); i++){
+				for (unsigned int i = 0; i < display.size(); i++){
 					std::cout << i+1 << ". " << display[i] << std::endl;
 				}
 			}
@@ -126,6 +126,6 @@ void UserInterface::displayFailMessage(){
 }
 
 //To display main menu
-void UserInterface::displayMainMenu(){
+//void UserInterface::displayMainMenu(){
 
-}
+//}

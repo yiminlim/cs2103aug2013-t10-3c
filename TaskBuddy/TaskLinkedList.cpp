@@ -20,7 +20,7 @@ TaskLinkedList::ListNode* TaskLinkedList::traverseTo(int index){
 
 	else{
 		ListNode *cur = _head;
-		for (int skip=1; skip<index; skip++){
+		for (int skip = 1; skip < index; skip++){
 			cur = cur->next;
 		}
 		return cur;
@@ -45,7 +45,6 @@ void TaskLinkedList::obtainDateAndTime(Task & task, Date *date, int *time){
 		date->_year = task.getStartingDate()._year;
 		*time = task.getStartingTime();
 	}
-
 	else{
 		date->_day = task.getDeadlineDate()._day;
 		date->_month = task.getDeadlineDate()._month;
@@ -66,11 +65,14 @@ bool TaskLinkedList::compareDateAndTime(Task & curTask, Task & listTask){
 
 		if (curDate->_year < listDate->_year){
 			condition = true;
-		} else if(curDate->_month < listDate->_month){
+		} 
+		else if(curDate->_month < listDate->_month){
 			condition = true;
-		} else if(curDate->_day < listDate->_day){
+		} 
+		else if(curDate->_day < listDate->_day){
 			condition = true;
-		} else if(curTime < listTime){
+		} 
+		else if(curTime < listTime){
 			condition = true;
 		}
 
@@ -98,7 +100,8 @@ int TaskLinkedList::getInsertIndex(Task & curTask){
 	while (cur != NULL){
 		if (compareDateAndTime(curTask, cur->item)){
 			return i;
-		} else{
+		} 
+		else{
 			cur = cur->next;
 			i++;
 		}
@@ -124,7 +127,8 @@ bool TaskLinkedList::insert(Task & curTask){
 		if (index == 1){
 			newTask->next = _head;
 			_head = newTask;
-		} else{
+		} 
+		else{
 			ListNode *prev = traverseTo(index-1);
 			newTask->next = prev->next;
 			prev->next = newTask;
@@ -176,7 +180,7 @@ bool TaskLinkedList::remove(std::string task){
 }
 
 std::string TaskLinkedList::toLowerCase(std::string line){
-	for (unsigned int i=0; line[i] != '\0'; i++){
+	for (unsigned int i = 0; line[i] != '\0'; i++){
 		line[i] = tolower(line[i]);
 	}
 	return line;
@@ -188,7 +192,7 @@ bool TaskLinkedList::retrieve(const std::vector<std::string> keywords, std::vect
 
 	while (cur != NULL){
 		int count = 0;
-		for (unsigned int i=0; i<keywords.size(); i++){
+		for (unsigned int i = 0; i < keywords.size(); i++){
 			std::string tempTask = toLowerCase(cur->item.getTask());
 			std::string tempKeyword = toLowerCase(keywords[i]);
 			if ((tempTask).find(tempKeyword) != std::string::npos){

@@ -36,7 +36,7 @@ std::string Task::formatTask(std::string action, std::string location, Date star
 		}
 		output << ": " << action;
 		if (location.size() > 0) {
-		output << " at " << location;
+			output << " at " << location;
 		}
 	}
 

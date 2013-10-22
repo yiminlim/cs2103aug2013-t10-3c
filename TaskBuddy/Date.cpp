@@ -13,8 +13,10 @@ Date::Date(int day, int month, int year) {
 }
 
 bool Date::isValidDate(){
-	if(_day==0 && _month==0 && _year==0)
+	if (_day==0 && _month==0 && _year==0){
 		return false;
-	else
+	}
+	else{
 		return true;
+	}
 }
