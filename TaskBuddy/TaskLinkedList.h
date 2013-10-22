@@ -53,9 +53,11 @@ public:
 	//Pass over a vector of keywords and an empty vector of string for me to return those strings with the words in it
 	bool retrieve(const std::vector<std::string>, std::vector<std::string> &);
 
+	/*
 	//Remove blockings that are unwanted which are stored in the vector
 	bool removeBlockings(const std::vector<std::string>);
 
 	//Return true if blockings are finalised
 	bool finaliseBlocking(const std::vector<std::string>);
+	*/
 };
