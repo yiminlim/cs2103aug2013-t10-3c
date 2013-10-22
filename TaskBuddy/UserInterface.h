@@ -10,13 +10,14 @@ private:
 	static const std::string COMMAND_ADD;
 	static const std::string COMMAND_DELETE;
 	static const std::string COMMAND_SEARCH;
-	static const std::string COMMAND_EXIT;	
-	static const std::string COMMAND_FAIL;
+	static const std::string COMMAND_EDIT;
 	static const std::string COMMAND_SAVE;
+	static const std::string COMMAND_EXIT;	
 
 	static const std::string MESSAGE_WELCOME;
 	static const std::string MESSAGE_ADD;
 	static const std::string MESSAGE_DELETE;
+	static const std::string MESSAGE_EDIT;
 	static const std::string MESSAGE_COMMAND;
 	static const std::string MESSAGE_INVALID_COMMAND;
 	static const std::string MESSAGE_EXIT;

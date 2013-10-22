@@ -3,14 +3,15 @@
 const std::string COMMAND_ADD = "add";
 const std::string COMMAND_DELETE = "delete";
 const std::string COMMAND_SEARCH = "search";
+const std::string COMMAND_EDIT = "edit";
 const std::string COMMAND_SAVE = "save";
 const std::string COMMAND_EXIT = "exit";
-//const std::string COMMAND_FAIL = "fail";
 //const std::string COMMAND_DISPLAY = "display";
 
 const std::string MESSAGE_WELCOME = "Welcome to Task Buddy!";
 const std::string MESSAGE_ADD = "Task is added";
 const std::string MESSAGE_DELETE = "Task is deleted";
+const std::string MESSAGE_EDIT = "Task is edited";
 const std::string MESSAGE_COMMAND = "command: ";
 const std::string MESSAGE_INVALID_COMMAND = "Invalid command";
 const std::string MESSAGE_EXIT = "Thank you for using Task Buddy!";
@@ -66,6 +67,18 @@ void UserInterface::commandUI(){
 				displayFailMessage();
 			}
 		}
+		else if (command == COMMAND_EDIT){
+			int option;
+			std::string editString;
+			std::cin >> option;
+			std::getline(std::cin, editString);
+			if (tbLogic.edit(display[option-1], editString)){
+				displaySuccessfulMessage(COMMAND_EDIT);
+			}
+			else{
+				displayFailMessage;
+			}
+		}
 		else if (command == COMMAND_SAVE){
 			tbLogic.save();
 		}
@@ -97,6 +110,9 @@ void UserInterface::displaySuccessfulMessage(std::string command){
 	}
 	else if (command == COMMAND_DELETE){
 		std::cout << MESSAGE_DELETE;
+	}
+	else if (command == COMMAND_EDIT){
+		std::cout << MESSAGE_EDIT;
 	}
 	else if (command == COMMAND_EXIT){
 		std::cout << MESSAGE_EXIT;
