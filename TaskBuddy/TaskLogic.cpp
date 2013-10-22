@@ -9,8 +9,6 @@ TaskLogic::TaskLogic(){
 
 }
 
-}
-
 TaskLogic::~TaskLogic(){
 }
 
@@ -27,9 +25,9 @@ void TaskLogic::initLogic(){
 //method 1 : User Input ; Method 2 : Pre-Existing Task in file
 void TaskLogic::stringParse(const std::string taskString, const int method, std::string &action, std::string &location, Date &startingDate, int &startingTime, Date &endingDate, int &endingTime, Date &deadlineDate, int &deadlineTime){
 	if(method == 1)
-		taskParse.formatTaskStringFromUI(taskString,action,location,startingDate,startingTime,endingDate,endingTime,deadlineDate,deadlineTime,dateVector);
+		taskParse.processTaskStringFromUI(taskString,action,location,startingDate,startingTime,endingDate,endingTime,deadlineDate,deadlineTime,dateVector);
 	else if(method == 2)
-		taskParse.formatTaskStringFromFile(taskString,action,location,startingDate,startingTime,endingDate,endingTime,deadlineDate,deadlineTime,dateVector);	
+		taskParse.processTaskStringFromFile(taskString,action,location,startingDate,startingTime,endingDate,endingTime,deadlineDate,deadlineTime,dateVector);	
 
 	//add in exceptions
 	return;
@@ -38,7 +36,7 @@ void TaskLogic::stringParse(const std::string taskString, const int method, std:
 //method 1 : User Input ; Method 2 : Pre-Existing Task in file
 Task TaskLogic::createTask(std::string taskString, int method){
 	std::string task = NULL, action = NULL, location = NULL;
-	Date startingDate, endingDate, deadlineDate;
+	Date startingDate, endingDate, deadlineDate; 
 	int startingTime = -1, endingTime = -1, deadlineTime = -1; //check if we really want to set it as -1
 
 	stringParse(taskString,method,action,location,startingDate,startingTime,endingDate,endingTime,deadlineDate,deadlineTime);   
@@ -113,7 +111,7 @@ bool TaskLogic::generalSearch(std::string userInput, std::vector<std::string>& v
 }
 
 bool TaskLogic::isDay(std::string& keyword){
-	std::string possibleDay[17] = {"today","mon","monday","tue","tues","tuesday","wed","wednesday","thur","thurs","thursday","fri","friday","sat","saturday","sun","sunday"};
+	std::string possibleDay[18] = {"today","tomorrow","mon","monday","tue","tues","tuesday","wed","wednesday","thur","thurs","thursday","fri","friday","sat","saturday","sun","sunday"};
 	bool keyWordIsDay = false;
     std::string lowerCaseKeyWord = keyword;
 		
@@ -124,7 +122,7 @@ bool TaskLogic::isDay(std::string& keyword){
 	for(int i = 0; i<17; i++){
 		if(lowerCaseKeyWord == possibleDay[i])
 		{
-			keyWordIsDay == true;
+			keyWordIsDay = true;
 			keyword = lowerCaseKeyWord;
 		}
 	}
@@ -132,32 +130,44 @@ bool TaskLogic::isDay(std::string& keyword){
 }
 	
 	
-//returns all tasks in the list that has the same date and copy these tasks into vector parameter
-bool TaskLogic::daySearch(std::string, std::vector<std::string> &){
-	return true;
-}
-	
 //edit a task from the list at the index given
 //edit firsts breaks it down to check if it needs to edit which component (task, action, location, Date, time) etc.
 bool TaskLogic::edit(std::string taskString, std::string editString){
-	std::string newTask, newAction = NULL, newLocation = NULL;
-	Date newStartingDate, newEndingDate, newDeadlineDate;
-	int newStartingTime = -1, newEndingTime = -1, newDeadlineTime = -1; //check if we really want to set it as -1
-	std::string editType;
+	std::string newTask, newAction = "", newLocation = "", currentAction = "", currentLocation = "";
+	Date newStartingDate, newEndingDate, newDeadlineDate, currentStartingDate, currentEndingDate, currentDeadlineDate;
+	int newStartingTime = -1, newEndingTime = -1, newDeadlineTime = -1, currentStartingTime = -1, currentEndingTime = -1, currentDeadlineTime = -1; //check if we really want to set it as -1
+	
 
-	stringParse(editString,1,newAction,newLocation,newStartingDate,newStartingTime,newEndingDate,newEndingTime,newDeadlineDate,newDeadlineTime);   
-	//all those that have something new will not be NULL or -1. Use it as indicator to check if need change later.
-	//checking should be done by here
+	stringParse(taskString,2,currentAction,currentLocation,currentStartingDate,currentStartingTime,currentEndingDate,currentEndingTime,currentDeadlineDate,currentDeadlineTime);
+	stringParse(editString,1,newAction,newLocation,newStartingDate,newStartingTime,newEndingDate,newEndingTime,newDeadlineDate,newDeadlineTime);
 	
-	newTask = tbLinkedList.edit(taskString,newAction,newLocation,newStartingDate,newStartingTime,newEndingDate,newEndingTime,newDeadlineDate,newDeadlineTime);  
-	//string newTask required to be returned back from LinkedList to store inside tbVector.
-	//tbLinkedList will just search for the taskObject using taskString, then send the newData all into that taskObject.
-	//actual updating will be done inside that taskObject itself.
-	
+	newAction = currentAction + newAction;
+	newLocation = currentLocation + newLocation;
+	if(!newStartingDate.isValidDate())
+		newStartingDate = currentStartingDate;
+	if(!newEndingDate.isValidDate())
+		newEndingDate = currentEndingDate;
+	if(!newDeadlineDate.isValidDate())
+		newDeadlineDate = currentDeadlineDate;
+	if(newStartingTime == -1)
+		newStartingTime = currentStartingTime;
+	if(newEndingTime == -1)
+		newEndingTime = currentEndingTime;
+	if(newDeadlineTime == -1)
+		newDeadlineTime = currentDeadlineTime;
+
+	Task taskObject(newAction,newLocation,newStartingDate,newStartingTime,newEndingDate,newEndingTime,newDeadlineDate,newDeadlineTime);
+
 	delFromVector(taskString);
-	tbVector.push_back(newTask);
+	tbVector.push_back(taskObject.getTask()); //only need to push in for user inputs
+	
+	tbLinkedList.remove(taskString);
+	tbLinkedList.insert(taskObject);
+
 	return true; // need to do checking
 }
+
+
 	
 //returns number of tasks in the list
 //int TaskLogic::getNumTasks(){
@@ -197,7 +207,6 @@ void TaskLogic::initDate(){
 	  i++;
 
    dateArray[0] = extractDate(currentDateTime);
-   dateArray[i] = extractDate(currentDateTime);
    
    // goes to next week's today
    for(int j=1; j <= 7; j++){
@@ -225,10 +234,8 @@ std::string TaskLogic::extractDate(std::string currentDateTime){
 	while(month != monthArray[monthNum])
 		monthNum ++;
 
-	year = year % 100;
-
 	std::ostringstream oss;
-	oss << date << "/" << monthNum << "/" << year;
+	oss << date << "/" << monthNum << "/" << year; 
 	return oss.str();
 }
 

@@ -11,9 +11,8 @@
 class TaskLogic{
 private:
 	TaskLinkedList tbLinkedList; // all the commands will be going through tbLogic to change the TaskLinkedList
-    Storage tbStorage;
+    Storage tbStorage; 
 	std::vector<std::string> tbVector;
-	std::vector<Date> dateVector;
 	Parse taskParse;
 	std::vector<std::string> dateVector; //dateVector[0] : today, dateVector[1] : coming Monday, ....dateVector[7] : coming Sunday (all in the form : dd/mm/yy)
 public:
@@ -49,16 +48,9 @@ public:
 
 	bool isDay(std::string &);
 	
-	//returns all tasks in the list that has the same date and copy these tasks into vector parameter
-	bool daySearch(std::string, std::vector<std::string> &);
 	
 	//edit a task from the list at the index given
-	bool edit(std::string);
-	
-	//checks which type of edit to use in LinkedList
-	std::string TaskLogic::checkEditType(const std::string, const std::string, const std::string, const Date, const int, const Date, const int, const Date, const int);
-
-
+	bool edit(std::string, std::string);
 	
 	//returns number of tasks in the list
 	//int getNumTasks();

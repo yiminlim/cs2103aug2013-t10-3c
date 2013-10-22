@@ -46,11 +46,18 @@ public:
 	
 	//Returns true if task is remove from linked list
 	bool remove(std::string);
-	
+
+	//Convert string into lowercase
+	std::string toLowerCase(std::string);
+
 	//Pass over a vector of keywords and an empty vector of string for me to return those strings with the words in it
 	bool retrieve(const std::vector<std::string>, std::vector<std::string> &);
-	
-	//Returns true if task is edited successfully in linked list
-	std::string edit(std::string, std::string, std::string, Date, int, Date, int, Date, int);
 
+	/*
+	//Remove blockings that are unwanted which are stored in the vector
+	bool removeBlockings(const std::vector<std::string>);
+
+	//Return true if blockings are finalised
+	bool finaliseBlocking(const std::vector<std::string>);
+	*/
 };
