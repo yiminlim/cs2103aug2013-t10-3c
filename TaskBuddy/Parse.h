@@ -15,11 +15,12 @@ public:
 	static const std::string KEYWORD_DEADLINE;
 
 	
-	Task generateTaskFromUserInput(std::string);
+	void processTaskStringFromUI(std::string &, std::string &, std::string &, Date &, int &, Date &, int &, Date &, int &, std::vector<std::string> &);
+	void processTaskStringFromFile(std::string &, std::string &, std::string &, Date &, int &, Date &, int &, Date &, int &, std::vector<std::string> &);
 	bool isKeyword(std::string word);
 	std::string formatTask(std::string, std::string, Date, int, Date, int, Date, int, bool);
-	Task retrieveTask(std::string);
 	Date convertToDate(std::string);
 	int convertToTime(std::string);
-	std::string Parse::formatTimeOutputString(int time);
+	bool isDayKeyword(std::string);
+	std::string changeDayToDate(std::string, std::vector<std::string>);
 };
