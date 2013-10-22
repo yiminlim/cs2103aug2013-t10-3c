@@ -12,9 +12,10 @@ class TaskLogic{
 private:
 	TaskLinkedList tbLinkedList; // all the commands will be going through tbLogic to change the TaskLinkedList
     Storage tbStorage; 
-	std::vector<std::string> tbVector;
 	Parse taskParse;
+	std::vector<std::string> tbVector;
 	std::vector<std::string> dateVector; //dateVector[0] : today, dateVector[1] : coming Monday, ....dateVector[7] : coming Sunday (all in the form : dd/mm/yy)
+
 public:
 
 	TaskLogic();

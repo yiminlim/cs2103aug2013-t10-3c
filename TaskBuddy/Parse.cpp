@@ -215,8 +215,9 @@ std::string Parse::changeDayToDate(std::string dayKeyword, std::vector<std::stri
 	else if (dayKeyword == "sat" || dayKeyword == "saturday") {
 		return dateStrings[6]; 
 	}
-	else 
+	else{ 
 		return dateStrings[7]; //verify that it really is "sun"/"sunday"?
+	}
 }
 
 /*std::string Parse::formatTask(std::string action, std::string location, Date startingDate, int startingTime, Date endingDate, int endingTime, Date deadlineDate, int deadlineTime, bool isDeadLineType) {

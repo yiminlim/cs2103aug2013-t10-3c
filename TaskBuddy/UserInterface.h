@@ -23,7 +23,6 @@ private:
 	static const std::string MESSAGE_EXIT;
 
 public:
-
 	//Starts the UserInterface from main.
 	//To initialise the taskLinkedList inside tbLogic by sending an initialising command to tbLogic.
 	void initUI();
@@ -42,5 +41,5 @@ public:
 	void displayFailMessage();
 	
 	//To display main menu
-	void displayMainMenu();
+	//void displayMainMenu();
 };
