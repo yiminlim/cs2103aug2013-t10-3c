@@ -28,6 +28,9 @@ public:
 	//constructor
 	Task(std::string, std::string, Date, int, Date, int, Date, int);
 
+	//formats the task output string
+	std::string Task::formatTask(std::string, std::string, Date, int, Date, int, Date, int);
+
 	//returns formatted task output string
 	std::string getTask();
 
@@ -58,8 +61,7 @@ public:
 	//returns task status
 	char getStatus();
 
-	//returns task string in the desired format
-	std::string formatTask(std::string, std::string, Date, int, Date, int, Date, int, bool);
-
 	std::string formatTimeOutputString(int time);
+
+	bool isDeadlineType();
 };
