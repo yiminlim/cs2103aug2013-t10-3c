@@ -6,7 +6,6 @@ Task::Task(){
 
 //constructor
 Task::Task(std::string action, std::string location, Date startingDate, int startingTime, Date endingDate, int endingTime, Date deadlineDate, int deadlineTime){
-	_task = formatTask(action,location,startingDate,startingTime,endingDate,endingTime,deadlineDate,deadlineTime);
 	_action = action;
 	_location = location;
 	_startingDate = startingDate;
@@ -15,6 +14,33 @@ Task::Task(std::string action, std::string location, Date startingDate, int star
 	_endingTime = endingTime;
 	_deadlineDate = deadlineDate;
 	_deadlineTime = deadlineTime;
+	_task = formatTask(action,location,startingDate,startingTime,endingDate,endingTime,deadlineDate,deadlineTime,);
+}
+
+std::string Task::formatTask(std::string action, std::string location, Date startingDate, int startingTime, Date endingDate, int endingTime, Date deadlineDate, int deadlineTime) {
+	std::ostringstream output;
+	if (isDeadlineType()) {
+		output << "by " << deadlineDate._day << "/" << deadlineDate._month << "/" << deadlineDate._year;
+		output << " " << formatTimeOutputString(deadlineTime) << " hrs";
+		output << ": " << action;
+		if (location.size() > 0) {
+			output << " at " << location;
+		}
+	}
+	else {
+		output << startingDate._day << "/" << startingDate._month << "/" << startingDate._year;
+		output << " " << formatTimeOutputString(startingTime) << " hrs";
+		if (endingDate._day && endingDate._month && endingDate._year) {
+			output << " - " << endingDate._day << "/" << endingDate._month << "/" << endingDate._year;
+			output << " " << formatTimeOutputString(endingTime) << " hrs";
+		}
+		output << ": " << action;
+		if (location.size() > 0) {
+		output << " at " << location;
+		}
+	}
+
+	return output.str();
 }
 
 //returns task
@@ -69,10 +95,9 @@ int Task::getDeadlineTime(){
 }
 */
 
-std::string Task::formatTask(std::string action, std::string location, Date startingDate, int startingTime, Date endingDate, int endingTime, Date deadlineDate, int deadlineTime, bool isDeadLineType) {
+std::string Task::formatTask(std::string action, std::string location, Date startingDate, int startingTime, Date endingDate, int endingTime, Date deadlineDate, int deadlineTime) {
 	std::ostringstream output;
-	if (isDeadLineType) {
-		assert (deadlineTime >= 0 && deadlineTime <= 2359);
+	if (isDeadlineType()) {
 		output << "by " << deadlineDate._day << "/" << deadlineDate._month << "/" << deadlineDate._year;
 		output << " " << formatTimeOutputString(deadlineTime) << " hrs";
 		output << ": " << action;
@@ -111,4 +136,8 @@ std::string Task::formatTimeOutputString(int time){
 	timeString << time;
 
 	return timeString.str();
+}
+
+bool Task::isDeadlineType() {
+	return (_deadlineDate._day && _deadlineDate._month && _deadlineDate._year);
 }
