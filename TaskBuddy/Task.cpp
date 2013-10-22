@@ -14,7 +14,7 @@ Task::Task(std::string action, std::string location, Date startingDate, int star
 	_endingTime = endingTime;
 	_deadlineDate = deadlineDate;
 	_deadlineTime = deadlineTime;
-	_task = formatTask(action,location,startingDate,startingTime,endingDate,endingTime,deadlineDate,deadlineTime,);
+	_task = formatTask(action,location,startingDate,startingTime,endingDate,endingTime,deadlineDate,deadlineTime);
 }
 
 std::string Task::formatTask(std::string action, std::string location, Date startingDate, int startingTime, Date endingDate, int endingTime, Date deadlineDate, int deadlineTime) {
