@@ -3,21 +3,17 @@
 const std::string COMMAND_ADD = "add";
 const std::string COMMAND_DELETE = "delete";
 const std::string COMMAND_SEARCH = "search";
-//const std::string COMMAND_DISPLAY = "display";
-const std::string COMMAND_EXIT = "exit";
-const std::string COMMAND_FAIL = "fail";
 const std::string COMMAND_SAVE = "save";
+const std::string COMMAND_EXIT = "exit";
+//const std::string COMMAND_FAIL = "fail";
+//const std::string COMMAND_DISPLAY = "display";
 
 const std::string MESSAGE_WELCOME = "Welcome to Task Buddy!";
 const std::string MESSAGE_ADD = "Task is added";
 const std::string MESSAGE_DELETE = "Task is deleted";
-//const std::string MESSAGE_READY = " is ready for use";
 const std::string MESSAGE_COMMAND = "command: ";
 const std::string MESSAGE_INVALID_COMMAND = "Invalid command";
 const std::string MESSAGE_EXIT = "Thank you for using Task Buddy!";
-
-UserInterface::UserInterface(){
-}
 
 //Starts the UserInterface from main.
 //To initialise the taskLinkedList inside tbLogic by sending an initialising command to tbLogic.
@@ -27,7 +23,7 @@ void UserInterface::initUI(){
 	return;
 }
 	
-//To read in different commands and the details of task if given, using readTask and readDate. 
+//To read in different commands and the details of task if given using readTask.
 //Given different commands, it calls out the corresponding function in tbLogic.
 void UserInterface::commandUI(){
 	std::string command;
@@ -39,14 +35,14 @@ void UserInterface::commandUI(){
 	do{
 		std::cout << MESSAGE_COMMAND;
 		std::cin >> command;
-		space = getchar();
+		space = getchar();						//Is it possible for space to obtain a char other than space?
 
 		if (command == COMMAND_ADD){		
 			if (tbLogic.add(readTask(command))){
-				displayMessage(COMMAND_ADD);
+				displaySuccessfulMessage(COMMAND_ADD);
 			}
 			else{
-				displayMessage(COMMAND_FAIL);
+				displayFailMessage();
 			}
 		}
 		else if (command == COMMAND_SEARCH){
@@ -57,17 +53,17 @@ void UserInterface::commandUI(){
 				}
 			}
 			else{
-				displayMessage(COMMAND_FAIL);
+				displayFailMessage();
 			}
 		}
 		else if (command == COMMAND_DELETE){
 			int option;
 			std::cin >> option;
 			if (tbLogic.del(display[option-1])){
-				displayMessage(COMMAND_DELETE);			
+				displaySuccessfulMessage(COMMAND_DELETE);			
 			}
 			else{
-				displayMessage(COMMAND_FAIL);
+				displayFailMessage();
 			}
 		}
 		else if (command == COMMAND_SAVE){
@@ -78,7 +74,7 @@ void UserInterface::commandUI(){
 			contProgram = false;
 		}
 		else{
-			displayMessage(COMMAND_FAIL);
+			displayFailMessage();
 		}		
 	} while(contProgram);
 }
@@ -93,29 +89,24 @@ std::string UserInterface::readTask(std::string command){
 	return task;
 }
 	
-/*To read in date of task, for a search for relevant task
-std::string UserInterface::readDate(){
-
-	return "test";
-}*/
-	
-//To display main menu
-void UserInterface::displayMainMenu(){
-
-}
-	
-//To display common messages to User
-void UserInterface::displayMessage(std::string message){
-	if (message == COMMAND_ADD){
+//To display only successful messages to User
+void UserInterface::displaySuccessfulMessage(std::string command){
+	if (command == COMMAND_ADD){
 		std::cout << MESSAGE_ADD;
 	}
-	else if (message == COMMAND_DELETE){
+	else if (command == COMMAND_DELETE){
 		std::cout << MESSAGE_DELETE;
 	}
-	else if (message == COMMAND_FAIL){
-		std::cout << MESSAGE_INVALID_COMMAND;
-	}
 	std::cout << std::endl;
+}
+
+//To display only fail messages to User
+void UserInterface::displayFailMessage(){
+	std::cout << MESSAGE_INVALID_COMMAND << std::endl;
+}
+
+//To display main menu
+void UserInterface::displayMainMenu(){
 
 }
 	
