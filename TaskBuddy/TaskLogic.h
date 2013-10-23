@@ -14,7 +14,7 @@ private:
     Storage tbStorage; 
 	Parse taskParse;
 	std::vector<std::string> tbVector;
-	std::vector<std::string> dateVector; //dateVector[0] : today, dateVector[1] : coming Monday, ....dateVector[7] : coming Sunday (all in the form : dd/mm/yy)
+	std::vector<std::string> dateVector; //dateVector[0] : today, dateVector[1] : coming Monday, ....dateVector[7] : coming Sunday, dateVector[8] : tomorrow (all in the form : dd/mm/yy)
 
 public:
 

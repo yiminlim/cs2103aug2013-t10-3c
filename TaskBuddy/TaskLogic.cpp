@@ -37,7 +37,7 @@ void TaskLogic::stringParse(const std::string taskString, const int method, std:
 
 //method 1 : User Input ; Method 2 : Pre-Existing Task in file
 Task TaskLogic::createTask(std::string taskString, int method){
-	std::string task = NULL, action = NULL, location = NULL;
+	std::string task = "", action = "", location ="";
 	Date startingDate, endingDate, deadlineDate; 
 	int startingTime = -1, endingTime = -1, deadlineTime = -1; //check if we really want to set it as -1
 	bool block = false;
@@ -111,7 +111,7 @@ bool TaskLogic::generalSearch(std::string userInput, std::vector<std::string>& v
 }
 
 bool TaskLogic::isDay(std::string& keyword){
-	std::string possibleDay[18] = {"today","tomorrow","mon","monday","tue","tues","tuesday","wed","wednesday","thur","thurs","thursday","fri","friday","sat","saturday","sun","sunday"};
+	std::string possibleDay[20] = {"today","tmr","tomorrow","mon","monday","tue","tues","tuesday","wed","wednesday","thu","thur","thurs","thursday","fri","friday","sat","saturday","sun","sunday"};
 	bool keyWordIsDay = false;
     std::string lowerCaseKeyWord = keyword;
 		
@@ -122,7 +122,7 @@ bool TaskLogic::isDay(std::string& keyword){
 	for(int i = 0; i < 17; i++){
 		if(lowerCaseKeyWord == possibleDay[i]){
 			keyWordIsDay = true;
-			keyword = lowerCaseKeyWord;
+			keyword = lowerCaseKeyWord;ve
 		}
 	}
 	return keyWordIsDay;
@@ -202,7 +202,7 @@ void TaskLogic::initDate(){
    time_t current = time(0);
    std::string currentDateTime;
    std::string today;
-   std::string dateArray[8];
+   std::string dateArray[9];
 
    currentDateTime = ctime(&current);
 
@@ -215,7 +215,7 @@ void TaskLogic::initDate(){
 	  i++;
 
    dateArray[0] = extractDate(currentDateTime);
-   
+  
    // goes to next week's today
    for(int j = 1; j <= 7; j++){
 		current += 86400;
@@ -224,9 +224,11 @@ void TaskLogic::initDate(){
 		if(i > 7)
 			i = 1;  // reset to Monday after Sunday
 		dateArray[i] = extractDate(currentDateTime);
+		if(j == 1)
+			dateArray[8] = dateArray[i];
    }
 
-   for(i = 0; i <= 7 ; i++)
+   for(i = 0; i <= 8 ; i++)
 	   dateVector.push_back(dateArray[i]);
 
    return;
@@ -234,13 +236,12 @@ void TaskLogic::initDate(){
 
 std::string TaskLogic::extractDate(std::string currentDateTime){
 	std::string day, month, time, monthArray[13] = {" ","Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"};
-    int date, year, monthNum = 1;
+    int date, year, monthNum = 1;	
 	std::istringstream iss(currentDateTime);
-
-	iss >> day >> date >> month >> time >> year;
+	iss >> day >> month >> date >> time >> year;
 
 	while(month != monthArray[monthNum])
-		monthNum ++;
+		monthNum ++;     // can Parse take in single digit month?
 
 	std::ostringstream oss;
 	oss << date << "/" << monthNum << "/" << year; 

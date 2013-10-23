@@ -16,6 +16,10 @@ const std::string MESSAGE_COMMAND = "command: ";
 const std::string MESSAGE_INVALID_COMMAND = "Invalid command";
 const std::string MESSAGE_EXIT = "Thank you for using Task Buddy!";
 
+UserInterface::UserInterface(){
+
+}
+
 //Starts the UserInterface from main.
 //To initialise the taskLinkedList inside tbLogic by sending an initialising command to tbLogic.
 void UserInterface::initUI(){
@@ -76,7 +80,7 @@ void UserInterface::commandUI(){
 				displaySuccessfulMessage(COMMAND_EDIT);
 			}
 			else{
-				displayFailMessage;
+				displayFailMessage();
 			}
 		}
 		else if (command == COMMAND_SAVE){

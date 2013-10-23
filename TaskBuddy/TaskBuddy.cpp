@@ -22,14 +22,6 @@ void printCurrentDateTime(){
 int main(){
 	UserInterface taskBuddyUI;
 	taskBuddyUI.initUI();
-	
-	/*
-	time_t now = time(0);
-	std::string currentDateTime = ctime(&now);
-	std::cout << "Local Date and Time now is: " << currentDateTime << std::endl;
-	*/
-	//printCurrentDateTime();
-
 	taskBuddyUI.commandUI();
 	return 0;
 }

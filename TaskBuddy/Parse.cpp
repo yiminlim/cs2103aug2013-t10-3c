@@ -169,7 +169,7 @@ Date Parse::convertToDate(std::string dateString){
 
 
 bool Parse::isDayKeyword(std::string word) {
-	std::string dayKeywords[18] = {"today","tomorrow","mon","monday","tue","tues","tuesday","wed","wednesday","thur","thurs","thursday","fri","friday","sat","saturday","sun","sunday"};
+	std::string dayKeywords[20] = {"today","tmr","tomorrow","mon","monday","tue","tues","tuesday","wed","wednesday","thu", "thur","thurs","thursday","fri","friday","sat","saturday","sun","sunday"};
 	
 	for(int i = 0; word[i] != '\0'; i++){
 		word[i] = tolower(word[i]);
@@ -206,7 +206,7 @@ std::string Parse::changeDayToDate(std::string dayKeyword, std::vector<std::stri
 	else if (dayKeyword == "wed" || dayKeyword == "wednesday") {
 		return dateStrings[3];
 	}
-	else if (dayKeyword == "thur" || dayKeyword == "thurs" || dayKeyword == "thursday") {
+	else if (dayKeyword == "thu" || dayKeyword == "thur"|| dayKeyword == "thurs" || dayKeyword == "thursday") {
 		return dateStrings[4]; 
 	}
 	else if (dayKeyword == "fri" || dayKeyword == "friday") {
@@ -215,9 +215,14 @@ std::string Parse::changeDayToDate(std::string dayKeyword, std::vector<std::stri
 	else if (dayKeyword == "sat" || dayKeyword == "saturday") {
 		return dateStrings[6]; 
 	}
-	else{ 
+	else if (dayKeyword == "sun" || dayKeyword == "sunday") {
 		return dateStrings[7]; //verify that it really is "sun"/"sunday"?
 	}
+	else if (dayKeyword == "tmr" || dayKeyword == "tomorrow") {
+		return dateStrings[8];
+	}
+	else
+		return NULL; // need to return error or something!
 }
 
 /*std::string Parse::formatTask(std::string action, std::string location, Date startingDate, int startingTime, Date endingDate, int endingTime, Date deadlineDate, int deadlineTime, bool isDeadLineType) {
