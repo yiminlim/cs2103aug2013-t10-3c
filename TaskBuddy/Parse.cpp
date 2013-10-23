@@ -53,13 +53,22 @@ void Parse::processTaskStringFromUI(std::string taskString, std::string & action
 		}
 		else if (keyword == KEYWORD_ENDING) {
 			if (taskDetails[i].find("/") != std::string::npos) {
-				endingDate[endingDate.size()-1] = convertToDate(taskDetails[i]);
+				if(!endingDate.empty())
+					endingDate[endingDate.size()-1] = convertToDate(taskDetails[i]);
+				else
+					endingDate.push_back(convertToDate(taskDetails[i]));
 			}
 			else if (isDayKeyword(taskDetails[i])) {
-				endingDate[endingDate.size()-1] = convertToDate(changeDayToDate(taskDetails[i], dateVector));
+				if(!endingDate.empty())
+					endingDate[endingDate.size()-1] = convertToDate(changeDayToDate(taskDetails[i], dateVector));
+				else
+					endingDate.push_back(convertToDate(changeDayToDate(taskDetails[i], dateVector)))	;
 			}
 			else {
-				endingTime[endingTime.size()-1] = convertToTime(taskDetails[i]);
+				if(!endingTime.empty())
+					endingTime[endingTime.size()-1] = convertToTime(taskDetails[i]);
+				else
+					endingTime.push_back(convertToTime(taskDetails[i]));
 			}
 		}
 		else if (keyword == KEYWORD_DEADLINE) {
@@ -76,26 +85,27 @@ void Parse::processTaskStringFromUI(std::string taskString, std::string & action
 		else if (keyword == KEYWORD_BLOCK) {
 			block = true;
 		}
+	}
 
-		if (deadlineDate.empty()) {
-			deadlineDate.push_back(Date());
-		}
-		if (deadlineTime.empty()) {
-			deadlineTime.push_back(-1);
-		}
-		if (startingDate.empty()) {
-			startingDate.push_back(Date());
-		}
-		if (startingTime.empty()) {
-			startingTime.push_back(-1);
-		}
-		if (endingDate.empty()) {
-			endingDate.push_back(Date());
-		}
-		if (endingTime.empty()) {
-			endingTime.push_back(-1);
-		}
-	}	
+	if (deadlineDate.empty()) {
+		deadlineDate.push_back(Date());
+	}
+	if (deadlineTime.empty()) {
+		deadlineTime.push_back(-1);
+	}
+	if (startingDate.empty()) {
+		startingDate.push_back(Date());
+	}
+	if (startingTime.empty()) {
+		startingTime.push_back(-1);
+	}
+	if (endingDate.empty()) {
+		endingDate.push_back(Date());
+	}
+	if (endingTime.empty()) {
+		endingTime.push_back(-1);
+	}
+		
 	return;
 }
 
@@ -131,7 +141,7 @@ void Parse::processTaskStringFromFile(std::string taskString, std::string & acti
 			location += taskDetails[i];
 			i++;
 		}
-	}
+	} // WHY NO NEED TO CHECK IF BLOCKING HERE?
 
 	else {
 		startingDate.push_back(convertToDate(taskDetails[0]));
@@ -166,26 +176,27 @@ void Parse::processTaskStringFromFile(std::string taskString, std::string & acti
 		if (i < taskDetails.size() && taskDetails[i] == ("("+KEYWORD_BLOCK+")")) {
 			block = true;
 		}
-
-		if (deadlineDate.empty()) {
-			deadlineDate.push_back(Date());
-		}
-		if (deadlineTime.empty()) {
-			deadlineTime.push_back(-1);
-		}
-		if (startingDate.empty()) {
-			startingDate.push_back(Date());
-		}
-		if (startingTime.empty()) {
-			startingTime.push_back(-1);
-		}
-		if (endingDate.empty()) {
-			endingDate.push_back(Date());
-		}
-		if (endingTime.empty()) {
-			endingTime.push_back(-1);
-		}
 	}
+
+	if (deadlineDate.empty()) {
+		deadlineDate.push_back(Date());
+	}
+	if (deadlineTime.empty()) {
+		deadlineTime.push_back(-1);
+	}
+	if (startingDate.empty()) {
+		startingDate.push_back(Date());
+	}
+	if (startingTime.empty()) {
+		startingTime.push_back(-1);
+	}
+	if (endingDate.empty()) {
+		endingDate.push_back(Date());
+	}
+	if (endingTime.empty()) {
+		endingTime.push_back(-1);
+	}
+
 	return;
 }
 
