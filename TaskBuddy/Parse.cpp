@@ -76,6 +76,25 @@ void Parse::processTaskStringFromUI(std::string taskString, std::string & action
 		else if (keyword == KEYWORD_BLOCK) {
 			block = true;
 		}
+
+		if (deadlineDate.empty()) {
+			deadlineDate.push_back(Date());
+		}
+		if (deadlineTime.empty()) {
+			deadlineTime.push_back(-1);
+		}
+		if (startingDate.empty()) {
+			startingDate.push_back(Date());
+		}
+		if (startingTime.empty()) {
+			startingTime.push_back(-1);
+		}
+		if (endingDate.empty()) {
+			endingDate.push_back(Date());
+		}
+		if (endingTime.empty()) {
+			endingTime.push_back(-1);
+		}
 	}	
 	return;
 }
@@ -146,6 +165,25 @@ void Parse::processTaskStringFromFile(std::string taskString, std::string & acti
 
 		if (i < taskDetails.size() && taskDetails[i] == ("("+KEYWORD_BLOCK+")")) {
 			block = true;
+		}
+
+		if (deadlineDate.empty()) {
+			deadlineDate.push_back(Date());
+		}
+		if (deadlineTime.empty()) {
+			deadlineTime.push_back(-1);
+		}
+		if (startingDate.empty()) {
+			startingDate.push_back(Date());
+		}
+		if (startingTime.empty()) {
+			startingTime.push_back(-1);
+		}
+		if (endingDate.empty()) {
+			endingDate.push_back(Date());
+		}
+		if (endingTime.empty()) {
+			endingTime.push_back(-1);
 		}
 	}
 	return;
