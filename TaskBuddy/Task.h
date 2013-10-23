@@ -61,6 +61,9 @@ public:
 	//returns task status
 	char getStatus();
 
+	//returns whether block or not
+	bool getBlock();
+
 	std::string formatTimeOutputString(int time);
 
 	bool isDeadlineType();

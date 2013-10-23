@@ -18,6 +18,7 @@ Task::Task(std::string action, std::string location, Date startingDate, int star
 	_task = formatTask(action,location,startingDate,startingTime,endingDate,endingTime,deadlineDate,deadlineTime);
 }
 
+//formatTask doesnt include block yet
 std::string Task::formatTask(std::string action, std::string location, Date startingDate, int startingTime, Date endingDate, int endingTime, Date deadlineDate, int deadlineTime) {
 	std::ostringstream output;
 	if (isDeadlineType()) {
@@ -95,6 +96,11 @@ int Task::getDeadlineTime(){
 	return temp;
 }
 */
+
+//returns block
+bool Task::getBlock(){
+	return _block;
+}
 
 std::string Task::formatTimeOutputString(int time){
 	std::ostringstream timeString;
