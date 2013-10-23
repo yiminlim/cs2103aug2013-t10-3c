@@ -15,11 +15,11 @@ Task::Task(std::string action, std::string location, Date startingDate, int star
 	_deadlineDate = deadlineDate;
 	_deadlineTime = deadlineTime;
 	_block = block;
-	_task = formatTask(action,location,startingDate,startingTime,endingDate,endingTime,deadlineDate,deadlineTime);
+	_task = formatTask(action,location,startingDate,startingTime,endingDate,endingTime,deadlineDate,deadlineTime,block);
 }
 
-//formatTask doesnt include block yet
-std::string Task::formatTask(std::string action, std::string location, Date startingDate, int startingTime, Date endingDate, int endingTime, Date deadlineDate, int deadlineTime) {
+//refactor to make keywords constant strings? 'at', 'by', 'blockoff'
+std::string Task::formatTask(std::string action, std::string location, Date startingDate, int startingTime, Date endingDate, int endingTime, Date deadlineDate, int deadlineTime, bool block) {
 	std::ostringstream output;
 	if (isDeadlineType()) {
 		output << "by " << deadlineDate._day << "/" << deadlineDate._month << "/" << deadlineDate._year;
@@ -27,6 +27,8 @@ std::string Task::formatTask(std::string action, std::string location, Date star
 		output << ": " << action;
 		if (location.size() > 0) {
 			output << " at " << location;
+		if (block) {
+			output << " (blockoff)";
 		}
 	}
 	else {
@@ -39,6 +41,9 @@ std::string Task::formatTask(std::string action, std::string location, Date star
 		output << ": " << action;
 		if (location.size() > 0) {
 			output << " at " << location;
+		}
+		if (block) {
+			output << " (blockoff)";
 		}
 	}
 
