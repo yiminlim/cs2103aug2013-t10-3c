@@ -54,8 +54,8 @@ public:
 	bool retrieve(const std::vector<std::string>, std::vector<std::string> &);
 
 	//Remove blockings that are unwanted which are stored in the vector
-	//bool removeBlockings(const std::vector<std::string>);
+	bool removeBlockings(const std::vector<std::string>);
 
 	//Return true if blockings are finalised
-	//bool finaliseBlocking(const std::vector<std::string>);
+	bool finaliseBlocking(const std::vector<std::string>);
 };

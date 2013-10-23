@@ -6,10 +6,11 @@ const std::string Parse::KEYWORD_LOCATION = "at";
 const std::string Parse::KEYWORD_STARTING = "from";
 const std::string Parse::KEYWORD_ENDING = "to";
 const std::string Parse::KEYWORD_DEADLINE = "by";
+const std::string Parse::KEYWORD_BLOCK = "blockoff";
 
 //takes in Task string and breaks it down into its various Task details
 
-void Parse::processTaskStringFromUI(std::string taskString, std::string & action, std::string & location, Date & startingDate, int & startingTime, Date & endingDate, int & endingTime, Date & deadlineDate, int & deadlineTime, std::vector<std::string> & dateVector){
+void Parse::processTaskStringFromUI(std::string taskString, std::string & action, std::string & location, std::vector<Date> & startingDate, std::vector<int> & startingTime, std::vector<Date> & endingDate, std::vector<int> & endingTime, std::vector<Date> & deadlineDate, std::vector<int> & deadlineTime, bool & block, std::vector<std::string> & dateVector){
 	std::istringstream userInputTask(taskString);
 	std::string word;
 	std::vector<std::string> taskDetails;
@@ -38,42 +39,67 @@ void Parse::processTaskStringFromUI(std::string taskString, std::string & action
 		}
 		else if (keyword == KEYWORD_STARTING) {
 			if (taskDetails[i].find("/") != std::string::npos) {
-				startingDate = convertToDate(taskDetails[i]);
+				startingDate.push_back(convertToDate(taskDetails[i]));
+				endingDate.push_back(Date()); //check
 			} 
 			else if (isDayKeyword(taskDetails[i])) {
-				startingDate = convertToDate(changeDayToDate(taskDetails[i], dateVector));
+				startingDate.push_back(convertToDate(changeDayToDate(taskDetails[i], dateVector)));
+				endingDate.push_back(Date()); //check
 			}
 			else {
-				startingTime = convertToTime(taskDetails[i]);
+				startingTime.push_back(convertToTime(taskDetails[i]));
+				endingTime.push_back(-1);
 			}
 		}
 		else if (keyword == KEYWORD_ENDING) {
 			if (taskDetails[i].find("/") != std::string::npos) {
-				endingDate = convertToDate(taskDetails[i]);
+				endingDate[endingDate.size()-1] = convertToDate(taskDetails[i]);
 			}
 			else if (isDayKeyword(taskDetails[i])) {
-				endingDate = convertToDate(changeDayToDate(taskDetails[i], dateVector));
+				endingDate[endingDate.size()-1] = convertToDate(changeDayToDate(taskDetails[i], dateVector));
 			}
 			else {
-				endingTime = convertToTime(taskDetails[i]);
+				endingTime[endingTime.size()-1] = convertToTime(taskDetails[i]);
 			}
 		}
 		else if (keyword == KEYWORD_DEADLINE) {
 			if (taskDetails[i].find("/") != std::string::npos) {
-				deadlineDate = convertToDate(taskDetails[i]);
+				deadlineDate.push_back(convertToDate(taskDetails[i]));
 			}
 			else if (isDayKeyword(taskDetails[i])) {
-				deadlineDate = convertToDate(changeDayToDate(taskDetails[i], dateVector));
+				deadlineDate.push_back(convertToDate(changeDayToDate(taskDetails[i], dateVector)));
 			}
 			else {
-				deadlineTime = convertToTime(taskDetails[i]);
+				deadlineTime.push_back(convertToTime(taskDetails[i]));
 			}
+		}
+		else if (keyword == KEYWORD_BLOCK) {
+			block = true;
+		}
+
+		if (deadlineDate.empty()) {
+			deadlineDate.push_back(Date());
+		}
+		if (deadlineTime.empty()) {
+			deadlineTime.push_back(-1);
+		}
+		if (startingDate.empty()) {
+			startingDate.push_back(Date());
+		}
+		if (startingTime.empty()) {
+			startingTime.push_back(-1);
+		}
+		if (endingDate.empty()) {
+			endingDate.push_back(Date());
+		}
+		if (endingTime.empty()) {
+			endingTime.push_back(-1);
 		}
 	}	
 	return;
 }
 
-void Parse::processTaskStringFromFile(std::string taskString, std::string & action, std::string & location, Date & startingDate, int & startingTime, Date & endingDate, int & endingTime, Date & deadlineDate, int & deadlineTime, std::vector<std::string> & dateVector){
+void Parse::processTaskStringFromFile(std::string taskString, std::string & action, std::string & location, std::vector<Date> & startingDate, std::vector<int> & startingTime, std::vector<Date> & endingDate, std::vector<int> & endingTime, std::vector<Date> & deadlineDate, std::vector<int> & deadlineTime, bool & block, std::vector<std::string> & dateVector){
 	std::istringstream fileTask(taskString);
 	std::string word;
 	std::vector<std::string> taskDetails;
@@ -83,8 +109,8 @@ void Parse::processTaskStringFromFile(std::string taskString, std::string & acti
 	}
 
 	if (taskDetails[0] == KEYWORD_DEADLINE) {
-		deadlineDate = convertToDate(taskDetails[1]);
-		deadlineTime = convertToTime(taskDetails[2]);
+		deadlineDate.push_back(convertToDate(taskDetails[1]));
+		deadlineTime.push_back(convertToTime(taskDetails[2]));
 		unsigned int i = 4;
 		while (i < taskDetails.size() && taskDetails[i] != KEYWORD_LOCATION) {
 			if (action != "") {
@@ -108,12 +134,12 @@ void Parse::processTaskStringFromFile(std::string taskString, std::string & acti
 	}
 
 	else {
-		startingDate = convertToDate(taskDetails[0]);
-		startingTime = convertToTime(taskDetails[1]);
+		startingDate.push_back(convertToDate(taskDetails[0]));
+		startingTime.push_back(convertToTime(taskDetails[1]));
 		unsigned int i = 3;
 		if (taskDetails[3] == "-") {
-			endingDate = convertToDate(taskDetails[4]);
-			endingTime = convertToTime(taskDetails[5]);
+			endingDate.push_back(convertToDate(taskDetails[4]));
+			endingTime.push_back(convertToTime(taskDetails[5]));
 			i = 7;
 		}
 
@@ -129,12 +155,35 @@ void Parse::processTaskStringFromFile(std::string taskString, std::string & acti
 			i++;
 		}
 
-		while (i < taskDetails.size()) {
+		while (i < taskDetails.size() && taskDetails[i] != ("("+KEYWORD_BLOCK+")")) {
 			if (location != "") {
 				location += " ";
 			}
 			location += taskDetails[i];
 			i++;
+		}
+
+		if (i < taskDetails.size() && taskDetails[i] == ("("+KEYWORD_BLOCK+")")) {
+			block = true;
+		}
+
+		if (deadlineDate.empty()) {
+			deadlineDate.push_back(Date());
+		}
+		if (deadlineTime.empty()) {
+			deadlineTime.push_back(-1);
+		}
+		if (startingDate.empty()) {
+			startingDate.push_back(Date());
+		}
+		if (startingTime.empty()) {
+			startingTime.push_back(-1);
+		}
+		if (endingDate.empty()) {
+			endingDate.push_back(Date());
+		}
+		if (endingTime.empty()) {
+			endingTime.push_back(-1);
 		}
 	}
 	return;
