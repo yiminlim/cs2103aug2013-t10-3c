@@ -95,32 +95,6 @@ int Task::getDeadlineTime(){
 }
 */
 
-std::string Task::formatTask(std::string action, std::string location, Date startingDate, int startingTime, Date endingDate, int endingTime, Date deadlineDate, int deadlineTime) {
-	std::ostringstream output;
-	if (isDeadlineType()) {
-		output << "by " << deadlineDate._day << "/" << deadlineDate._month << "/" << deadlineDate._year;
-		output << " " << formatTimeOutputString(deadlineTime) << " hrs";
-		output << ": " << action;
-		if (location.size() > 0) {
-			output << " at " << location;
-		}
-	}
-	else {
-		output << startingDate._day << "/" << startingDate._month << "/" << startingDate._year;
-		output << " " << formatTimeOutputString(startingTime) << " hrs";
-		if (endingDate._day && endingDate._month && endingDate._year) {
-			output << " - " << endingDate._day << "/" << endingDate._month << "/" << endingDate._year;
-			output << " " << formatTimeOutputString(endingTime) << " hrs";
-		}
-		output << ": " << action;
-		if (location.size() > 0) {
-		output << " at " << location;
-		}
-	}
-
-	return output.str();
-}
-
 std::string Task::formatTimeOutputString(int time){
 	std::ostringstream timeString;
 
