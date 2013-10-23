@@ -16,9 +16,9 @@ private:
 
 public:
 	
-	void processTaskStringFromUI(std::string &, std::string &, std::string &, Date &, int &, Date &, int &, Date &, int &, std::vector<std::string> &);
+	void processTaskStringFromUI(std::string, std::string &, std::string &, Date &, int &, Date &, int &, Date &, int &, std::vector<std::string> &);
 
-	void processTaskStringFromFile(std::string &, std::string &, std::string &, Date &, int &, Date &, int &, Date &, int &, std::vector<std::string> &);
+	void processTaskStringFromFile(std::string, std::string &, std::string &, Date &, int &, Date &, int &, Date &, int &, std::vector<std::string> &);
 
 	bool isKeyword(std::string word);
 
