@@ -102,7 +102,7 @@ bool TaskLogic::generalSearch(std::string userInput, std::vector<std::string>& v
 	// check that userInput not empty
 	while (iss >> keyword){
 		if(isDay(keyword)){
-			keyword = taskParse.changeDayToDate(keyword);
+			keyword = taskParse.changeDayToDate(keyword, dateVector);
 		}
 		keywordVector.push_back(keyword);
 	}
