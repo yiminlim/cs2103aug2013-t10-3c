@@ -27,10 +27,10 @@ public:
 
 	void initDate();
 
-	void stringParse(const std::string, const int, std::string &, std::string &, Date &, int &, Date &, int &, Date &, int &);
+	void stringParse(const std::string, const int, std::string &, std::string &, std::vector<Date> &, int &, std::vector<Date> &, int &, std::vector<Date> &, int &);
 	//converts userInput String into various components from existing
 		
-	Task createTask(std::string, int);
+	std::vector<Task> createTask(std::string, int);
 
 	//add a new task to the list (search for correct index first)
 	void addExistingTask(const std::string); //for initLogic use only

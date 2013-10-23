@@ -23,7 +23,7 @@ void TaskLogic::initLogic(){
 }
 
 //method 1 : User Input ; Method 2 : Pre-Existing Task in file
-void TaskLogic::stringParse(const std::string taskString, const int method, std::string &action, std::string &location, Date &startingDate, int &startingTime, Date &endingDate, int &endingTime, Date &deadlineDate, int &deadlineTime){
+void TaskLogic::stringParse(const std::string taskString, const int method, std::string &action, std::string &location, std::vector<Date> &startingDate, int &startingTime, std::vector<Date> &endingDate, int &endingTime, std::vector<Date> &deadlineDate, int &deadlineTime){
 	if(method == 1){
 		taskParse.processTaskStringFromUI(taskString,action,location,startingDate,startingTime,endingDate,endingTime,deadlineDate,deadlineTime,dateVector);
 	}
@@ -36,32 +36,56 @@ void TaskLogic::stringParse(const std::string taskString, const int method, std:
 }
 
 //method 1 : User Input ; Method 2 : Pre-Existing Task in file
-Task TaskLogic::createTask(std::string taskString, int method){
+std::vector<Task> TaskLogic::createTask(std::string taskString, int method){
 	std::string task = "", action = "", location ="";
-	Date startingDate, endingDate, deadlineDate; 
+	std::vector<Date> startingDateVector, endingDateVector, deadlineDateVector; 
 	int startingTime = -1, endingTime = -1, deadlineTime = -1; //check if we really want to set it as -1
 	bool block = false;
 
-	stringParse(taskString,method,action,location,startingDate,startingTime,endingDate,endingTime,deadlineDate,deadlineTime);   
-	Task taskObject(action,location,startingDate,startingTime,endingDate,endingTime,deadlineDate,deadlineTime,block);
+	stringParse(taskString,method,action,location,startingDateVector,startingTime,endingDateVector,endingTime,deadlineDateVector,deadlineTime);   
+	
+	if(startingDateVector.size() > 1 || endingDateVector.size() > 1 || deadlineDateVector.size() > 1)
+		block = true;
+
+	Date startingDate, endingDate, deadlineDate; 
+	//PROBLEM!! HOW TO CREATE SO MANY TASK AT ONE GO? MUST BE IN ADD
+	//WHAT IF YOU HAVE DIFFERENT NUMBER OF STARTING AND ENDING? Must indicate in that same ending vector / starting vector
+
+	std::vector<Task> taskObjectVector;
+
+	//MUST DO A CHECK TO ENSURE THAT StartingDate Vector and Endng Date Vector must be the same size!
+	for(unsigned int i = 0 ; i < startingDateVector.size() ; i++){
+		Date deadlineDate;
+		Task taskObject(action,location,startingDateVector[i],startingTime,endingDateVector[i],endingTime,deadlineDate,deadlineTime,block);
+		taskObjectVector.push_back(taskObject);
+	}
+	for(unsigned int i = 0 ; i < deadlineDateVector.size() ; i++){
+		Date startingDate, endingDate;
+		Task taskObject(action,location,startingDate,startingTime,endingDate,endingTime,deadlineDateVector[i],deadlineTime,block);
+		taskObjectVector.push_back(taskObject);
+	}
 	//task string must be created upon constrution!
 
-	return taskObject;
+	return taskObjectVector;
 }
 	
 bool TaskLogic::add(const std::string taskString){
-	Task taskObject; 
-    taskObject = createTask(taskString, 1); //generating task from user input.
+	std::vector<Task> taskObjectVector; 
+    taskObjectVector = createTask(taskString, 1); //generating task from user input.
+	bool checkAdded = true;
 
-	tbVector.push_back(taskObject.getTask()); //only need to push in for user inputs
-	
-	return tbLinkedList.insert(taskObject);
+	for(unsigned int i = 0; i < taskObjectVector.size() ; i++){
+		tbVector.push_back(taskObjectVector[i].getTask()); //only need to push in for user inputs
+		if(!tbLinkedList.insert(taskObjectVector[i]))
+			checkAdded = false;
+	}
+	return checkAdded;
 }
 
 void TaskLogic::addExistingTask(const std::string taskString){
-	Task taskObject; 
+	std::vector<Task> taskObject; 
     taskObject = createTask(taskString, 2); //generating task from file
-	tbLinkedList.insert(taskObject);
+	tbLinkedList.insert(taskObject[0]); //FOR EXISTING FILE MUST NOTE THE BLOCKING AS WELL!! 
 
 	return;
 }
