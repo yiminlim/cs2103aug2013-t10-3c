@@ -1,20 +1,20 @@
 #include "UserInterface.h"
 
-const std::string COMMAND_ADD = "add";
-const std::string COMMAND_DELETE = "delete";
-const std::string COMMAND_SEARCH = "search";
-const std::string COMMAND_EDIT = "edit";
-const std::string COMMAND_SAVE = "save";
-const std::string COMMAND_EXIT = "exit";
+const std::string UserInterface::COMMAND_ADD = "add";
+const std::string UserInterface::COMMAND_DELETE = "delete";
+const std::string UserInterface::COMMAND_SEARCH = "search";
+const std::string UserInterface::COMMAND_EDIT = "edit";
+const std::string UserInterface::COMMAND_SAVE = "save";
+const std::string UserInterface::COMMAND_EXIT = "exit";
 //const std::string COMMAND_DISPLAY = "display";
 
-const std::string MESSAGE_WELCOME = "Welcome to Task Buddy!";
-const std::string MESSAGE_ADD = "Task is added";
-const std::string MESSAGE_DELETE = "Task is deleted";
-const std::string MESSAGE_EDIT = "Task is edited";
-const std::string MESSAGE_COMMAND = "command: ";
-const std::string MESSAGE_INVALID_COMMAND = "Invalid command";
-const std::string MESSAGE_EXIT = "Thank you for using Task Buddy!";
+const std::string UserInterface::MESSAGE_WELCOME = "Welcome to Task Buddy!";
+const std::string UserInterface::MESSAGE_ADD = "Task is added";
+const std::string UserInterface::MESSAGE_DELETE = "Task is deleted";
+const std::string UserInterface::MESSAGE_EDIT = "Task is edited";
+const std::string UserInterface::MESSAGE_COMMAND = "command: ";
+const std::string UserInterface::MESSAGE_INVALID_COMMAND = "Invalid command";
+const std::string UserInterface::MESSAGE_EXIT = "Thank you for using Task Buddy!";
 
 UserInterface::UserInterface(){
 
