@@ -7,25 +7,23 @@ class UserInterface{
 private:
 	TaskLogic tbLogic; // all the commands will be going through tbLogic to change the TaskLinkedList
 
+	static const std::string COMMAND_ADD;
+	static const std::string COMMAND_DELETE;
+	static const std::string COMMAND_SEARCH;
+	static const std::string COMMAND_EDIT;
+	static const std::string COMMAND_SAVE;
+	static const std::string COMMAND_EXIT;	
+
+	static const std::string MESSAGE_WELCOME;
+	static const std::string MESSAGE_ADD;
+	static const std::string MESSAGE_DELETE;
+	static const std::string MESSAGE_EDIT;
+	static const std::string MESSAGE_COMMAND;
+	static const std::string MESSAGE_INVALID_COMMAND;
+	static const std::string MESSAGE_EXIT;
 
 public:
-	/*
-	const std::string COMMAND_ADD;
-	const std::string COMMAND_DELETE;
-	const std::string COMMAND_SEARCH;
-	const std::string COMMAND_EDIT;
-	const std::string COMMAND_SAVE;
-	const std::string COMMAND_EXIT;	
-
-	const std::string MESSAGE_WELCOME;
-	const std::string MESSAGE_ADD;
-	const std::string MESSAGE_DELETE;
-	const std::string MESSAGE_EDIT;
-	const std::string MESSAGE_COMMAND;
-	const std::string MESSAGE_INVALID_COMMAND;
-	const std::string MESSAGE_EXIT;
-	*/
-	
+		
 	//Starts the UserInterface from main.
 	//To initialise the taskLinkedList inside tbLogic by sending an initialising command to tbLogic.
 	UserInterface();
