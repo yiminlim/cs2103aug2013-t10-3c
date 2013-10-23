@@ -9,7 +9,7 @@ const std::string Parse::KEYWORD_DEADLINE = "by";
 
 //takes in Task string and breaks it down into its various Task details
 
-void Parse::processTaskStringFromUI(std::string & taskString, std::string & action, std::string & location, Date & startingDate, int & startingTime, Date & endingDate, int & endingTime, Date & deadlineDate, int & deadlineTime, std::vector<std::string> & dateVector){
+void Parse::processTaskStringFromUI(std::string taskString, std::string & action, std::string & location, Date & startingDate, int & startingTime, Date & endingDate, int & endingTime, Date & deadlineDate, int & deadlineTime, std::vector<std::string> & dateVector){
 	std::istringstream userInputTask(taskString);
 	std::string word;
 	std::vector<std::string> taskDetails;
@@ -73,7 +73,7 @@ void Parse::processTaskStringFromUI(std::string & taskString, std::string & acti
 	return;
 }
 
-void Parse::processTaskStringFromFile(std::string & taskString, std::string & action, std::string & location, Date & startingDate, int & startingTime, Date & endingDate, int & endingTime, Date & deadlineDate, int & deadlineTime, std::vector<std::string> & dateVector){
+void Parse::processTaskStringFromFile(std::string taskString, std::string & action, std::string & location, Date & startingDate, int & startingTime, Date & endingDate, int & endingTime, Date & deadlineDate, int & deadlineTime, std::vector<std::string> & dateVector){
 	std::istringstream fileTask(taskString);
 	std::string word;
 	std::vector<std::string> taskDetails;
