@@ -19,14 +19,14 @@ private:
 	Date _deadlineDate;
 	int	_deadlineTime;
 	//char _status;
-	//std::vector <std::string> _block;
+	bool _block;
 
 public:
 	//empty constructor
 	Task();
 
 	//constructor
-	Task(std::string, std::string, Date, int, Date, int, Date, int);
+	Task(std::string, std::string, Date, int, Date, int, Date, int, bool);
 
 	//formats the task output string
 	std::string Task::formatTask(std::string, std::string, Date, int, Date, int, Date, int);

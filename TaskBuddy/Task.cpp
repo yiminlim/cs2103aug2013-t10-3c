@@ -5,7 +5,7 @@ Task::Task(){
 }
 
 //constructor
-Task::Task(std::string action, std::string location, Date startingDate, int startingTime, Date endingDate, int endingTime, Date deadlineDate, int deadlineTime){
+Task::Task(std::string action, std::string location, Date startingDate, int startingTime, Date endingDate, int endingTime, Date deadlineDate, int deadlineTime, bool block){
 	_action = action;
 	_location = location;
 	_startingDate = startingDate;
@@ -14,6 +14,7 @@ Task::Task(std::string action, std::string location, Date startingDate, int star
 	_endingTime = endingTime;
 	_deadlineDate = deadlineDate;
 	_deadlineTime = deadlineTime;
+	_block = block;
 	_task = formatTask(action,location,startingDate,startingTime,endingDate,endingTime,deadlineDate,deadlineTime);
 }
 
