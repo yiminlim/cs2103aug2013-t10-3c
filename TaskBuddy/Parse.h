@@ -16,6 +16,8 @@ private:
 
 public:
 	
+	//process methods should include block when it's implemented
+
 	void processTaskStringFromUI(std::string, std::string &, std::string &, Date &, int &, Date &, int &, Date &, int &, std::vector<std::string> &);
 
 	void processTaskStringFromFile(std::string, std::string &, std::string &, Date &, int &, Date &, int &, Date &, int &, std::vector<std::string> &);
