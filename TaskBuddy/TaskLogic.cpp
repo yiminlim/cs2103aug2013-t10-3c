@@ -40,9 +40,10 @@ Task TaskLogic::createTask(std::string taskString, int method){
 	std::string task = NULL, action = NULL, location = NULL;
 	Date startingDate, endingDate, deadlineDate; 
 	int startingTime = -1, endingTime = -1, deadlineTime = -1; //check if we really want to set it as -1
+	bool block = false;
 
 	stringParse(taskString,method,action,location,startingDate,startingTime,endingDate,endingTime,deadlineDate,deadlineTime);   
-	Task taskObject(action,location,startingDate,startingTime,endingDate,endingTime,deadlineDate,deadlineTime);
+	Task taskObject(action,location,startingDate,startingTime,endingDate,endingTime,deadlineDate,deadlineTime,block);
 	//task string must be created upon constrution!
 
 	return taskObject;
@@ -134,7 +135,7 @@ bool TaskLogic::edit(std::string taskString, std::string editString){
 	std::string newTask, newAction = "", newLocation = "", currentAction = "", currentLocation = "";
 	Date newStartingDate, newEndingDate, newDeadlineDate, currentStartingDate, currentEndingDate, currentDeadlineDate;
 	int newStartingTime = -1, newEndingTime = -1, newDeadlineTime = -1, currentStartingTime = -1, currentEndingTime = -1, currentDeadlineTime = -1; //check if we really want to set it as -1
-	
+	bool newBlock = false;
 
 	stringParse(taskString,2,currentAction,currentLocation,currentStartingDate,currentStartingTime,currentEndingDate,currentEndingTime,currentDeadlineDate,currentDeadlineTime);
 	stringParse(editString,1,newAction,newLocation,newStartingDate,newStartingTime,newEndingDate,newEndingTime,newDeadlineDate,newDeadlineTime);
@@ -159,8 +160,11 @@ bool TaskLogic::edit(std::string taskString, std::string editString){
 	if(newDeadlineTime == -1){
 		newDeadlineTime = currentDeadlineTime;
 	}
+	
+	//add update for block
 
-	Task taskObject(newAction,newLocation,newStartingDate,newStartingTime,newEndingDate,newEndingTime,newDeadlineDate,newDeadlineTime);
+
+	Task taskObject(newAction,newLocation,newStartingDate,newStartingTime,newEndingDate,newEndingTime,newDeadlineDate,newDeadlineTime,newBlock);
 
 	delFromVector(taskString);
 	tbVector.push_back(taskObject.getTask()); //only need to push in for user inputs
