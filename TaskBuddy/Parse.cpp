@@ -169,7 +169,7 @@ Date Parse::convertToDate(std::string dateString){
 
 
 bool Parse::isDayKeyword(std::string word) {
-	std::string dayKeywords[17] = {"today","mon","monday","tue","tues","tuesday","wed","wednesday","thur","thurs","thursday","fri","friday","sat","saturday","sun","sunday"};
+	std::string dayKeywords[18] = {"today","tomorrow","mon","monday","tue","tues","tuesday","wed","wednesday","thur","thurs","thursday","fri","friday","sat","saturday","sun","sunday"};
 	
 	for(int i = 0; word[i] != '\0'; i++){
 		word[i] = tolower(word[i]);
