@@ -101,8 +101,18 @@ void UserInterface::commandUI(){
 std::string UserInterface::readTask(std::string command){
 	std::string task;
 	std::getline(std::cin, task);
+
 	if (command == COMMAND_ADD){
-		return command + " " + task;
+		task = command + " " + task;
+		if (task.find("blockoff") != std::string::npos){
+			std::string block;
+			do{
+				std::getline(std::cin, block);
+				if (block != "end"){
+					task = task + block;
+				}
+			} while(block != "end");
+		}	
 	}
 	return task;
 }
