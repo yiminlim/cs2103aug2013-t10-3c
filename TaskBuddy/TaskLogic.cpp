@@ -23,29 +23,26 @@ void TaskLogic::initLogic(){
 }
 
 //method 1 : User Input ; Method 2 : Pre-Existing Task in file
-void TaskLogic::stringParse(const std::string taskString, const int method, std::string &action, std::string &location, std::vector<Date> &startingDate, int &startingTime, std::vector<Date> &endingDate, int &endingTime, std::vector<Date> &deadlineDate, int &deadlineTime){
+bool TaskLogic::stringParse(const std::string taskString, const int method, std::string &action, std::string &location, std::vector<Date> &startingDateVector, std::vector<int> &startingTimeVector, std::vector<Date> &endingDateVector, std::vector<int> &endingTimeVector, std::vector<Date> &deadlineDateVector, std::vector<int> &deadlineTimeVector){
 	if(method == 1){
-		taskParse.processTaskStringFromUI(taskString,action,location,startingDate,startingTime,endingDate,endingTime,deadlineDate,deadlineTime,dateVector);
+		return taskParse.processTaskStringFromUI(taskString,action,location,startingDateVector,startingTimeVector,endingDateVector,endingTimeVector,deadlineDateVector,deadlineTimeVector,dateVector);
 	}
 	else if(method == 2){
-		taskParse.processTaskStringFromFile(taskString,action,location,startingDate,startingTime,endingDate,endingTime,deadlineDate,deadlineTime,dateVector);
+		return taskParse.processTaskStringFromFile(taskString,action,location,startingDateVector,startingTimeVector,endingDateVector,endingTimeVector,deadlineDateVector,deadlineTimeVector,dateVector);
 	}
 
 	//add in exceptions
-	return;
 }
 
 //method 1 : User Input ; Method 2 : Pre-Existing Task in file
 std::vector<Task> TaskLogic::createTask(std::string taskString, int method){
 	std::string task = "", action = "", location ="";
 	std::vector<Date> startingDateVector, endingDateVector, deadlineDateVector; 
-	int startingTime = -1, endingTime = -1, deadlineTime = -1; //check if we really want to set it as -1
-	bool block = false;
-
-	stringParse(taskString,method,action,location,startingDateVector,startingTime,endingDateVector,endingTime,deadlineDateVector,deadlineTime);   
+	std::vector<int> startingTimeVector, endingTimeVector, deadlineTimeVector; //check if we really want to set it as -1
+	bool block = stringParse(taskString,method,action,location,startingDateVector,startingTimeVector,endingDateVector,endingTimeVector,deadlineDateVector,deadlineTimeVector);   
 	
 	if(startingDateVector.size() > 1 || endingDateVector.size() > 1 || deadlineDateVector.size() > 1)
-		block = true;
+		block = true; 
 
 	Date startingDate, endingDate, deadlineDate; 
 	//PROBLEM!! HOW TO CREATE SO MANY TASK AT ONE GO? MUST BE IN ADD
@@ -54,14 +51,16 @@ std::vector<Task> TaskLogic::createTask(std::string taskString, int method){
 	std::vector<Task> taskObjectVector;
 
 	//MUST DO A CHECK TO ENSURE THAT StartingDate Vector and Endng Date Vector must be the same size!
-	for(unsigned int i = 0 ; i < startingDateVector.size() ; i++){
+	for(unsigned int i = 0 ; i < startingDateVector.size() && startingDateVector[i].isValidDate(); i++){
 		Date deadlineDate;
-		Task taskObject(action,location,startingDateVector[i],startingTime,endingDateVector[i],endingTime,deadlineDate,deadlineTime,block);
+		int deadlineTime = -1;
+		Task taskObject(action,location,startingDateVector[i],startingTimeVector[i],endingDateVector[i],endingTimeVector[i],deadlineDate,deadlineTime,block);
 		taskObjectVector.push_back(taskObject);
 	}
-	for(unsigned int i = 0 ; i < deadlineDateVector.size() ; i++){
+	for(unsigned int i = 0 ; i < deadlineDateVector.size() && deadlineDateVector[i].isValidDate() ; i++){
 		Date startingDate, endingDate;
-		Task taskObject(action,location,startingDate,startingTime,endingDate,endingTime,deadlineDateVector[i],deadlineTime,block);
+		int startingTime = -1, endingTime = -1;
+		Task taskObject(action,location,startingDate,startingTime,endingDate,endingTime,deadlineDateVector[i],deadlineTimeVector[i],block);
 		taskObjectVector.push_back(taskObject);
 	}
 	//task string must be created upon constrution!
@@ -83,9 +82,9 @@ bool TaskLogic::add(const std::string taskString){
 }
 
 void TaskLogic::addExistingTask(const std::string taskString){
-	std::vector<Task> taskObject; 
-    taskObject = createTask(taskString, 2); //generating task from file
-	tbLinkedList.insert(taskObject[0]); //FOR EXISTING FILE MUST NOTE THE BLOCKING AS WELL!! 
+	std::vector<Task> taskObjectVector; 
+    taskObjectVector = createTask(taskString, 2); //generating task from file
+	tbLinkedList.insert(taskObjectVector[0]); //FOR EXISTING FILE MUST NOTE THE BLOCKING AS WELL!! 
 
 	return;
 }
@@ -157,38 +156,38 @@ bool TaskLogic::isDay(std::string& keyword){
 //edit firsts breaks it down to check if it needs to edit which component (task, action, location, Date, time) etc.
 bool TaskLogic::edit(std::string taskString, std::string editString){
 	std::string newTask, newAction = "", newLocation = "", currentAction = "", currentLocation = "";
-	Date newStartingDate, newEndingDate, newDeadlineDate, currentStartingDate, currentEndingDate, currentDeadlineDate;
-	int newStartingTime = -1, newEndingTime = -1, newDeadlineTime = -1, currentStartingTime = -1, currentEndingTime = -1, currentDeadlineTime = -1; //check if we really want to set it as -1
-	bool newBlock = false;
+	std::vector<Date> newStartingDate, newEndingDate, newDeadlineDate, currentStartingDate, currentEndingDate, currentDeadlineDate;
+	std::vector<int> newStartingTime, newEndingTime, newDeadlineTime, currentStartingTime, currentEndingTime, currentDeadlineTime; 
+	bool isBlock = false;
 
-	stringParse(taskString,2,currentAction,currentLocation,currentStartingDate,currentStartingTime,currentEndingDate,currentEndingTime,currentDeadlineDate,currentDeadlineTime);
+	isBlock = stringParse(taskString,2,currentAction,currentLocation,currentStartingDate,currentStartingTime,currentEndingDate,currentEndingTime,currentDeadlineDate,currentDeadlineTime);
 	stringParse(editString,1,newAction,newLocation,newStartingDate,newStartingTime,newEndingDate,newEndingTime,newDeadlineDate,newDeadlineTime);
 	
 	newAction = currentAction + newAction;
 	newLocation = currentLocation + newLocation;
-	if(!newStartingDate.isValidDate()){
+	if(!newStartingDate[0].isValidDate() && currentStartingDate[0].isValidDate()){
 		newStartingDate = currentStartingDate;
 	}
-	if(!newEndingDate.isValidDate()){
+	if(!newEndingDate[0].isValidDate() && currentEndingDate[0].isValidDate()){
 		newEndingDate = currentEndingDate;
 	}
-	if(!newDeadlineDate.isValidDate()){
+	if(!newDeadlineDate[0].isValidDate() && currentDeadlineDate[0].isValidDate()){
 		newDeadlineDate = currentDeadlineDate;
 	}
-	if(newStartingTime == -1){
-		newStartingTime = currentStartingTime;
+	if(newStartingTime[0] == -1 && currentStartingTime[0] != -1){
+		newStartingTime == currentStartingTime;
 	}
-	if(newEndingTime == -1){
-		newEndingTime = currentEndingTime;
+	if(newEndingTime[0] == -1 && currentEndingTime[0] != -1){
+		newEndingTime == currentEndingTime;
 	}
-	if(newDeadlineTime == -1){
-		newDeadlineTime = currentDeadlineTime;
+	if(newDeadlineTime[0] == -1 && currentDeadlineTime[0] != -1){
+		newDeadlineTime == currentDeadlineTime;
 	}
 	
 	//add update for block
 
 
-	Task taskObject(newAction,newLocation,newStartingDate,newStartingTime,newEndingDate,newEndingTime,newDeadlineDate,newDeadlineTime,newBlock);
+	Task taskObject(newAction,newLocation,newStartingDate[0],newStartingTime[0],newEndingDate[0],newEndingTime[0],newDeadlineDate[0],newDeadlineTime[0],isBlock);
 
 	delFromVector(taskString);
 	tbVector.push_back(taskObject.getTask()); //only need to push in for user inputs

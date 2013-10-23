@@ -27,7 +27,7 @@ public:
 
 	void initDate();
 
-	void stringParse(const std::string, const int, std::string &, std::string &, std::vector<Date> &, int &, std::vector<Date> &, int &, std::vector<Date> &, int &);
+	bool stringParse(const std::string, const int, std::string &, std::string &, std::vector<Date> &, std::vector<int> &, std::vector<Date> &, std::vector<int> &, std::vector<Date> &, std::vector<int> &);
 	//converts userInput String into various components from existing
 		
 	std::vector<Task> createTask(std::string, int);
