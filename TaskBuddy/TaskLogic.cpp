@@ -122,7 +122,7 @@ bool TaskLogic::isDay(std::string& keyword){
 	for(int i = 0; i < 17; i++){
 		if(lowerCaseKeyWord == possibleDay[i]){
 			keyWordIsDay = true;
-			keyword = lowerCaseKeyWord;ve
+			keyword = lowerCaseKeyWord;
 		}
 	}
 	return keyWordIsDay;
