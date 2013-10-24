@@ -7,6 +7,7 @@ const std::string Parse::KEYWORD_STARTING = "from";
 const std::string Parse::KEYWORD_ENDING = "to";
 const std::string Parse::KEYWORD_DEADLINE = "by";
 const std::string Parse::KEYWORD_BLOCK = "blockoff";
+const std::string Parse::KEYWORD_BLOCK_BRACKETS = "(blockoff)";
 
 //takes in Task string and breaks it down into its various Task details
 
@@ -24,6 +25,9 @@ void Parse::processTaskStringFromUI(std::string taskString, std::string & action
 	for (unsigned int i = 0; i < taskDetails.size(); i++) { //must always start with command
 		if (isKeyword(taskDetails[i])) {
 			keyword = taskDetails[i];
+			if (keyword == KEYWORD_BLOCK) {
+				block = true;
+			}
 		}
 		else if (keyword == KEYWORD_ADD) {
 			if (action != "") {
@@ -82,9 +86,6 @@ void Parse::processTaskStringFromUI(std::string taskString, std::string & action
 				deadlineTime.push_back(convertToTime(taskDetails[i]));
 			}
 		}
-		else if (keyword == KEYWORD_BLOCK) {
-			block = true;
-		}
 	}
 
 	if (deadlineDate.empty()) {
@@ -122,7 +123,7 @@ void Parse::processTaskStringFromFile(std::string taskString, std::string & acti
 		deadlineDate.push_back(convertToDate(taskDetails[1]));
 		deadlineTime.push_back(convertToTime(taskDetails[2]));
 		unsigned int i = 4;
-		while (i < taskDetails.size() && taskDetails[i] != KEYWORD_LOCATION) {
+		while (i < taskDetails.size() && taskDetails[i] != KEYWORD_LOCATION && taskDetails[i] != KEYWORD_BLOCK_BRACKETS) {
 			if (action != "") {
 				action += " ";
 			}
@@ -134,15 +135,18 @@ void Parse::processTaskStringFromFile(std::string taskString, std::string & acti
 			i++;
 		}
 
-		while (i < taskDetails.size()) {
+		while (i < taskDetails.size() && taskDetails[i] != KEYWORD_BLOCK_BRACKETS) {
 			if (location != "") {
 				location += " ";
 			}
 			location += taskDetails[i];
 			i++;
 		}
-	} // WHY NO NEED TO CHECK IF BLOCKING HERE?
-
+		
+		if (i < taskDetails.size() && taskDetails[i] == KEYWORD_BLOCK_BRACKETS) {
+			block = true;
+		} 
+	}
 	else {
 		startingDate.push_back(convertToDate(taskDetails[0]));
 		startingTime.push_back(convertToTime(taskDetails[1]));
@@ -153,7 +157,7 @@ void Parse::processTaskStringFromFile(std::string taskString, std::string & acti
 			i = 7;
 		}
 
-		while (i < taskDetails.size() && taskDetails[i] != KEYWORD_LOCATION) {
+		while (i < taskDetails.size() && taskDetails[i] != KEYWORD_LOCATION && taskDetails[i] != KEYWORD_BLOCK_BRACKETS) {
 			if (action != "") {
 				action += " ";
 			}
@@ -165,15 +169,15 @@ void Parse::processTaskStringFromFile(std::string taskString, std::string & acti
 			i++;
 		}
 
-		while (i < taskDetails.size() && taskDetails[i] != ("("+KEYWORD_BLOCK+")")) {
+		while (i < taskDetails.size() && taskDetails[i] != KEYWORD_BLOCK_BRACKETS) {
 			if (location != "") {
 				location += " ";
 			}
 			location += taskDetails[i];
 			i++;
 		}
-
-		if (i < taskDetails.size() && taskDetails[i] == ("("+KEYWORD_BLOCK+")")) {
+		
+		if (i < taskDetails.size() && taskDetails[i] == KEYWORD_BLOCK_BRACKETS) {
 			block = true;
 		}
 	}
@@ -201,7 +205,7 @@ void Parse::processTaskStringFromFile(std::string taskString, std::string & acti
 }
 
 bool Parse::isKeyword(std::string word) {
-	return word == KEYWORD_ADD || word == KEYWORD_DEADLINE || word == KEYWORD_ENDING || word == KEYWORD_LOCATION || word == KEYWORD_STARTING;
+	return word == KEYWORD_ADD || word == KEYWORD_DEADLINE || word == KEYWORD_ENDING || word == KEYWORD_LOCATION || word == KEYWORD_STARTING || word == KEYWORD_BLOCK;
 }
 
 Date Parse::convertToDate(std::string dateString){
@@ -235,7 +239,7 @@ bool Parse::isDayKeyword(std::string word) {
 		word[i] = tolower(word[i]);
 	}
 
-	for (int i = 0; i < 17; i++) {
+	for (int i = 0; i < 20; i++) {
 		if (word == dayKeywords[i]) {
 			return true;
 		}
@@ -273,10 +277,12 @@ std::string Parse::changeDayToDate(std::string dayKeyword, std::vector<std::stri
 		return dateStrings[5]; 
 	}
 	else if (dayKeyword == "sat" || dayKeyword == "saturday") {
+		std::cout<<dateStrings[6]<<std::endl;
 		return dateStrings[6]; 
 	}
 	else if (dayKeyword == "sun" || dayKeyword == "sunday") {
-		return dateStrings[7]; //verify that it really is "sun"/"sunday"?
+		std::cout<<dateStrings[7]<<std::endl;
+		return dateStrings[7]; 
 	}
 	else if (dayKeyword == "tmr" || dayKeyword == "tomorrow") {
 		return dateStrings[8];
