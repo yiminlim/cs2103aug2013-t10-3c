@@ -44,7 +44,8 @@ void UserInterface::commandUI(){
 
 		if (command == COMMAND_ADD){		
 			if (tbLogic.add(readTask(command))){
-				displaySuccessfulMessage(COMMAND_ADD);
+				tbLogic.save();
+				displaySuccessfulMessage(COMMAND_ADD);				
 			}
 			else{
 				displayFailMessage();
@@ -65,6 +66,7 @@ void UserInterface::commandUI(){
 			int option;
 			std::cin >> option;
 			if (tbLogic.del(display[option-1])){
+				tbLogic.save();
 				displaySuccessfulMessage(COMMAND_DELETE);			
 			}
 			else{
@@ -78,14 +80,12 @@ void UserInterface::commandUI(){
 			std::getline(std::cin, editString);
 			editString = "add " + editString; //adding 'add ' to the start 
 			if (tbLogic.edit(display[option-1], editString)){
+				tbLogic.save();
 				displaySuccessfulMessage(COMMAND_EDIT);
 			}
 			else{
 				displayFailMessage();
 			}
-		}
-		else if (command == COMMAND_SAVE){
-			tbLogic.save();
 		}
 		else if(command == COMMAND_EXIT){
 			tbLogic.exitLogic();
@@ -99,7 +99,7 @@ void UserInterface::commandUI(){
 }
 	
 //To read in the task details
-std::string UserInterface::readTask(std::string command){
+std::string UserInterface::readTask(const std::string command){
 	std::string task;
 	std::getline(std::cin, task);
 

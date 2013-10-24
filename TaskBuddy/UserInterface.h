@@ -35,7 +35,7 @@ public:
 	void commandUI();
 	
 	//To read in the task details
-	std::string readTask(std::string);
+	std::string readTask(const std::string);
 
 	//To display only successful messages to User
 	void displaySuccessfulMessage(std::string);
