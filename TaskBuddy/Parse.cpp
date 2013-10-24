@@ -277,11 +277,9 @@ std::string Parse::changeDayToDate(std::string dayKeyword, std::vector<std::stri
 		return dateStrings[5]; 
 	}
 	else if (dayKeyword == "sat" || dayKeyword == "saturday") {
-		std::cout<<dateStrings[6]<<std::endl;
 		return dateStrings[6]; 
 	}
 	else if (dayKeyword == "sun" || dayKeyword == "sunday") {
-		std::cout<<dateStrings[7]<<std::endl;
 		return dateStrings[7]; 
 	}
 	else if (dayKeyword == "tmr" || dayKeyword == "tomorrow") {
