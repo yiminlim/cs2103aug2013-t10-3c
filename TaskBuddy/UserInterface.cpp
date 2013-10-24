@@ -76,6 +76,7 @@ void UserInterface::commandUI(){
 			std::string editString;
 			std::cin >> option;
 			std::getline(std::cin, editString);
+			editString = "add " + editString; //adding 'add ' to the start 
 			if (tbLogic.edit(display[option-1], editString)){
 				displaySuccessfulMessage(COMMAND_EDIT);
 			}
@@ -109,7 +110,7 @@ std::string UserInterface::readTask(std::string command){
 			do{
 				std::getline(std::cin, block);
 				if (block != "end"){
-					task = task + block;
+					task = task + " " + block; //add space
 				}
 			} while(block != "end");
 		}	
