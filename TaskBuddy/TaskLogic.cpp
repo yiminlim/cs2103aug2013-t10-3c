@@ -44,8 +44,8 @@ std::vector<Task> TaskLogic::createTask(std::string taskString, int method){
 	stringParse(taskString,method,action,location,startingDateVector,startingTimeVector,endingDateVector,endingTimeVector,deadlineDateVector,deadlineTimeVector,isBlock);   
 	
 	if(startingDateVector.size() > 1 || endingDateVector.size() > 1 || deadlineDateVector.size() > 1)
-		isBlock = true; 
-
+		isBlock = true;
+	
 	//PROBLEM!! HOW TO CREATE SO MANY TASK AT ONE GO? MUST BE IN ADD
 	//WHAT IF YOU HAVE DIFFERENT NUMBER OF STARTING AND ENDING? Must indicate in that same ending vector / starting vector
 
@@ -143,7 +143,7 @@ bool TaskLogic::isDay(std::string& keyword){
 		lowerCaseKeyWord[i] = tolower(lowerCaseKeyWord[i]);
 	}
 
-	for(int i = 0; i < 17; i++){
+	for(int i = 0; i < 20; i++){
 		if(lowerCaseKeyWord == possibleDay[i]){
 			keyWordIsDay = true;
 			keyword = lowerCaseKeyWord;
@@ -164,21 +164,71 @@ bool TaskLogic::edit(std::string taskString, std::string editString){
 
 	stringParse(taskString,2,currentAction,currentLocation,currentStartingDate,currentStartingTime,currentEndingDate,currentEndingTime,currentDeadlineDate,currentDeadlineTime, isBlock);
 	stringParse(editString,1,newAction,newLocation,newStartingDate,newStartingTime,newEndingDate,newEndingTime,newDeadlineDate,newDeadlineTime, dummy);
-	
-	std::cout << currentAction << std::endl;
-	std::cout << currentLocation << std::endl;
-	std::cout << currentStartingTime[0] << std::endl;
-	std::cout << currentEndingTime[0] << std::endl;
-	std::cout << currentDeadlineTime[0] << std::endl;
-	std::cout << "NEW: " << std::endl;
-	std::cout << newAction << std::endl;
-	std::cout << newLocation << std::endl;
-	std::cout << newStartingTime[0] << std::endl;
-	std::cout << newEndingTime[0] << std::endl;
-	std::cout << newDeadlineTime[0] << std::endl;
 
+	if (newAction != "") {
+		currentAction = "";
+	}
 	newAction = currentAction + newAction;
+
+	if (newLocation != "" && currentLocation != "") {
+		currentLocation = "";
+	}
 	newLocation = currentLocation + newLocation;
+	
+	bool isCurrentDeadlineType = false;
+	bool isNewDeadlineType = false;
+	if (currentDeadlineTime[0] != -1 && currentStartingTime[0] == -1) {
+		isCurrentDeadlineType = true;	
+	}
+	if ((newDeadlineTime[0] != -1 && newStartingTime[0] == -1) || (newDeadlineTime[0] == -1  && currentDeadlineTime[0] != -1 && newStartingTime[0] == -1)) {
+		isNewDeadlineType = true;
+	}
+
+	if (isCurrentDeadlineType && isNewDeadlineType) {
+		if(!newDeadlineDate[0].isValidDate() && currentDeadlineDate[0].isValidDate()){
+			newDeadlineDate = currentDeadlineDate;
+		}
+		if(newDeadlineTime[0] == -1 && currentDeadlineTime[0] != -1){
+		newDeadlineTime[0] = currentDeadlineTime[0];
+		
+		}
+	}
+	else if (!isCurrentDeadlineType && isNewDeadlineType) {
+		newStartingDate[0]._day = 0;
+		newStartingDate[0]._month = 0;
+		newStartingDate[0]._year = 0;
+		newStartingTime[0] = -1;
+		newEndingDate[0]._day = 0;
+		newEndingDate[0]._month = 0;
+		newEndingDate[0]._year = 0;
+		newEndingTime[0] = -1;
+	}
+	else if (!isNewDeadlineType && isCurrentDeadlineType) {
+		newDeadlineDate[0]._day = 0;
+		newDeadlineDate[0]._month = 0;
+		newDeadlineDate[0]._year = 0;
+		newDeadlineTime[0] = -1;
+	}
+	else if (!isNewDeadlineType && !isCurrentDeadlineType) {
+		if (!newStartingDate[0].isValidDate() && currentStartingDate[0].isValidDate()) {
+			newStartingDate = currentStartingDate;
+			newStartingTime[0] = currentStartingTime[0];
+			if (!newEndingDate[0].isValidDate() && currentEndingDate[0].isValidDate()) {
+				newEndingDate[0]._day = 0;
+				newEndingDate[0]._month = 0;
+				newEndingDate[0]._year = 0;
+				newEndingTime[0] = -1;
+			}
+			
+		}
+		/*if (!newEndingDate[0].isValidDate() && currentEndingDate[0].isValidDate()) {
+			newEndingDate = currentEndingDate;
+			newEndingTime[0] = currentEndingTime[0];
+		}*/
+	}
+	
+
+/*	
 	if(!newStartingDate[0].isValidDate() && currentStartingDate[0].isValidDate()){
 		newStartingDate = currentStartingDate;
 	}
@@ -197,13 +247,7 @@ bool TaskLogic::edit(std::string taskString, std::string editString){
 	if(newDeadlineTime[0] == -1 && currentDeadlineTime[0] != -1){
 		newDeadlineTime = currentDeadlineTime;
 	}
-
-	std::cout << "NEW: " << std::endl;
-	std::cout << newAction << std::endl;
-	std::cout << newLocation << std::endl;
-	std::cout << newStartingTime[0] << std::endl;
-	std::cout << newEndingTime[0] << std::endl;
-	std::cout << newDeadlineTime[0] << std::endl;
+	*/
 	
 	//add update for block
 
