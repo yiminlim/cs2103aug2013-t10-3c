@@ -1,0 +1,11 @@
+﻿Build started 25/10/2013 11:38:12 AM.
+     1>Project "C:\Users\Min\Desktop\TaskBuddy\TaskBuddy\gtest-1.7.0\msvc\gtest.vcxproj" on node 2 (Build target(s)).
+     1>C:\Program Files\MSBuild\Microsoft.Cpp\v4.0\V110\Microsoft.CppBuild.targets(1299,5): warning MSB8012: TargetPath(C:\Users\Min\Desktop\TaskBuddy\TaskBuddy\gtest-1.7.0\msvc\TaskBuddy/Debug\gtest.lib) does not match the Library's OutputFile property value (C:\Users\Min\Desktop\TaskBuddy\TaskBuddy\gtest-1.7.0\msvc\TaskBuddy\Debug\gtestd.lib). This may cause your project to build incorrectly. To correct this, please make sure that $(OutDir), $(TargetName) and $(TargetExt) property values match the value specified in %(Lib.OutputFile).
+     1>C:\Program Files\MSBuild\Microsoft.Cpp\v4.0\V110\Microsoft.CppBuild.targets(1301,5): warning MSB8012: TargetName(gtest) does not match the Library's OutputFile property value (gtestd). This may cause your project to build incorrectly. To correct this, please make sure that $(OutDir), $(TargetName) and $(TargetExt) property values match the value specified in %(Lib.OutputFile).
+     1>Lib:
+         gtest.vcxproj -> C:\Users\Min\Desktop\TaskBuddy\TaskBuddy\gtest-1.7.0\msvc\TaskBuddy/Debug\gtest.lib
+     1>Done Building Project "C:\Users\Min\Desktop\TaskBuddy\TaskBuddy\gtest-1.7.0\msvc\gtest.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:00.93
