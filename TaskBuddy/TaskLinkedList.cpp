@@ -42,9 +42,10 @@ int TaskLinkedList::getSize(){
 
 //Pre-condition: input in a Task reference and two pointers indicating date and time 
 //				 the task have to have either a startingDate and startingTime or a deadlineDate and deadlineTime
+//				 for empty time, it is declared with a value -1
 //Post-condition: the pointer indicating date and time will be updated to store either the startingDate and startingTime or the deadlineDate and deadlineTime of the respective Task. 
 void TaskLinkedList::obtainDateAndTime(Task & task, Date *date, int *time){
-	if (task.getDeadlineDate()._day == 0){
+	if (task.getDeadlineTime() == -1){
 		date->_day = task.getStartingDate()._day;
 		date->_month = task.getStartingDate()._month;
 		date->_year = task.getStartingDate()._year;
@@ -72,15 +73,27 @@ bool TaskLinkedList::compareDateAndTime(Task & curTask, Task & listTask){
 		if (curDate->_year < listDate->_year){
 			condition = true;
 		} 
-		else if(curDate->_month < listDate->_month){
-			condition = true;
+		else if (curDate->_year > listDate->_year){
+			condition = false;
 		} 
-		else if(curDate->_day < listDate->_day){
-			condition = true;
-		} 
-		else if(curTime < listTime){
+		else if (curDate->_month < listDate->_month){
 			condition = true;
 		}
+		else if (curDate->_month > listDate->_month){
+			condition = false;
+		}
+		else if (curDate->_day < listDate->_day){
+			condition = true;
+		}
+		else if (curDate->_day > listDate->_day){
+			condition = false;
+		}
+		else if (*curTime < *listTime){
+			condition = true;
+		}
+		else
+			condition = false; 
+			
 
 		delete curDate;
 		curDate = NULL;
