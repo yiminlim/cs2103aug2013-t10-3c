@@ -10,6 +10,7 @@ TaskLogic::TaskLogic(){
 }
 
 TaskLogic::~TaskLogic(){
+
 }
 
 //Takes in filename and takes all existing tasks inside file into tbLinkedList
@@ -282,7 +283,6 @@ void TaskLogic::save(){
 
 //Takes in filename and stores all tasks inside tbLinkedList into the file to prepare for exit.
 void TaskLogic::exitLogic(){
-	save();
 	tbVector.clear();
 }
 
