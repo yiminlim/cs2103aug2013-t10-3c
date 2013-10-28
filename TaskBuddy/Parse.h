@@ -8,7 +8,7 @@
 class Parse{
 private:
 
-	static const std::string KEYWORD_ADD;
+	static const std::string KEYWORD_EMPTY;
 	static const std::string KEYWORD_LOCATION;
 	static const std::string KEYWORD_STARTING;
 	static const std::string KEYWORD_ENDING;
