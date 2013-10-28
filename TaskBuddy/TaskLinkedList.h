@@ -33,7 +33,7 @@ public:
 	void obtainDateAndTime(Task &, Date*, int*, int*);
 
 	//Returns true if the curTask is of an earlier date and time than listTask
-	bool compareDateAndTime(Task &, Task &, bool & isClash);
+	bool compareDateAndTime(Task &, Task &, bool &);
 
 	//Returns the index at which a Task is to be added
 	int getInsertIndex(Task &, bool &);
