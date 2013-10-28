@@ -284,12 +284,27 @@ bool TaskLinkedList::finaliseBlocking(const std::vector<std::string> tasks){
 	}
 }	
 
-
 void TaskLinkedList::updateStorageVector(std::vector<std::string> & tbVector){
 	ListNode *cur = _head;
 
 	while (cur != NULL){
 		tbVector.push_back(cur->item.getTask());
 		cur = cur->next;
+	}
+}
+
+//Pre-condition: input a string task to be located and change it's bool block as true
+//				 the task must be found in the linked list to successfully change the block to true
+//Post-condition: the task passed in is set as true for it's bool block
+void TaskLinkedList::setBlock(std::string task){
+	ListNode *cur = _head;
+
+	while(cur != NULL){
+		if (cur->item.getTask() == task){ 
+			cur->item.setBlock(true);
+		}
+		else{
+			cur = cur->next;
+		}
 	}
 }
