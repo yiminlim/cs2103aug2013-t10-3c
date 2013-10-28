@@ -134,3 +134,11 @@ std::string Task::formatTimeOutputString(int time){
 bool Task::isDeadlineType() {
 	return (_deadlineDate._day && _deadlineDate._month && _deadlineDate._year);
 }
+
+bool Task::isValidDate(Date date) {
+	return date._day && date._month && date._year;
+}
+
+bool Task::isValidTime(int time) {
+	return (time != -1);
+}
