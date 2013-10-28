@@ -67,7 +67,8 @@ public:
 	bool editBlock(const std::string, std::vector<std::string> &);
 
 	//for adding in new blocks, const string contains action + location while vector string contains timings and dates
-	bool addBlock(const std::string, std::vector<std::string> &);
+	bool addBlock(const std::string, const std::string, std::vector<std::string> &);
+	// first string is the action and location of original taskString, 2nd string is the original taskString
 
 	//delete all the blocks of the string given
 	//finaliseBlock is the same as deleteBlock. Just give in all those that is meant to be deleted. If only one left, send in isBloack = false
