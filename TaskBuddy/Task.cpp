@@ -22,8 +22,13 @@ Task::Task(std::string action, std::string location, Date startingDate, int star
 std::string Task::formatTask(std::string action, std::string location, Date startingDate, int startingTime, Date endingDate, int endingTime, Date deadlineDate, int deadlineTime, bool block) {
 	std::ostringstream output;
 	if (isDeadlineType()) {
-		output << "by " << deadlineDate._day << "/" << deadlineDate._month << "/" << deadlineDate._year;
-		output << " " << formatTimeOutputString(deadlineTime) << " hrs";
+		output << "by ";
+		if (deadlineDate.isValidDate()) {
+			output << deadlineDate._day << "/" << deadlineDate._month << "/" << deadlineDate._year;
+		}
+		if (deadlineTime != -1) {
+			output << " " << formatTimeOutputString(deadlineTime) << " hrs";
+		}
 		output << ": " << action;
 		if (location.size() > 0) {
 			output << " at " << location;
@@ -32,11 +37,20 @@ std::string Task::formatTask(std::string action, std::string location, Date star
 		}
 	}
 	else {
-		output << startingDate._day << "/" << startingDate._month << "/" << startingDate._year;
-		output << " " << formatTimeOutputString(startingTime) << " hrs";
-		if (endingDate._day && endingDate._month && endingDate._year) {
-			output << " - " << endingDate._day << "/" << endingDate._month << "/" << endingDate._year;
-			output << " " << formatTimeOutputString(endingTime) << " hrs";
+		if (startingDate.isValidDate()) {
+			output << startingDate._day << "/" << startingDate._month << "/" << startingDate._year;
+		}
+		if (startingTime != -1) {
+			output << " " << formatTimeOutputString(startingTime) << " hrs";
+		}
+		if (endingDate.isValidDate() || endingTime != -1) {
+			output << " - ";
+			if (endingDate.isValidDate()) {
+				output << endingDate._day << "/" << endingDate._month << "/" << endingDate._year;
+			}
+			if (endingTime != -1) {
+				output << " " << formatTimeOutputString(endingTime) << " hrs";
+			}
 		}
 		output << ": " << action;
 		if (location.size() > 0) {
@@ -133,12 +147,4 @@ std::string Task::formatTimeOutputString(int time){
 
 bool Task::isDeadlineType() {
 	return (_deadlineDate._day && _deadlineDate._month && _deadlineDate._year);
-}
-
-bool Task::isValidDate(Date date) {
-	return date._day && date._month && date._year;
-}
-
-bool Task::isValidTime(int time) {
-	return (time != -1);
 }
