@@ -7,9 +7,6 @@ TaskLinkedList::TaskLinkedList(){
 	
 //destructor for linked list
 TaskLinkedList::~TaskLinkedList(){
-	while (!isEmpty()){
-		remove(" ", " ");
-	}
 }
 
 //Pre-condition: input an index between the range of 1 and the size of the linked list (including)
