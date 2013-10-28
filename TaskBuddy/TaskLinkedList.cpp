@@ -7,9 +7,6 @@ TaskLinkedList::TaskLinkedList(){
 	
 //destructor for linked list
 TaskLinkedList::~TaskLinkedList(){
-	while (!isEmpty()){
-		remove("1");
-	}
 }
 
 //Pre-condition: input an index between the range of 1 and the size of the linked list (including)
@@ -168,14 +165,52 @@ bool TaskLinkedList::getRemoveIndex(std::string task, int *index){
 		(*index)++;
 	}
 	if (cur != NULL){
-		return true;
+		return true; 
 	}
 	return false;
 }
 
-//Pre-condition: input a string containing the output format of the task to be deleted from the linked list
-//Post-condition: return true if the task is found and deleted from the linked list
-bool TaskLinkedList::remove(std::string task){
+//pre-condition: input a line and an empty vector to contain keywords
+//post-condition: rsplit the line into individual words and store them in the keywords vector
+void TaskLinkedList::splitIntoKeywords(std::string line, std::vector<std::string> & keywords){
+	std::stringstream iss;
+	std::string keyword;
+	iss << line;
+
+	while (iss >> keyword){
+		keywords.push_back(keyword);
+	}
+}
+
+//pre-condition: input a string containing a line of action and location and check if there is only one block off task having this action and location left. If yes, the last block off task will be unblocked
+//			     the last task must contain the word "blockoff" in the output format
+//post-condition: checks if there is only one task left in that specific block and unblock it if it is true
+void TaskLinkedList::checkIfRemainingBlockTask(std::string line){
+	std::vector<std::string> keywords;
+	std::vector<std::string> taskList;
+	int *index = new int;
+	ListNode *cur;
+	splitIntoKeywords(line, keywords);
+	keywords.push_back("blockoff");
+
+	if(retrieve(keywords, taskList)){
+		if(taskList.size() == 1){
+			if(getRemoveIndex(taskList[0], index)){
+				cur = traverseTo(*index);
+				cur->item.setBlock(false);
+			}
+		}
+	}
+
+	delete index;
+	delete cur;
+	cur = NULL;
+	index = NULL;
+}
+
+//Pre-condition: input a string containing the output format of the task to be deleted from the linked list and a line containing the action and location to cater in the fact that if there's only one task block remaining, it will be unblocked
+//Post-condition: return true if the task is found and deleted from the linked list, if task comes from a block, the last block will be unblocked.
+bool TaskLinkedList::remove(std::string task, std::string line){
 	int *index = new int;
 	*index = 1;
 	bool condition = false;
@@ -196,6 +231,9 @@ bool TaskLinkedList::remove(std::string task){
 		cur = NULL;
 		condition = true;
 	}
+
+	checkIfRemainingBlockTask(line);
+	
 	delete index;
 	index = NULL;
 	return condition;
@@ -241,7 +279,7 @@ bool TaskLinkedList::retrieve(const std::vector<std::string> keywords, std::vect
 
 //Pre-condition: input a vector of strings to be deleted from the linked list and deltes them from the linked list using the remove function
 //Post-condition: returns true when all the strings to be deleted are deleted from the linked list
-bool TaskLinkedList::removeBlockings(const std::vector<std::string> taskToBeDeleted){
+/*bool TaskLinkedList::removeBlockings(const std::vector<std::string> taskToBeDeleted){
 	bool isRemoved = true;
 
 	for(unsigned int i=0; i<taskToBeDeleted.size(); i++){
@@ -283,13 +321,31 @@ bool TaskLinkedList::finaliseBlocking(const std::vector<std::string> tasks){
 		return false;
 	}
 }	
+*/
 
-
+//pre-condition: input an empty vector and copy all the output format of the tasks in the linked list into this vector
+//post-condition: the entire output format of the tasks in the linked list is copied over into the vector
 void TaskLinkedList::updateStorageVector(std::vector<std::string> & tbVector){
 	ListNode *cur = _head;
 
 	while (cur != NULL){
 		tbVector.push_back(cur->item.getTask());
 		cur = cur->next;
+	}
+}
+
+//Pre-condition: input a string task to be located and change it's bool block as true
+//				 the task must be found in the linked list to successfully change the block to true
+//Post-condition: the task passed in is set as true for it's bool block
+void TaskLinkedList::setBlock(std::string task){
+	ListNode *cur = _head;
+
+	while(cur != NULL){
+		if (cur->item.getTask() == task){ 
+			cur->item.setBlock(true);
+		}
+		else{
+			cur = cur->next;
+		}
 	}
 }
