@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include <sstream>
 #include "TaskLogic.h"
 
 class UserInterface{
@@ -8,9 +9,15 @@ private:
 	TaskLogic tbLogic; 
 
 	static const std::string COMMAND_ADD;
+	static const std::string COMMAND_BLOCKOFF;
+	static const std::string COMMAND_END;
 	static const std::string COMMAND_DELETE;
 	static const std::string COMMAND_SEARCH;
 	static const std::string COMMAND_EDIT;
+	static const std::string COMMAND_EDITBLOCK;
+	static const std::string COMMAND_EDITALL;
+	static const std::string COMMAND_FINALISE;
+	static const std::string COMMAND_FINALIZE;
 	static const std::string COMMAND_UNDO;
 	static const std::string COMMAND_CLEAR;
 	static const std::string COMMAND_EXIT;	
@@ -23,7 +30,8 @@ private:
 	static const std::string MESSAGE_ADD;
 	static const std::string MESSAGE_DELETE;
 	static const std::string MESSAGE_EDIT;
-	static const std::string MESSAGE_UNDO;	
+	static const std::string MESSAGE_UNDO;
+	static const std::string MESSAGE_AVAILABLE_BLOCKS;
 	static const std::string MESSAGE_INVALID_ADD;
 	static const std::string MESSAGE_INVALID_SEARCH;
 	static const std::string MESSAGE_INVALID_DELETE;
@@ -64,6 +72,16 @@ public:
 	//Precondition: 
 	//Post-condition: 
 	void displayTodayTask();
+
+	//To display the sub-menu for editing of block off dates
+	//Precondition: 
+	//Post-condition:
+	void editBlockUI(const std::string);
+
+	//To display all information stored in a vector
+	//Precondition:
+	//Post-condition:
+	void displayInformationInVector(std::vector<std::string>);
 
 	//To display messages when commands are executed successfully
 	//Precondition: function successfully call
