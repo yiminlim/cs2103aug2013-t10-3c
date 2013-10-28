@@ -14,6 +14,7 @@ private:
 	static const std::string COMMAND_DELETE;
 	static const std::string COMMAND_SEARCH;
 	static const std::string COMMAND_EDIT;
+	static const std::string COMMAND_ADDBLOCK;
 	static const std::string COMMAND_EDITBLOCK;
 	static const std::string COMMAND_EDITALL;
 	static const std::string COMMAND_FINALISE;
@@ -32,6 +33,7 @@ private:
 	static const std::string MESSAGE_EDIT;
 	static const std::string MESSAGE_UNDO;
 	static const std::string MESSAGE_AVAILABLE_BLOCKS;
+	static const std::string MESSAGE_ADDBLOCK;
 	static const std::string MESSAGE_INVALID_ADD;
 	static const std::string MESSAGE_INVALID_SEARCH;
 	static const std::string MESSAGE_INVALID_DELETE;

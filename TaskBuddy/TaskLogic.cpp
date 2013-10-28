@@ -304,8 +304,8 @@ bool TaskLogic::editBlock(const std::string taskActionLocation, std::vector<std:
 	return true;
 }
 
-/*	//for adding in new blocks, const string contains action + location while vector string contains timings and dates
-bool TaskLogic::addBlock(const std::string taskActionLocation, const std::string originalTaskStrng, std::vector<std::string>& taskDateTimeVector){
+	//for adding in new blocks, const string contains action + location while vector string contains timings and dates
+bool TaskLogic::addBlock(const std::string taskActionLocation, const std::string originalTaskString, std::vector<std::string>& taskDateTimeVector){
 	std::string taskString = taskActionLocation + " blockoff";
 	tbLinkedList.setBlock(originalTaskString);   //originalTaskString
 	for(unsigned int i = 0; i < taskDateTimeVector.size(); i++)
@@ -314,7 +314,7 @@ bool TaskLogic::addBlock(const std::string taskActionLocation, const std::string
 		return true;
 	else
 		return false;
-}*/
+}
 
 	//delete all the blocks of the string given
 	//finaliseBlock is the same as deleteBlock. Just give in all those that is meant to be deleted. If only one left, send in isBloack = false
