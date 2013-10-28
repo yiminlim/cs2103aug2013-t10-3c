@@ -252,3 +252,12 @@ bool TaskLinkedList::finaliseBlocking(const std::vector<std::string> tasks){
 		return false;
 	}
 }	
+
+void TaskLinkedList::updateStorageVector(std::vector<std::string> & tbVector){
+	ListNode *cur = _head;
+
+	while (cur != NULL){
+		tbVector.push_back(cur->item.getTask());
+		cur = cur->next;
+	}
+}
