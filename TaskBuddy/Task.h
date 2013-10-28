@@ -64,6 +64,9 @@ public:
 	//returns whether block or not
 	bool getBlock();
 
+	//set block
+	void setBlock(bool);
+
 	std::string formatTimeOutputString(int time);
 
 	bool isDeadlineType();
