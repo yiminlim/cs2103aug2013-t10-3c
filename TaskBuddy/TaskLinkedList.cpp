@@ -41,31 +41,33 @@ int TaskLinkedList::getSize(){
 //				 the task have to have either a startingDate and startingTime or a deadlineDate and deadlineTime
 //				 for empty time, it is declared with a value -1
 //Post-condition: the pointer indicating date and time will be updated to store either the startingDate and startingTime or the deadlineDate and deadlineTime of the respective Task. 
-void TaskLinkedList::obtainDateAndTime(Task & task, Date *date, int *time){
+void TaskLinkedList::obtainDateAndTime(Task & task, Date *date, int *time, int *endTime){
 	if (task.getDeadlineTime() == -1){
 		date->_day = task.getStartingDate()._day;
 		date->_month = task.getStartingDate()._month;
 		date->_year = task.getStartingDate()._year;
 		*time = task.getStartingTime();
+		*endTime = task.getEndingTime();
 	}
 	else{
 		date->_day = task.getDeadlineDate()._day;
 		date->_month = task.getDeadlineDate()._month;
 		date->_year = task.getDeadlineDate()._year;
 		*time = task.getDeadlineTime();
+		*endTime = -1;
 	}
 	return;
 }
 
 //Pre-condition: input the Task reference to be added and a specific Task reference from the linked list and sort them accordingly 
 //Post-condition: returns true if the Task reference to be added is of an earlier date and time than the specific Task reference from the linked list
-bool TaskLinkedList::compareDateAndTime(Task & curTask, Task & listTask){
+bool TaskLinkedList::compareDateAndTime(Task & curTask, Task & listTask, bool & isClash){
 		Date *curDate = new Date;
 		Date *listDate = new Date;
-		int *curTime = new int, *listTime = new int;
+		int *curTime = new int, *listTime = new int, *endCurTime = new int, *endListTime = new int;
 		bool condition = false;
-		obtainDateAndTime(curTask, curDate, curTime);
-		obtainDateAndTime(listTask, listDate, listTime);
+		obtainDateAndTime(curTask, curDate, curTime, endCurTime);
+		obtainDateAndTime(listTask, listDate, listTime, endListTime);
 
 		if (curDate->_year < listDate->_year){
 			condition = true;
@@ -87,10 +89,25 @@ bool TaskLinkedList::compareDateAndTime(Task & curTask, Task & listTask){
 		}
 		else if (*curTime < *listTime){
 			condition = true;
+			if (*endListTime == -1 || (*endListTime != -1 && *endCurTime != -1)){ //both from to
+				if (*endCurTime > *listTime){
+					isClash = true; //cur is from to, list is from
+				}
+			}
 		}
-		else
+		else if (*curTime == *listTime){
+			isClash = true; //both froms
+			condition = false;
+		}
+		else if (*curTime > *listTime){
 			condition = false; 
-			
+			if (*endCurTime == -1 ){
+				if (*endListTime > *curTime || (*endListTime != -1 && *endCurTime != -1)){ //both from to
+					isClash = true; //cur is from, list is from to
+				}
+			}
+		}
+
 
 		delete curDate;
 		curDate = NULL;
@@ -106,7 +123,7 @@ bool TaskLinkedList::compareDateAndTime(Task & curTask, Task & listTask){
 
 //Pre-condition: input a Task reference to check for the index which it should be inserted into the linked list, in a sorted manner
 //Post-condition: return the index where the Task is supposed to be added at
-int TaskLinkedList::getInsertIndex(Task & curTask){
+int TaskLinkedList::getInsertIndex(Task & curTask, bool & isClash){
 	ListNode *cur = _head;
 	int i = 1;
 
@@ -115,7 +132,7 @@ int TaskLinkedList::getInsertIndex(Task & curTask){
 	}
 
 	while (cur != NULL){
-		if (compareDateAndTime(curTask, cur->item)){
+		if (compareDateAndTime(curTask, cur->item, isClash)){
 			return i;
 		} 
 		else{
@@ -129,9 +146,9 @@ int TaskLinkedList::getInsertIndex(Task & curTask){
 
 //Pre-condition: input a Task reference to be added into the linked list 
 //Post-condition: return true if the task is added into the linked list in an sorted manner
-bool TaskLinkedList::insert(Task & curTask){
+bool TaskLinkedList::insert(Task & curTask, bool & isClash){
 	int newSize = getSize() + 1;
-	int index = getInsertIndex(curTask);
+	int index = getInsertIndex(curTask, isClash);
 
 	if ( (index < 1) || (index > newSize) ){
 		return false;
