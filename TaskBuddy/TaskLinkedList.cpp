@@ -1,0 +1,368 @@
+#include "TaskLinkedList.h"
+
+TaskLinkedList::TaskLinkedList(){
+	_head = NULL;
+	_size = 0;
+}
+	
+//destructor for linked list
+TaskLinkedList::~TaskLinkedList(){
+}
+
+//Pre-condition: input an index between the range of 1 and the size of the linked list (including)
+//Post-condition: returns a ListNode pointer that will traverse to the position given by the index
+TaskLinkedList::ListNode* TaskLinkedList::traverseTo(int index){
+	if ( (index < 1) || (index > getSize()) ){
+		return NULL;
+	}
+
+	else{
+		ListNode *cur = _head;
+		for (int skip = 1; skip < index; skip++){
+			cur = cur->next;
+		}
+		return cur;
+	}
+}
+	
+//Pre-condition: check if linked list is empty
+//Post-condition: return true if the linked list is empty
+bool TaskLinkedList::isEmpty(){
+	return _size==0;
+}
+	
+//Pre-condition: check for the size of the linked list
+//Post-condition: return the number of tasks in the linked list
+int TaskLinkedList::getSize(){
+	return _size;
+}
+
+//Pre-condition: input in a Task reference and two pointers indicating date and time 
+//				 the task have to have either a startingDate and startingTime or a deadlineDate and deadlineTime
+//				 for empty time, it is declared with a value -1
+//Post-condition: the pointer indicating date and time will be updated to store either the startingDate and startingTime or the deadlineDate and deadlineTime of the respective Task. 
+void TaskLinkedList::obtainDateAndTime(Task & task, Date *date, int *time, int *endTime){
+	if (task.getDeadlineTime() == -1){
+		date->_day = task.getStartingDate()._day;
+		date->_month = task.getStartingDate()._month;
+		date->_year = task.getStartingDate()._year;
+		*time = task.getStartingTime();
+		*endTime = task.getEndingTime();
+	}
+	else{
+		date->_day = task.getDeadlineDate()._day;
+		date->_month = task.getDeadlineDate()._month;
+		date->_year = task.getDeadlineDate()._year;
+		*time = task.getDeadlineTime();
+		*endTime = -1;
+	}
+	return;
+}
+
+//Pre-condition: input the Task reference to be added and a specific Task reference from the linked list and sort them accordingly 
+//Post-condition: returns true if the Task reference to be added is of an earlier date and time than the specific Task reference from the linked list
+bool TaskLinkedList::compareDateAndTime(Task & curTask, Task & listTask, bool & isClash){
+		Date *curDate = new Date;
+		Date *listDate = new Date;
+		int *curTime = new int, *listTime = new int, *endCurTime = new int, *endListTime = new int;
+		bool condition = false;
+		obtainDateAndTime(curTask, curDate, curTime, endCurTime);
+		obtainDateAndTime(listTask, listDate, listTime, endListTime);
+
+		if (curDate->_year < listDate->_year){
+			condition = true;
+		} 
+		else if (curDate->_year > listDate->_year){
+			condition = false;
+		} 
+		else if (curDate->_month < listDate->_month){
+			condition = true;
+		}
+		else if (curDate->_month > listDate->_month){
+			condition = false;
+		}
+		else if (curDate->_day < listDate->_day){
+			condition = true;
+		}
+		else if (curDate->_day > listDate->_day){
+			condition = false;
+		}
+		else if (*curTime < *listTime){
+			condition = true;
+			if (*endListTime == -1 || (*endListTime != -1 && *endCurTime != -1)){ //both from to
+				if (*endCurTime > *listTime){
+					isClash = true; //cur is from to, list is from
+				}
+			}
+		}
+		else if (*curTime == *listTime){
+			isClash = true; //both froms
+			condition = false;
+		}
+		else if (*curTime > *listTime){
+			condition = false; 
+			if (*endCurTime == -1 ){
+				if (*endListTime > *curTime || (*endListTime != -1 && *endCurTime != -1)){ //both from to
+					isClash = true; //cur is from, list is from to
+				}
+			}
+		}
+
+
+		delete curDate;
+		curDate = NULL;
+		delete listDate;
+		listDate = NULL;
+		delete curTime;
+		curTime = NULL;
+		delete listTime;
+		listTime = NULL;
+
+		return condition;		
+}
+
+//Pre-condition: input a Task reference to check for the index which it should be inserted into the linked list, in a sorted manner
+//Post-condition: return the index where the Task is supposed to be added at
+int TaskLinkedList::getInsertIndex(Task & curTask, bool & isClash){
+	ListNode *cur = _head;
+	int i = 1;
+
+	if (isEmpty()){
+		return i;
+	}
+
+	while (cur != NULL){
+		if (compareDateAndTime(curTask, cur->item, isClash)){
+			return i;
+		} 
+		else{
+			cur = cur->next;
+			i++;
+		}
+	} 
+
+	return i;
+}
+
+//Pre-condition: input a Task reference to be added into the linked list 
+//Post-condition: return true if the task is added into the linked list in an sorted manner
+bool TaskLinkedList::insert(Task & curTask, bool & isClash){
+	int newSize = getSize() + 1;
+	int index = getInsertIndex(curTask, isClash);
+
+	if ( (index < 1) || (index > newSize) ){
+		return false;
+	}
+	else{
+		ListNode *newTask = new ListNode;
+		newTask->item = curTask;
+		newTask->next = NULL;
+		_size = newSize;
+
+		if (index == 1){
+			newTask->next = _head;
+			_head = newTask;
+		} 
+		else{
+			ListNode *prev = traverseTo(index-1);
+			newTask->next = prev->next;
+			prev->next = newTask;
+		}
+	}
+	return true;
+}
+
+//Pre-condition: input a string containing the output format of the task to be deleted from the linked list and a pointer indicating the index, search for the task in the linked list and obtain the index of the task
+//Post-condition: return true if task is found in the linked list and the index pointer will be updated accordingly
+bool TaskLinkedList::getRemoveIndex(std::string task, int *index){
+	ListNode *cur = _head;
+
+	while (cur->item.getTask() != task){
+		cur = cur->next;
+		(*index)++;
+	}
+	if (cur != NULL){
+		return true; 
+	}
+	return false;
+}
+
+//pre-condition: input a line and an empty vector to contain keywords
+//post-condition: rsplit the line into individual words and store them in the keywords vector
+void TaskLinkedList::splitIntoKeywords(std::string line, std::vector<std::string> & keywords){
+	std::stringstream iss;
+	std::string keyword;
+	iss << line;
+
+	while (iss >> keyword){
+		keywords.push_back(keyword);
+	}
+}
+
+//pre-condition: input a string containing a line of action and location and check if there is only one block off task having this action and location left. If yes, the last block off task will be unblocked
+//			     the last task must contain the word "blockoff" in the output format
+//post-condition: checks if there is only one task left in that specific block and unblock it if it is true
+void TaskLinkedList::checkIfRemainingBlockTask(std::string line){
+	std::vector<std::string> keywords;
+	std::vector<std::string> taskList;
+	int *index = new int;
+	ListNode *cur;
+	splitIntoKeywords(line, keywords);
+	keywords.push_back("blockoff");
+
+	if(retrieve(keywords, taskList)){
+		if(taskList.size() == 1){
+			if(getRemoveIndex(taskList[0], index)){
+				cur = traverseTo(*index);
+				cur->item.setBlock(false);
+			}
+		}
+	}
+
+	delete index;
+	delete cur;
+	cur = NULL;
+	index = NULL;
+}
+
+//Pre-condition: input a string containing the output format of the task to be deleted from the linked list and a line containing the action and location to cater in the fact that if there's only one task block remaining, it will be unblocked
+//Post-condition: return true if the task is found and deleted from the linked list, if task comes from a block, the last block will be unblocked.
+bool TaskLinkedList::remove(std::string task, std::string line){
+	int *index = new int;
+	*index = 1;
+	bool condition = false;
+	if (getRemoveIndex(task,index)){
+		ListNode *cur;
+		--_size;
+
+		if (*index == 1){
+			cur = _head;
+			_head = _head->next;
+		} 
+		else{
+			ListNode *prev = traverseTo(*index-1);
+			cur = prev->next;
+			prev->next = cur->next;
+		}
+		delete cur;
+		cur = NULL;
+		condition = true;
+	}
+
+	checkIfRemainingBlockTask(line);
+	
+	delete index;
+	index = NULL;
+	return condition;
+}
+
+//Pre-condition: input a string of words/word and convert it to lower case
+//Post-condition: return the same string but converted to lower case
+std::string TaskLinkedList::toLowerCase(std::string line){
+	for (unsigned int i = 0; line[i] != '\0'; i++){
+		line[i] = tolower(line[i]);
+	}
+	return line;
+}
+	
+//Pre-condition: input a vector of individual keywords and an empty vector of taskList to store the task that are found from the linked list which contains all of the keywords 
+//Post-condition: return true if at least 1 task is found to contain all of the keywords from the vector and updates the taskList vector accordingly
+bool TaskLinkedList::retrieve(const std::vector<std::string> keywords, std::vector<std::string> & taskList){
+	ListNode *cur = _head;
+
+	while (cur != NULL){
+		int count = 0;
+		for (unsigned int i = 0; i < keywords.size(); i++){
+			std::string tempTask = toLowerCase(cur->item.getTask());
+			std::string tempKeyword = toLowerCase(keywords[i]);
+			if ((tempTask).find(tempKeyword) != std::string::npos){
+				count++;
+			}
+		}
+		if (count == keywords.size()){
+			taskList.push_back(cur->item.getTask());
+		}
+		cur = cur->next;
+	}
+
+	if (taskList.empty()){
+		return false;
+	} 
+	else{
+		return true;
+	}
+}
+
+
+//Pre-condition: input a vector of strings to be deleted from the linked list and deltes them from the linked list using the remove function
+//Post-condition: returns true when all the strings to be deleted are deleted from the linked list
+/*bool TaskLinkedList::removeBlockings(const std::vector<std::string> taskToBeDeleted){
+	bool isRemoved = true;
+
+	for(unsigned int i=0; i<taskToBeDeleted.size(); i++){
+		if (!remove(taskToBeDeleted[i])){
+			isRemoved = false;
+		}
+	}
+
+	return isRemoved;
+}
+
+//Pre-condition: input a vector of tasks to be finalised in the blocking. The function will search through the linked list and remove the other blockings that are unwanted
+//Post-condition: return true if the blockings are successfully finalised. Meaning that the other unwanted blockings are removed. 
+bool TaskLinkedList::finaliseBlocking(const std::vector<std::string> tasks){
+	ListNode *cur = _head;
+	std::vector<std::string> taskToBeDeleted;
+
+	while (cur != NULL){
+		bool finBlocks = false;
+
+		if (cur->item.getBlock()){
+			for(unsigned int i=0; i<tasks.size(); i++){
+				if (cur->item.getTask() == tasks[i]){
+					finBlocks = true;
+				}
+			}
+		}
+
+		if (finBlocks == false){
+			taskToBeDeleted.push_back(cur->item.getTask());
+		}
+		
+		cur = cur->next;
+	}
+
+	if(removeBlockings(taskToBeDeleted)){
+		return true;
+	} else{
+		return false;
+	}
+}	
+*/
+
+//pre-condition: input an empty vector and copy all the output format of the tasks in the linked list into this vector
+//post-condition: the entire output format of the tasks in the linked list is copied over into the vector
+void TaskLinkedList::updateStorageVector(std::vector<std::string> & tbVector){
+	ListNode *cur = _head;
+
+	while (cur != NULL){
+		tbVector.push_back(cur->item.getTask());
+		cur = cur->next;
+	}
+}
+
+//Pre-condition: input a string task to be located and change it's bool block as true
+//				 the task must be found in the linked list to successfully change the block to true
+//Post-condition: the task passed in is set as true for it's bool block
+void TaskLinkedList::setBlock(std::string task){
+	ListNode *cur = _head;
+
+	while(cur != NULL){
+		if (cur->item.getTask() == task){ 
+			cur->item.setBlock(true);
+		}
+		else{
+			cur = cur->next;
+		}
+	}
+}
