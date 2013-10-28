@@ -67,7 +67,11 @@ public:
 	//set block
 	void setBlock(bool);
 
-	std::string formatTimeOutputString(int time);
+	std::string formatTimeOutputString(int);
 
 	bool isDeadlineType();
+
+	bool isValidDate(Date);
+
+	bool isValidTime(int);
 };
