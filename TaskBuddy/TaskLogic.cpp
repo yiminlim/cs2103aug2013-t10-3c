@@ -4,17 +4,22 @@
 #include <iostream>
 #include <ctime>
 
+const std::string TaskLogic::COMMAND_ADD = "add";
+const std::string TaskLogic::COMMAND_DELETE = "delete";
+const std::string TaskLogic::COMMAND_EDIT = "edit";
 
 TaskLogic::TaskLogic(){
 
 }
 
 TaskLogic::~TaskLogic(){
+
 }
 
 //Takes in filename and takes all existing tasks inside file into tbLinkedList
 void TaskLogic::initLogic(){
 	initDate();
+	std::vector<std::string> tbVector;
 	tbStorage.getExistingTasks(tbVector);
 	for (unsigned int i = 0; i < tbVector.size(); i++){
 		addExistingTask(tbVector[i]); 
@@ -75,19 +80,22 @@ bool TaskLogic::add(const std::string taskString){
 	bool checkAdded = true;
 
 	for(unsigned int i = 0; i < taskObjectVector.size() ; i++){
-		tbVector.push_back(taskObjectVector[i].getTask()); //only need to push in for user inputs
-		if(!tbLinkedList.insert(taskObjectVector[i]))
+		//tbVector.push_back(taskObjectVector[i].getTask()); //only need to push in for user inputs
+		if(tbLinkedList.insert(taskObjectVector[i]))
+			update(COMMAND_ADD, taskObjectVector[0].getTask(), "");
+		else
 			checkAdded = false;
 	}
 	return checkAdded;
 }
 
-void TaskLogic::addExistingTask(const std::string taskString){
+bool TaskLogic::addExistingTask(const std::string taskString){
 	std::vector<Task> taskObjectVector; 
     taskObjectVector = createTask(taskString, 2); //generating task from file
-	tbLinkedList.insert(taskObjectVector[0]); //FOR EXISTING FILE MUST NOTE THE BLOCKING AS WELL!! 
-
-	return;
+	if(tbLinkedList.insert(taskObjectVector[0]))//FOR EXISTING FILE MUST NOTE THE BLOCKING AS WELL!! 
+		return true;
+	else
+		return false;
 }
 
 bool TaskLogic::checkIsValidInput(std::string taskString){
@@ -100,10 +108,19 @@ bool TaskLogic::checkIsValidInput(std::string taskString){
 	
 //delete a task from the list at the index given
 bool TaskLogic::del(const std::string taskString){
-	delFromVector(taskString);
-	return tbLinkedList.remove(taskString);
+	bool checkDeleted = true;
+
+	//delFromVector(taskString);
+	checkDeleted = tbLinkedList.remove(taskString);
+
+	if (checkDeleted){
+		update(COMMAND_DELETE, taskString, "");
+	}
+
+	return checkDeleted;
 }
 
+/*  NOT NECESSARY IF NO VECTOR
 bool TaskLogic::delFromVector(const std::string taskString){
 	std::vector<std::string>::iterator delIter;
 
@@ -117,6 +134,7 @@ bool TaskLogic::delFromVector(const std::string taskString){
 	//assert that it can be found or use exception
 	return false;
 }
+*/
 	
 //return all tasks in the list that contains keyword and copy these tasks into vector parameter
 bool TaskLogic::generalSearch(std::string userInput, std::vector<std::string>& vectorOutput){
@@ -163,21 +181,52 @@ bool TaskLogic::edit(std::string taskString, std::string editString){
 	bool dummy;
 
 	stringParse(taskString,2,currentAction,currentLocation,currentStartingDate,currentStartingTime,currentEndingDate,currentEndingTime,currentDeadlineDate,currentDeadlineTime, isBlock);
-	stringParse(editString,1,newAction,newLocation,newStartingDate,newStartingTime,newEndingDate,newEndingTime,newDeadlineDate,newDeadlineTime, dummy);
+	stringParse(editString,1,newAction,newLocation,newStartingDate,newStartingTime,newEndingDate,newEndingTime,newDeadlineDate,newDeadlineTime, dummy);  
 
-	if (newAction != "") {
-		currentAction = "";
+	if (newAction == "" && currentAction != "") {
+		newAction = currentAction;
+		//isBlock = false;
 	}
-	newAction = currentAction + newAction;
-
-	if (newLocation != "" && currentLocation != "") {
-		currentLocation = "";
+	//if there is new action we need to change status of block? Current set as if action and location changes, block will be removed!!
+	if (newLocation == "" && currentLocation != "") {
+		newLocation = currentLocation;
 	}
-	newLocation = currentLocation + newLocation;
 	
+	bool isDateEdited = false;
+
+	if(newDeadlineDate[0].isValidDate() || newStartingDate[0].isValidDate() || newEndingDate[0].isValidDate() ) //check is by Date instead of time because we want to be able to allow time to be undefined. Also check if we want to allow only to.
+		isDateEdited = true;
+
+	if(!isDateEdited){
+		if(currentStartingDate[0].isValidDate() )  //actually necessary to have all these checks?
+			newStartingDate[0] = currentStartingDate[0];
+		if(currentEndingDate[0].isValidDate() )
+			newEndingDate[0] = currentEndingDate[0];
+		if(currentDeadlineDate[0].isValidDate() )
+			newDeadlineDate[0] = currentDeadlineDate[0];
+		if(currentStartingTime[0] != -1)
+			newStartingTime[0] = currentStartingTime[0];
+		if(currentEndingTime[0] != -1)
+			newEndingTime[0] = currentEndingTime[0];
+		if(currentDeadlineTime[0] != -1)
+			newDeadlineTime[0] = currentDeadlineTime[0];
+	}
+	
+	Task taskObject(newAction,newLocation,newStartingDate[0],newStartingTime[0],newEndingDate[0],newEndingTime[0],newDeadlineDate[0],newDeadlineTime[0],isBlock);
+
+	//delFromVector(taskString);
+//	tbVector.push_back(taskObject.getTask()); //only need to push in for user inputs
+	
+	tbLinkedList.remove(taskString);
+	tbLinkedList.insert(taskObject);
+
+	update(COMMAND_EDIT, taskObject.getTask(), taskString);
+	return true; // need to do checking
+		
+	/*
 	bool isCurrentDeadlineType = false;
 	bool isNewDeadlineType = false;
-	if (currentDeadlineTime[0] != -1 && currentStartingTime[0] == -1) {
+	if (currentDeadlineTime[0] != -1 && currentStartingTime[0] == -1) {  //on the basis that time must always be placed??!! what if no time placed
 		isCurrentDeadlineType = true;	
 	}
 	if ((newDeadlineTime[0] != -1 && newStartingTime[0] == -1) || (newDeadlineTime[0] == -1  && currentDeadlineTime[0] != -1 && newStartingTime[0] == -1)) {
@@ -221,46 +270,59 @@ bool TaskLogic::edit(std::string taskString, std::string editString){
 			}
 			
 		}
-		/*if (!newEndingDate[0].isValidDate() && currentEndingDate[0].isValidDate()) {
-			newEndingDate = currentEndingDate;
-			newEndingTime[0] = currentEndingTime[0];
-		}*/
+		//if (!newEndingDate[0].isValidDate() && currentEndingDate[0].isValidDate()) {
+		//	newEndingDate = currentEndingDate;
+		//	newEndingTime[0] = currentEndingTime[0];
+		//}
 	}
-	
+*/	
 
-/*	
-	if(!newStartingDate[0].isValidDate() && currentStartingDate[0].isValidDate()){
-		newStartingDate = currentStartingDate;
-	}
-	if(!newEndingDate[0].isValidDate() && currentEndingDate[0].isValidDate()){
-		newEndingDate = currentEndingDate;
-	}
-	if(!newDeadlineDate[0].isValidDate() && currentDeadlineDate[0].isValidDate()){
-		newDeadlineDate = currentDeadlineDate;
-	}
-	if(newStartingTime[0] == -1 && currentStartingTime[0] != -1){
-		newStartingTime = currentStartingTime;
-	}
-	if(newEndingTime[0] == -1 && currentEndingTime[0] != -1){
-		newEndingTime = currentEndingTime;
-	}
-	if(newDeadlineTime[0] == -1 && currentDeadlineTime[0] != -1){
-		newDeadlineTime = currentDeadlineTime;
-	}
-	*/
-	
 	//add update for block
+}
 
-
-	Task taskObject(newAction,newLocation,newStartingDate[0],newStartingTime[0],newEndingDate[0],newEndingTime[0],newDeadlineDate[0],newDeadlineTime[0],isBlock);
-
-	delFromVector(taskString);
-	tbVector.push_back(taskObject.getTask()); //only need to push in for user inputs
+//gives back entire block of taskStrings and also a string that contains the task (action + " at " location )
+bool TaskLogic::getBlock(std::string& taskString, std::string& taskActionLocation, std::vector<std::string>& blockTaskVector){
+	std::string action = "", location ="";
+	std::vector<Date> startingDateVector, endingDateVector, deadlineDateVector; 
+	std::vector<int> startingTimeVector, endingTimeVector, deadlineTimeVector; //check if we really want to set it as -1
+	bool isBlock = false;
+	taskParse.processTaskStringFromFile(taskString,action,location,startingDateVector,startingTimeVector,endingDateVector,endingTimeVector,deadlineDateVector,deadlineTimeVector,isBlock,dateVector);
 	
-	tbLinkedList.remove(taskString);
-	tbLinkedList.insert(taskObject);
+	taskActionLocation = action + " at " + location; //just the common details. i.e action and location only
+	generalSearch(taskActionLocation, blockTaskVector);
+	
+	if(blockTaskVector.size() > 0)
+		return true;
+	else
+		return false;
+}
+	
+	//for editing location, action of all blocked item.
+bool TaskLogic::editBlock(const std::string taskActionLocation, std::vector<std::string>& blockTaskVector){
+	for(unsigned int i = 0; i < blockTaskVector.size(); i++)
+		edit(taskActionLocation, blockTaskVector[i]);
+	return true;
+}
 
-	return true; // need to do checking
+	//for adding in new blocks, const string contains action + location while vector string contains timings and dates
+bool TaskLogic::addBlock(const std::string taskActionLocation, std::vector<std::string>& taskDateTimeVector){
+	std::string taskString = "add " + taskActionLocation + " blockoff";
+	for(unsigned int i = 0; i < taskDateTimeVector.size(); i++)
+		taskString = taskString + " " + taskDateTimeVector[i];
+	if(add(taskString))
+		return true;
+	else
+		return false;
+}
+
+	//delete all the blocks of the string given
+	//finaliseBlock is the same as deleteBlock. Just give in all those that is meant to be deleted. If only one left, send in isBloack = false
+bool TaskLogic::deleteBlock(std::vector<std::string>& blockTaskVector){
+	for(unsigned int i=0; i < blockTaskVector.size() ; i++)
+		del(blockTaskVector[i]);
+
+	//what if it is finalising? then we must remove the blockoff
+	return true;
 }
 
 
@@ -277,13 +339,14 @@ bool TaskLogic::edit(std::string taskString, std::string editString){
 //}
 	
 void TaskLogic::save(){
+    std::vector<std::string> tbVector;
+	tbLinkedList.updateStorageVector(tbVector);
 	tbStorage.saveTasksIntoFile(tbVector);
 }
 
 //Takes in filename and stores all tasks inside tbLinkedList into the file to prepare for exit.
 void TaskLogic::exitLogic(){
-	save();
-	tbVector.clear();
+	//tbVector.clear();
 }
 
 void TaskLogic::initDate(){
@@ -335,3 +398,55 @@ std::string TaskLogic::extractDate(std::string currentDateTime){
 	oss << date << "/" << monthNum << "/" << year; 
 	return oss.str();
 }   
+
+//To update taskVector with new command and task by user
+void TaskLogic::update(std::string command, std::string newTask, std::string oldTask){
+
+	if (command == COMMAND_EDIT){
+		commandStackHistory.push(command);   // newTask is to be added in, while old task is to be deleted.
+		taskStackHistory.push(oldTask);  //deleted
+		taskStackHistory.push(newTask);  //added
+		// must be in this specific order, and newTask and oldTask must be in proper form
+	}
+	else if(command == COMMAND_ADD || command == COMMAND_DELETE){
+		commandStackHistory.push(command);
+		taskStackHistory.push(newTask); //use newTask even for delete
+	}
+}
+
+//To undo the most recent command made by user
+bool TaskLogic::undo(){
+	bool result = true;
+
+	if(commandStackHistory.top() == COMMAND_EDIT){
+		if(!del(taskStackHistory.top()))
+			result = false;
+		taskStackHistory.pop();   //if delete fails we should still remove the task to be done from the system?
+		
+		if(!addExistingTask(taskStackHistory.top()))
+			result = false;
+		taskStackHistory.pop();
+	
+		commandStackHistory.pop();  //whether result true or not, let the command be popped out cos otherwise it can never be done
+	}
+	else if(commandStackHistory.top() == COMMAND_ADD){
+		if(!del(taskStackHistory.top()))
+			result = false;
+		taskStackHistory.pop();
+		
+		commandStackHistory.pop();
+	}
+	else if(commandStackHistory.top() == COMMAND_DELETE){
+		if(!addExistingTask(taskStackHistory.top()))
+			result = false;
+		taskStackHistory.pop();
+		
+		commandStackHistory.pop();
+	}	
+	else if(commandStackHistory.empty())
+		result = false;
+	else
+		//wrong command sent in or the command Stack is empty i.e nothing to undo
+
+	return result;
+}
