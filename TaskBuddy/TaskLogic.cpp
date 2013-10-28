@@ -239,10 +239,9 @@ bool TaskLogic::edit(std::string taskString, std::string editString){
 
 //-----EDIT BLOCK-----------------------------------------------------------------------------------------------------
 
-//gives back entire block of taskStrings and also a string that contains the task (action + " at " location )
 /*
 	Purpose: Search for all task that is blocked together with the task and input strings into blockTaskVector and
-			 taskActionLocation
+			 taskActionLocation (action + " at " + location)
 	Pre-conditions: taskString is not-empty and is in proper format
 	Post-conditions: true is returned only if task(s) is found, given that the input is valid
 					 
@@ -259,15 +258,31 @@ bool TaskLogic::getBlock(std::string& taskString, std::string& taskActionLocatio
 		return false;
 }
 
-	
-//for editing location, action of all blocked item.
-bool TaskLogic::editBlock(const std::string taskActionLocation, std::vector<std::string>& blockTaskVector){
-	for(unsigned int i = 0; i < blockTaskVector.size(); i++)
-		edit(taskActionLocation, blockTaskVector[i]);
-	return true;
+/*
+	Purpose: edit the action and location of all task in the block to the newTaskActionLocation
+	Pre-conditions: newTaskActionLocation is not empty and is valid
+					blockTaskVector is not-empty and is in proper format
+	Post-conditions: true is returned only if all tasks are edited correctly, given that all inputs are valid
+					 
+	Equivalence Partition: Empty string, Invalid string, Valid string, empty vector, invalid vector strings, valid vector strings
+	Boundary: Empty string, Any valid string, Any invalid string, empty vector, any invalid vector strings, any valid vector strings
+*/
+bool TaskLogic::editBlock(const std::string newTaskActionLocation, std::vector<std::string>& blockTaskVector){
+	bool isValidEdit = true;
+	for(unsigned int i = 0; i < blockTaskVector.size(); i++){
+		if(!edit(newTaskActionLocation, blockTaskVector[i]))
+			isValidEdit = false;
+	}
+	return isValidEdit;
 }
 
-//for adding in new blocks, const string contains action + location while vector string contains timings and dates
+/*
+	Purpose: Adds in all new tasks into tbLinkedList and also mark the original task as blocked if not already blocked.
+	Pre-conditions: taskString is not empty and is valid (contains key word such as "blockoff"
+	Post-conditions: true is returned only if all tasks are added successfully, given that all inputs are valid
+	Equivalence Partition: Empty strings, Invalid strings, Valid strings
+	Boundary: Empty strings, Any valid strings, Any invalid strings
+*/
 bool TaskLogic::addBlock(const std::string taskString, const std::string originalTaskString){
 	tbLinkedList.setBlock(originalTaskString);   
 	bool isClash = false;
@@ -278,18 +293,35 @@ bool TaskLogic::addBlock(const std::string taskString, const std::string origina
 		return false;
 }
 
-//delete all the blocks of the string given
-//finaliseBlock is the same as deleteBlock. Just give in all those that is meant to be deleted. If only one left, send in isBloack = false
+/*
+	Purpose: Finalise blocking to only one task by removing all others. Del ensures that the sole task remaining is not marked
+			 as blocked anymore
+	Pre-conditions: all strings in blockTaskVector is of proper format. delIndex is withing the range of blockTaskVector
+	Post-conditions: true is returned only if block is finalised, given that all inputs are valid
+	Equivalence Partition: valid int index, invalid int index, empty vector, empty strings, valid strings, invalid strings
+	Boundary: index 0, index 1, index size-1, any invalid index, Empty vector, Empty strings, Any valid strings, Any invalid strings
+*/
 bool TaskLogic::finaliseBlock(const int delIndex, std::vector<std::string>& blockTaskVector){
-	for(unsigned int i=0; i < blockTaskVector.size() && i != delIndex ; i++)
-		del(blockTaskVector[i]);
+	unsigned int count = 0;
+	for(unsigned int i=0; i < blockTaskVector.size() ; i++){
+		if(i != delIndex){
+			del(blockTaskVector[i]);
+			count++;
+		}
+	}
 
-	return true;
+	return (count == blockTaskVector.size() - 1);
 }
 
 //-----UNDO--------------------------------------------------------------------------------------------------------
 
-//To update taskVector with new command and task by user
+/*
+	Purpose: Keeps track of commands made by pushing command keywords into stack commandStackHistory and pushing the
+			 taskString into taskStackHistory
+	Pre-conditions: command string is a valid command, newTask and oldTask are in the proper processed format needed
+	Equivalence Partition: command == COMMAND_EDIT, command == COMMAND_ADD, command == COMMAND_DELETE
+	Boundary: any invalid command, command == COMMAND_EDIT, command == COMMAND_ADD, command == COMMAND_DELETE
+*/
 void TaskLogic::update(std::string command, std::string newTask, std::string oldTask){
 
 	if (command == COMMAND_EDIT){
@@ -302,9 +334,17 @@ void TaskLogic::update(std::string command, std::string newTask, std::string old
 		commandStackHistory.push(command);
 		taskStackHistory.push(newTask); //use newTask even for delete
 	}
+	return;
 }
 
-//To undo the most recent command made by user
+/*
+	Purpose: Undo the last previous command stored at the top of commandStackHistory
+	Pre-conditions: commandStackHistory is not empty, and taskStackHistory is not empty and contains sufficient tasks
+					to undo the command.
+	Post-condition: returns true if undo is successful.
+	Equivalence Partition: empty commandStackHistory, empty taskStackHistory, insufficient taskStackHistory, invalid command, command == COMMAND_EDIT, command == COMMAND_ADD, command == COMMAND_DELETE
+	Boundary: empty commandStackHistory, empty taskStackHistory, insufficient taskStackHistory, invalid command, command == COMMAND_EDIT, command == COMMAND_ADD, command == COMMAND_DELETE
+*/
 bool TaskLogic::undo(){
 	bool result = true;
 
