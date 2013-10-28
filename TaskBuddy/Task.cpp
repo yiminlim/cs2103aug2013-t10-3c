@@ -107,6 +107,13 @@ bool Task::getBlock(){
 	return _block;
 }
 
+void Task::setBlock(bool newBlock) {
+	_block = newBlock;
+	_task = formatTask(_action, _location, _startingDate, _startingTime, _endingDate, _endingTime, _deadlineDate, _deadlineTime, _block);
+	
+	return;
+}
+
 std::string Task::formatTimeOutputString(int time){
 	std::ostringstream timeString;
 
