@@ -29,36 +29,40 @@ public:
 
 	~TaskLogic();
 
+//-----INITIALISATION, SAVING & EXIT------------------------------------------------------------------------
 	//Takes in filename and takes all existing tasks inside file into tbLinkedList
 	void initLogic();
 
 	void initDate();
 
-	void stringParse(const std::string, const int, std::string &, std::string &, std::vector<Date> &, std::vector<int> &, std::vector<Date> &, std::vector<int> &, std::vector<Date> &, std::vector<int> &, bool &);
-	//converts userInput String into various components from existing
-		
-	std::vector<Task> createTask(std::string, int);
+	//Takes in filename and stores all tasks inside tbLinkedList into the file to prepare for exit.
+	void save();
+	
+	void exitLogic();
+
+//-----ADD TASK----------------------------------------------------------------------------------------------
+
+	bool add(const std::string, bool&);
 
 	//add a new task to the list (search for correct index first)
 	bool addExistingTask(const std::string); //for initLogic use only
-	
-	bool add(const std::string);
 
-	bool checkIsValidInput(std::string);
-	
+//-----DELETE TASK-------------------------------------------------------------------------------------------
+
 	//delete a task from the list at the index given
 	bool del(const std::string);
 
-	//bool delFromVector(const std::string);
-	
+//-----SEARCH TASK-------------------------------------------------------------------------------------------
+
 	//return all tasks in the list that contains keyword and copy these tasks into vector parameter
 	bool generalSearch(std::string, std::vector<std::string> &);
+	
+//-----EDIT TASK---------------------------------------------------------------------------------------------
 
-	bool isDay(std::string &);
-	
-	
 	//edit a task from the list at the index given
 	bool edit(std::string, std::string);
+
+//-----EDIT BLOCK--------------------------------------------------------------------------------------------
 
 	//gives back entire block of taskStrings and also a string that contains the task (action + " at " location )
 	bool getBlock(std::string &, std::string &, std::vector<std::string> &);
@@ -67,30 +71,31 @@ public:
 	bool editBlock(const std::string, std::vector<std::string> &);
 
 	//for adding in new blocks, const string contains action + location while vector string contains timings and dates
-	bool addBlock(const std::string, const std::string, std::vector<std::string> &);
+	bool addBlock(const std::string, const std::string);
 	// first string is the action and location of original taskString, 2nd string is the original taskString
 
 	//delete all the blocks of the string given
 	//finaliseBlock is the same as deleteBlock. Just give in all those that is meant to be deleted. If only one left, send in isBloack = false
-	bool deleteBlock(std::vector<std::string> &);
+	bool finaliseBlock(const int, std::vector<std::string> &);
 
-	
-	//returns number of tasks in the list
-	//int getNumTasks();
-	
-	//returns a task at the index given
-	//Task getTasks(int);
-	
-	//Takes in filename and stores all tasks inside tbLinkedList into the file to prepare for exit.
-	void save();
-	
-	void exitLogic();
-
-	std::string extractDate(std::string);
+//-----UNDO---------------------------------------------------------------------------------------------------
 
 	//To update taskVector with new command and task by user
 	void update(std::string, std::string, std::string);
 
 	//To undo the most recent command made by user
 	bool undo();
+	
+//-----HELPER FUNCTIONS---------------------------------------------------------------------------------------
+	
+	void stringParse(const std::string, const int, std::string &, std::string &, std::vector<Date> &, std::vector<int> &, std::vector<Date> &, std::vector<int> &, std::vector<Date> &, std::vector<int> &, bool &);
+	//converts userInput String into various components from existing
+		
+	std::vector<Task> createTask(std::string, int);
+
+	bool isDay(std::string &);
+
+	std::string extractDate(std::string);
+
+	std::string getActionLocation(std::string);
 };
