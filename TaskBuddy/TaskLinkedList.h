@@ -56,6 +56,14 @@ public:
 	//Convert string into lowercase
 	std::string toLowerCase(std::string);
 
+	std::string getStringDate(int, int, int);
+
+	std::string compareAndIncludeRange(std::string, int*, int*, int*, int*, int*, int*);
+
+	void getIntDate(std::string, int*, int*, int*);
+
+	std::string includeRangeOfDates(std::string);
+
 	//Pass over a vector of keywords and an empty vector of string for me to return those strings with the words in it
 	bool retrieve(const std::vector<std::string>, std::vector<std::string> &);
 
