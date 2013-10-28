@@ -60,4 +60,6 @@ public:
 	bool finaliseBlocking(const std::vector<std::string>);
 
 	void updateStorageVector(std::vector<std::string> &);
+
+	void setBlock(std::string task);
 };
