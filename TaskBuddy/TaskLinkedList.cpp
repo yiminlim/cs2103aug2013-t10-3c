@@ -238,6 +238,7 @@ bool TaskLinkedList::retrieve(const std::vector<std::string> keywords, std::vect
 	}
 }
 
+
 //Pre-condition: input a vector of strings to be deleted from the linked list and deltes them from the linked list using the remove function
 //Post-condition: returns true when all the strings to be deleted are deleted from the linked list
 bool TaskLinkedList::removeBlockings(const std::vector<std::string> taskToBeDeleted){
@@ -282,3 +283,13 @@ bool TaskLinkedList::finaliseBlocking(const std::vector<std::string> tasks){
 		return false;
 	}
 }	
+
+
+void TaskLinkedList::updateStorageVector(std::vector<std::string> & tbVector){
+	ListNode *cur = _head;
+
+	while (cur != NULL){
+		tbVector.push_back(cur->item.getTask());
+		cur = cur->next;
+	}
+}
