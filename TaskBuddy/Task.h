@@ -70,8 +70,4 @@ public:
 	std::string formatTimeOutputString(int);
 
 	bool isDeadlineType();
-
-	bool isValidDate(Date);
-
-	bool isValidTime(int);
 };
