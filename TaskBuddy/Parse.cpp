@@ -1,7 +1,7 @@
 #include "Parse.h" 
 #include <iostream>
 
-const std::string Parse::KEYWORD_ADD = "add";
+const std::string Parse::KEYWORD_EMPTY = "";
 const std::string Parse::KEYWORD_LOCATION = "at";
 const std::string Parse::KEYWORD_STARTING = "from";
 const std::string Parse::KEYWORD_ENDING = "to";
@@ -20,7 +20,7 @@ void Parse::processTaskStringFromUI(std::string taskString, std::string & action
 		taskDetails.push_back(word);
 	}
 
-	std::string keyword = "";
+	std::string keyword = KEYWORD_EMPTY;
 
 	for (unsigned int i = 0; i < taskDetails.size(); i++) { //must always start with command
 		if (isKeyword(taskDetails[i])) {
@@ -29,7 +29,7 @@ void Parse::processTaskStringFromUI(std::string taskString, std::string & action
 				block = true;
 			}
 		}
-		else if (keyword == KEYWORD_ADD) {
+		else if (keyword == KEYWORD_EMPTY) {
 			if (action != "") {
 				action += " ";
 			}
@@ -205,7 +205,7 @@ void Parse::processTaskStringFromFile(std::string taskString, std::string & acti
 }
 
 bool Parse::isKeyword(std::string word) {
-	return word == KEYWORD_ADD || word == KEYWORD_DEADLINE || word == KEYWORD_ENDING || word == KEYWORD_LOCATION || word == KEYWORD_STARTING || word == KEYWORD_BLOCK;
+	return word == KEYWORD_DEADLINE || word == KEYWORD_ENDING || word == KEYWORD_LOCATION || word == KEYWORD_STARTING || word == KEYWORD_BLOCK;
 }
 
 Date Parse::convertToDate(std::string dateString){
