@@ -43,9 +43,15 @@ public:
 
 	//Returns the index of the task to be removed
 	bool getRemoveIndex(std::string, int*);
+
+	//Split a string into a vector of keywords
+	void splitIntoKeywords(std::string, std::vector<std::string> &);
 	
-	//Returns true if task is remove from linked list
-	bool remove(std::string);
+	//check if the task is a blocked item and if it is the last task left. IF true, unblock the task
+	void checkIfRemainingBlockTask(std::string); 
+	
+	//Returns true if task is remove from linked list, at the same time, if the deleted item is a blocked item, check if there is only one task left in that specific block. If true, unblock the last task
+	bool remove(std::string, std::string);
 
 	//Convert string into lowercase
 	std::string toLowerCase(std::string);
@@ -54,12 +60,14 @@ public:
 	bool retrieve(const std::vector<std::string>, std::vector<std::string> &);
 
 	//Remove blockings that are unwanted which are stored in the vector
-	bool removeBlockings(const std::vector<std::string>);
+	//bool removeBlockings(const std::vector<std::string>);
 
 	//Return true if blockings are finalised
-	bool finaliseBlocking(const std::vector<std::string>);
+	//bool finaliseBlocking(const std::vector<std::string>);
 
+	//Copy the entire list of output format of the tasks in the linked list into the empty vector that is passed over
 	void updateStorageVector(std::vector<std::string> &);
 
-	void setBlock(std::string task);
+	//Set the bool block component of the string as true
+	void setBlock(std::string);
 };
