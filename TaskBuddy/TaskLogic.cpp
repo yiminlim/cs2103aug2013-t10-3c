@@ -305,8 +305,9 @@ bool TaskLogic::editBlock(const std::string taskActionLocation, std::vector<std:
 }
 
 	//for adding in new blocks, const string contains action + location while vector string contains timings and dates
-bool TaskLogic::addBlock(const std::string taskActionLocation, std::vector<std::string>& taskDateTimeVector){
-	std::string taskString = "add " + taskActionLocation + " blockoff";
+bool TaskLogic::addBlock(const std::string taskActionLocation, const std::string originalTaskStrng, std::vector<std::string>& taskDateTimeVector){
+	std::string taskString = taskActionLocation + " blockoff";
+	tbLinkedList.setBlock(originalTaskString);   //originalTaskString
 	for(unsigned int i = 0; i < taskDateTimeVector.size(); i++)
 		taskString = taskString + " " + taskDateTimeVector[i];
 	if(add(taskString))
