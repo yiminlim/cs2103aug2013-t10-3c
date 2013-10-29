@@ -4,9 +4,10 @@ const std::string UserInterface::COMMAND_ADD = "add";
 const std::string UserInterface::COMMAND_DELETE = "delete";
 const std::string UserInterface::COMMAND_SEARCH = "search";
 const std::string UserInterface::COMMAND_EDIT = "edit";
-const std::string UserInterface::COMMAND_ADDBLOCK = "addblock";
 const std::string UserInterface::COMMAND_EDITBLOCK = "editblock";
+const std::string UserInterface::COMMAND_ADDBLOCK = "addblock";
 const std::string UserInterface::COMMAND_EDITALL = "editall";
+const std::string UserInterface::COMMAND_DELETEBLOCK = "deleteblock";
 const std::string UserInterface::COMMAND_FINALISE = "finalise";
 const std::string UserInterface::COMMAND_FINALIZE = "finalize";
 const std::string UserInterface::COMMAND_UNDO = "undo";
@@ -15,6 +16,9 @@ const std::string UserInterface::COMMAND_EXIT = "exit";
 
 const std::string UserInterface::KEYWORD_TODAY = "today";
 const std::string UserInterface::KEYWORD_BLOCKOFF = "blockoff";
+const std::string UserInterface::KEYWORD_EMPTY_STRING = "";
+const std::string UserInterface::KEYWORD_SPACE = " ";
+const std::string UserInterface::KEYWORD_BULLETING = ". ";
 const std::string UserInterface::KEYWORD_END = "end";
 
 const std::string UserInterface::MESSAGE_TODAY_TASK = "Task(s) due by TODAY!";
@@ -26,11 +30,18 @@ const std::string UserInterface::MESSAGE_EDIT = "Task is edited";
 const std::string UserInterface::MESSAGE_UNDO = "Previous command is undone";
 const std::string UserInterface::MESSAGE_AVAILABLE_BLOCKS = "Available Blocks: ";
 const std::string UserInterface::MESSAGE_ADDBLOCK = "All blocking of dates are successful";
+const std::string UserInterface::MESSAGE_EDITALL = "Tasks' action and location in the all blocked slots have been edited";
+const std::string UserInterface::MESSAGE_DELETEBLOCK = "Requested blocked slot has been deleted";
+const std::string UserInterface::MESSAGE_FINALISE = "Time and date of the task has been finalised";
 const std::string UserInterface::MESSAGE_INVALID_ADD = "Task cannot be added";
 const std::string UserInterface::MESSAGE_INVALID_SEARCH = "No task is found";
 const std::string UserInterface::MESSAGE_INVALID_DELETE = "Task cannot be deleted";
 const std::string UserInterface::MESSAGE_INVALID_EDIT = "Task cannot be edited";
 const std::string UserInterface::MESSAGE_INVALID_UNDO = "Previous command cannot be undone";
+const std::string UserInterface::MESSAGE_INVALID_ADDBLOCK = "Blocking of dates has failed";
+const std::string UserInterface::MESSAGE_INVALID_EDITALL = "Editing of tasks in all blocked slots has failed";
+const std::string UserInterface::MESSAGE_INVALID_DELETEBLOCK = "Deleting of requested blocked slots has failed";
+const std::string UserInterface::MESSAGE_INVALID_FINALISE = "Finalising of the time and date of the task has failed"; 
 const std::string UserInterface::MESSAGE_INVALID_COMMAND = "Invalid command";
 const std::string UserInterface::MESSAGE_EXIT = "Thank you for using Task Buddy!";
 
@@ -62,7 +73,7 @@ void UserInterface::commandUI(){
 		space = getchar();						//Is it possible for space to obtain a char other than space?
 
 		if (command == COMMAND_ADD){		
-			if (tbLogic.add(readTask(command, ""), isClash)){
+			if (tbLogic.add(readTask(command, KEYWORD_EMPTY_STRING), isClash)){
 				tbLogic.save();
 				displaySuccessfulMessage(command);				
 			}
@@ -73,7 +84,7 @@ void UserInterface::commandUI(){
 		}
 		else if (command == COMMAND_SEARCH){
 			display.clear();
-			if (tbLogic.generalSearch(readTask(command, ""), display)){
+			if (tbLogic.generalSearch(readTask(command, KEYWORD_EMPTY_STRING), display)){
 				displayInformationInVector(display);
 			}
 			else{
@@ -81,7 +92,7 @@ void UserInterface::commandUI(){
 			}
 		}
 		else if (command == COMMAND_DELETE){
-			std::stringstream ss(readTask(command, ""));
+			std::stringstream ss(readTask(command, KEYWORD_EMPTY_STRING));
 			while (!ss.eof() && ss >> option){
 				if (tbLogic.del(display[option-1])){
 					tbLogic.save();
@@ -95,7 +106,7 @@ void UserInterface::commandUI(){
 		}
 		else if (command == COMMAND_EDIT){
 			std::cin >> option;
-			if (tbLogic.edit(display[option-1], readTask(COMMAND_EDIT, ""))){
+			if (tbLogic.edit(display[option-1], readTask(COMMAND_EDIT, KEYWORD_EMPTY_STRING))){
 				tbLogic.save();
 				displaySuccessfulMessage(command);
 			}
@@ -106,9 +117,9 @@ void UserInterface::commandUI(){
 		}
 		else if (command == COMMAND_EDITBLOCK){
 			std::cin >> option;
+			system("CLS");
 			editBlockUI(display[option-1]);
 			display.clear();
-			system("CLS");
 			displayWelcomeMessage();
 		}
 		else if (command == COMMAND_UNDO){
@@ -130,7 +141,7 @@ void UserInterface::commandUI(){
 			contProgram = false;
 		}
 		else{
-			displayFailMessage("");
+			displayFailMessage(KEYWORD_EMPTY_STRING);
 		}
 		
 		if (command != COMMAND_CLEAR){
@@ -147,17 +158,17 @@ std::string UserInterface::readTask(const std::string command, const std::string
 
 	std::getline(std::cin, task);
 
-	if ((command == COMMAND_ADD || command == COMMAND_ADDBLOCK) && (task.find(KEYWORD_BLOCKOFF) != std::string::npos){
+	if ((command == COMMAND_ADD || command == COMMAND_ADDBLOCK) && (task.find(KEYWORD_BLOCKOFF) != std::string::npos)){
 			if (command == COMMAND_ADDBLOCK){
-				task = stringToBeAdded + " " + task;
+				task = stringToBeAdded + KEYWORD_SPACE + task;
 			}
 
 			do{
 				std::getline(std::cin, block);
-				if (block != COMMAND_END){
-					task = task + " " + block; 
+				if (block != KEYWORD_END){
+					task = task + KEYWORD_SPACE + block; 
 				}
-			} while(block != COMMAND_END);
+			} while(block != KEYWORD_END);
 	}
 	return task;
 }
@@ -188,7 +199,7 @@ void UserInterface::displayTodayTask(){
 	if (tbLogic.generalSearch(KEYWORD_TODAY, todayTask)){
 		std::cout << MESSAGE_TODAY_TASK << std::endl;
 		for (unsigned int i = 0; i < todayTask.size(); i++){
-			std::cout << i+1 << ". " << todayTask[i] << std::endl;
+			std::cout << i+1 << KEYWORD_BULLETING << todayTask[i] << std::endl;
 		}
 	}
 	else{
@@ -200,6 +211,7 @@ void UserInterface::displayTodayTask(){
 //To display sub-menu for editing of block off dates of a certain task
 void UserInterface::editBlockUI(const std::string stringToEditBlock){
 	char space;
+	int option;
 	std::string command;
 	std::string taskString;
 	std::string taskActionLocation;
@@ -209,6 +221,7 @@ void UserInterface::editBlockUI(const std::string stringToEditBlock){
 	if (tbLogic.getBlock(originalTaskString, taskActionLocation, blockTaskVector)){
 		std::cout << MESSAGE_AVAILABLE_BLOCKS << std::endl;
 		displayInformationInVector(blockTaskVector);
+		std::cout << std::endl;
 	}
 
 	std::cout << MESSAGE_COMMAND;
@@ -216,43 +229,58 @@ void UserInterface::editBlockUI(const std::string stringToEditBlock){
 	space = getchar();
 
 	if (command == COMMAND_ADD){
-		std::getline(std::cin, taskString);
-		if (taskString.find(COMMAND_BLOCKOFF) != std::string::npos){
-			taskString = taskActionLocation + " " + taskString;
-			std::string block;
-			do{
-				std::getline(std::cin, block);
-				if (block != COMMAND_END){
-					taskString = taskString + " " + block; 
-				}
-			} while(block != COMMAND_END);
-		}	
-
-		if(tbLogic.addBlock(readTask(COMMAND_ADDBLOCK, taskActionLocation), originalTaskString)){
-			displaySuccessfulMessage(COMMAND_ADDBLOCK);
+		command = COMMAND_ADDBLOCK;
+		if (tbLogic.addBlock(readTask(command, taskActionLocation), originalTaskString)){
+			tbLogic.save();
+			displaySuccessfulMessage(command);
 		}
 		else{
-			displayFailMessage("");
+			displayFailMessage(command);
 		}
 	}
 	else if (command == COMMAND_EDITALL){
-		
+		if (tbLogic.editBlock(readTask(command, KEYWORD_EMPTY_STRING), blockTaskVector)){
+			tbLogic.save();
+			displaySuccessfulMessage(command);
+		}		
+		else{
+			displayFailMessage(command);
+		}
 	}
 	else if (command == COMMAND_DELETE){
-
+		command = COMMAND_DELETEBLOCK;
+		std::stringstream ss(readTask(command, KEYWORD_EMPTY_STRING));
+		while (!ss.eof() && ss >> option){
+			if (tbLogic.del(blockTaskVector[option-1])){
+				tbLogic.save();
+				displaySuccessfulMessage(command);			
+			}
+			else{
+				displayFailMessage(command);
+			}
+		}
 	}
 	else if (command == COMMAND_FINALISE || command == COMMAND_FINALIZE){
-
+		std::cin >> option;
+		if (tbLogic.finaliseBlock(option, blockTaskVector)){
+			tbLogic.save();
+			displaySuccessfulMessage(command);
+		}
+		else{
+			displayFailMessage(command);
+		}
 	}
 	else{
-		displayFailMessage("");
+		displayFailMessage(KEYWORD_EMPTY_STRING);
 	}
+	system("PAUSE");
+	system("CLS");
 }
 
 //To display all information in a vector
 void UserInterface::displayInformationInVector(std::vector<std::string> vec){
 	for (unsigned int i = 0; i < vec.size(); i++){
-		std::cout << i+1 << ". " << vec[i] << std::endl;
+		std::cout << i+1 << KEYWORD_BULLETING << vec[i] << std::endl;
 	}
 }
 
@@ -272,6 +300,15 @@ void UserInterface::displaySuccessfulMessage(const std::string command){
 	}
 	else if (command == COMMAND_ADDBLOCK){
 		std::cout << MESSAGE_ADDBLOCK;
+	}
+	else if (command == COMMAND_EDITALL){
+		std::cout << MESSAGE_EDITALL;
+	}
+	else if (command == COMMAND_DELETEBLOCK){
+		std::cout << MESSAGE_DELETEBLOCK;
+	}
+	else if (command == COMMAND_FINALISE || command == COMMAND_FINALIZE){
+		std::cout << MESSAGE_FINALISE;
 	}
 	else if (command == COMMAND_EXIT){
 		std::cout << MESSAGE_EXIT;
@@ -298,6 +335,18 @@ void UserInterface::displayFailMessage(const std::string command){
 	}
 	else if (command == COMMAND_UNDO){
 		std::cout << MESSAGE_INVALID_UNDO << std::endl;
+	}
+	else if (command == COMMAND_ADDBLOCK){
+		std::cout << MESSAGE_INVALID_ADDBLOCK << std::endl;
+	}
+	else if (command == COMMAND_EDITALL){
+		std::cout << MESSAGE_INVALID_EDITALL << std::endl;
+	}
+	else if (command == COMMAND_DELETEBLOCK){
+		std::cout << MESSAGE_INVALID_DELETEBLOCK << std::endl;
+	}
+	else if (command == COMMAND_FINALISE || command == COMMAND_FINALIZE){
+		std::cout << MESSAGE_INVALID_FINALISE << std::endl;
 	}
 	else{
 		std::cout << MESSAGE_INVALID_COMMAND << std::endl;

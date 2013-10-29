@@ -12,9 +12,10 @@ private:
 	static const std::string COMMAND_DELETE;
 	static const std::string COMMAND_SEARCH;
 	static const std::string COMMAND_EDIT;
-	static const std::string COMMAND_ADDBLOCK;
 	static const std::string COMMAND_EDITBLOCK;
+	static const std::string COMMAND_ADDBLOCK;	
 	static const std::string COMMAND_EDITALL;
+	static const std::string COMMAND_DELETEBLOCK;
 	static const std::string COMMAND_FINALISE;
 	static const std::string COMMAND_FINALIZE;
 	static const std::string COMMAND_UNDO;
@@ -23,6 +24,9 @@ private:
 
 	static const std::string KEYWORD_TODAY;
 	static const std::string KEYWORD_BLOCKOFF;
+	static const std::string KEYWORD_EMPTY_STRING;
+	static const std::string KEYWORD_SPACE;
+	static const std::string KEYWORD_BULLETING;
 	static const std::string KEYWORD_END;
 
 	static const std::string MESSAGE_TODAY_TASK;
@@ -34,11 +38,18 @@ private:
 	static const std::string MESSAGE_UNDO;
 	static const std::string MESSAGE_AVAILABLE_BLOCKS;
 	static const std::string MESSAGE_ADDBLOCK;
+	static const std::string MESSAGE_EDITALL;
+	static const std::string MESSAGE_DELETEBLOCK;
+	static const std::string MESSAGE_FINALISE;
 	static const std::string MESSAGE_INVALID_ADD;
 	static const std::string MESSAGE_INVALID_SEARCH;
 	static const std::string MESSAGE_INVALID_DELETE;
 	static const std::string MESSAGE_INVALID_EDIT;
 	static const std::string MESSAGE_INVALID_UNDO;
+	static const std::string MESSAGE_INVALID_ADDBLOCK;
+	static const std::string MESSAGE_INVALID_EDITALL;
+	static const std::string MESSAGE_INVALID_DELETEBLOCK;
+	static const std::string MESSAGE_INVALID_FINALISE;
 	static const std::string MESSAGE_INVALID_COMMAND;
 	static const std::string MESSAGE_EXIT;
 
