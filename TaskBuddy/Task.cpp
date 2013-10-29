@@ -11,6 +11,8 @@ Task::Task(){
 	Pre-conditions: All variables should have values. (strings should not be NULL)
 	Post-conditions: Given that all variable values are found to be valid and necessary variables are included, formatted task output string is generated and task object is constructed. 
 */
+//Use isValid/isEmpty methods to check & throw exceptions if necessary
+//Note: isEmpty will be accepted also because they are not included under isValid
 Task::Task(std::string action, std::string location, Date startingDate, int startingTime, Date endingDate, int endingTime, Date deadlineDate, int deadlineTime, bool block){
 	_action = action;
 	_location = location;
@@ -21,7 +23,7 @@ Task::Task(std::string action, std::string location, Date startingDate, int star
 	_deadlineDate = deadlineDate;
 	_deadlineTime = deadlineTime;
 	_block = block;
-	_task = formatTask(action,location,startingDate,startingTime,endingDate,endingTime,deadlineDate,deadlineTime,block);
+	_task = formatTask();
 }
 
 //-----GET METHODS-----------------------------------------------------------------------------
@@ -137,7 +139,7 @@ bool Task::getBlock(){
 */
 void Task::setBlock(bool newBlock) {
 	_block = newBlock;
-	_task = formatTask(_action, _location, _startingDate, _startingTime, _endingDate, _endingTime, _deadlineDate, _deadlineTime, _block);
+	_task = formatTask();
 	
 	return;
 }
@@ -146,48 +148,49 @@ void Task::setBlock(bool newBlock) {
 
 /* 
 	Purpose: Formats task output string to be displayed to user.
-	Pre-condition: Task object variables have been initialised. --> Don't need parameters actually???
+	Pre-condition: Task object variables have been initialised.
 	Post-condition: Returns formatted task output string.
 */
 //refactor to make keywords constant strings? 'at', 'by', 'blockoff'
-std::string Task::formatTask(std::string action, std::string location, Date startingDate, int startingTime, Date endingDate, int endingTime, Date deadlineDate, int deadlineTime, bool block) {
+std::string Task::formatTask() {
 	std::ostringstream output;
 	if (isDeadlineType()) {
 		output << "by ";
-		if (deadlineDate.isValidDate()) {
-			output << deadlineDate._day << "/" << deadlineDate._month << "/" << deadlineDate._year;
+		if (!isEmptyDate(_deadlineDate)) {
+			output << _deadlineDate._day << "/" << _deadlineDate._month << "/" << _deadlineDate._year;
 		}
-		if (deadlineTime != -1) {
-			output << " " << formatTimeOutputString(deadlineTime) << " hrs";
+		if (!isEmptyTime(_deadlineTime)) {
+			output << " " << formatTimeOutputString(_deadlineTime) << " hrs";
 		}
-		output << ": " << action;
-		if (location.size() > 0) {
-			output << " at " << location;
-		}if (block) {
+		output << ": " << _action;
+		if (_location.size() > 0) {
+			output << " at " << _location;
+		}
+		if (_block) {
 			output << " (blockoff)";
 		}
 	}
 	else {
-		if (startingDate.isValidDate()) {
-			output << startingDate._day << "/" << startingDate._month << "/" << startingDate._year;
+		if (!isEmptyDate(_startingDate)) {
+			output << _startingDate._day << "/" << _startingDate._month << "/" << _startingDate._year;
 		}
-		if (startingTime != -1) {
-			output << " " << formatTimeOutputString(startingTime) << " hrs";
+		if (!isEmptyTime(_startingTime)) {
+			output << " " << formatTimeOutputString(_startingTime) << " hrs";
 		}
-		if (endingDate.isValidDate() || endingTime != -1) {
+		if (!isEmptyDate(_endingDate) || !isEmptyTime(_endingTime)) {
 			output << " - ";
-			if (endingDate.isValidDate()) {
-				output << endingDate._day << "/" << endingDate._month << "/" << endingDate._year;
+			if (!isEmptyDate(_endingDate)) {
+				output << _endingDate._day << "/" << _endingDate._month << "/" << _endingDate._year;
 			}
-			if (endingTime != -1) {
-				output << " " << formatTimeOutputString(endingTime) << " hrs";
+			if (!isEmptyTime(_endingTime)) {
+				output << " " << formatTimeOutputString(_endingTime) << " hrs";
 			}
 		}
-		output << ": " << action;
-		if (location.size() > 0) {
-			output << " at " << location;
+		output << ": " << _action;
+		if (_location.size() > 0) {
+			output << " at " << _location;
 		}
-		if (block) {
+		if (_block) {
 			output << " (blockoff)";
 		}
 	}
