@@ -1,8 +1,6 @@
 #include "UserInterface.h"
 
 const std::string UserInterface::COMMAND_ADD = "add";
-const std::string UserInterface::COMMAND_BLOCKOFF = "blockoff";
-const std::string UserInterface::COMMAND_END = "end";
 const std::string UserInterface::COMMAND_DELETE = "delete";
 const std::string UserInterface::COMMAND_SEARCH = "search";
 const std::string UserInterface::COMMAND_EDIT = "edit";
@@ -16,6 +14,8 @@ const std::string UserInterface::COMMAND_CLEAR = "clear";
 const std::string UserInterface::COMMAND_EXIT = "exit";
 
 const std::string UserInterface::KEYWORD_TODAY = "today";
+const std::string UserInterface::KEYWORD_BLOCKOFF = "blockoff";
+const std::string UserInterface::KEYWORD_END = "end";
 
 const std::string UserInterface::MESSAGE_TODAY_TASK = "Task(s) due by TODAY!";
 const std::string UserInterface::MESSAGE_NO_TASK_TODAY = "No task due today!";
@@ -62,7 +62,7 @@ void UserInterface::commandUI(){
 		space = getchar();						//Is it possible for space to obtain a char other than space?
 
 		if (command == COMMAND_ADD){		
-			if (tbLogic.add(readTask(command), isClash)){
+			if (tbLogic.add(readTask(command, ""), isClash)){
 				tbLogic.save();
 				displaySuccessfulMessage(command);				
 			}
@@ -73,7 +73,7 @@ void UserInterface::commandUI(){
 		}
 		else if (command == COMMAND_SEARCH){
 			display.clear();
-			if (tbLogic.generalSearch(readTask(command), display)){
+			if (tbLogic.generalSearch(readTask(command, ""), display)){
 				displayInformationInVector(display);
 			}
 			else{
@@ -81,7 +81,7 @@ void UserInterface::commandUI(){
 			}
 		}
 		else if (command == COMMAND_DELETE){
-			std::stringstream ss(readTask(command));
+			std::stringstream ss(readTask(command, ""));
 			while (!ss.eof() && ss >> option){
 				if (tbLogic.del(display[option-1])){
 					tbLogic.save();
@@ -94,10 +94,8 @@ void UserInterface::commandUI(){
 			display.clear();
 		}
 		else if (command == COMMAND_EDIT){
-			std::string editString;
 			std::cin >> option;
-			editString = "add " + readTask(COMMAND_EDIT); 
-			if (tbLogic.edit(display[option-1], editString)){
+			if (tbLogic.edit(display[option-1], readTask(COMMAND_EDIT, ""))){
 				tbLogic.save();
 				displaySuccessfulMessage(command);
 			}
@@ -143,21 +141,23 @@ void UserInterface::commandUI(){
 }
 	
 //To read in the details of task (excluding command)
-std::string UserInterface::readTask(const std::string command){
+std::string UserInterface::readTask(const std::string command, const std::string stringToBeAdded){
 	std::string task;
+	std::string block;
+
 	std::getline(std::cin, task);
 
-	if (command == COMMAND_ADD){
-		task = command + " " + task;
-		if (task.find(COMMAND_BLOCKOFF) != std::string::npos){
-			std::string block;
+	if ((command == COMMAND_ADD || command == COMMAND_ADDBLOCK) && (task.find(KEYWORD_BLOCKOFF) != std::string::npos){
+			if (command == COMMAND_ADDBLOCK){
+				task = stringToBeAdded + " " + task;
+			}
+
 			do{
 				std::getline(std::cin, block);
 				if (block != COMMAND_END){
 					task = task + " " + block; 
 				}
 			} while(block != COMMAND_END);
-		}	
 	}
 	return task;
 }
@@ -201,13 +201,12 @@ void UserInterface::displayTodayTask(){
 void UserInterface::editBlockUI(const std::string stringToEditBlock){
 	char space;
 	std::string command;
-	std::string block;
+	std::string taskString;
 	std::string taskActionLocation;
-	std::string taskString = stringToEditBlock;
+	std::string originalTaskString = stringToEditBlock;
 	std::vector<std::string> blockTaskVector;
-	std::vector<std::string> taskDateTimeVector;
 
-	if (tbLogic.getBlock(taskString, taskActionLocation, blockTaskVector)){
+	if (tbLogic.getBlock(originalTaskString, taskActionLocation, blockTaskVector)){
 		std::cout << MESSAGE_AVAILABLE_BLOCKS << std::endl;
 		displayInformationInVector(blockTaskVector);
 	}
@@ -216,15 +215,20 @@ void UserInterface::editBlockUI(const std::string stringToEditBlock){
 	std::cin >> command;
 	space = getchar();
 
-	if (command == COMMAND_ADDBLOCK){                    //two parameter: task string (blockoff plus from to from to), original task string
-		do{
-			std::getline(std::cin,block);
-			if (block != COMMAND_END){
-				taskDateTimeVector.push_back(block);
-			}
-		} while(block != COMMAND_END);
+	if (command == COMMAND_ADD){
+		std::getline(std::cin, taskString);
+		if (taskString.find(COMMAND_BLOCKOFF) != std::string::npos){
+			taskString = taskActionLocation + " " + taskString;
+			std::string block;
+			do{
+				std::getline(std::cin, block);
+				if (block != COMMAND_END){
+					taskString = taskString + " " + block; 
+				}
+			} while(block != COMMAND_END);
+		}	
 
-		if(tbLogic.addBlock(taskActionLocation, taskString, taskDateTimeVector)){
+		if(tbLogic.addBlock(readTask(COMMAND_ADDBLOCK, taskActionLocation), originalTaskString)){
 			displaySuccessfulMessage(COMMAND_ADDBLOCK);
 		}
 		else{
