@@ -247,8 +247,7 @@ bool Task::isEmptyDate(Date date) {
 	Post-condition: Returns true if date is valid and false otherwise. 
 */
 bool Task::isValidDate(Date date) {
-
-	return true;
+	return isValidDay(date._day) && isValidMonth(date._month) && isValidYear(date._year);
 }
 
 /* 
