@@ -59,8 +59,8 @@ void TaskLinkedList::obtainDateAndTime(Task & task, Date *date, int *time, int *
 	return;
 }
 
-//Pre-condition: input the Task reference to be added and a specific Task reference from the linked list and sort them accordingly 
-//Post-condition: returns true if the Task reference to be added is of an earlier date and time than the specific Task reference from the linked list
+//Pre-condition: input the Task reference to be added and a specific Task reference from the linked list and sort them accordingly. Check along the way if there are any clashes
+//Post-condition: returns true if the Task reference to be added is of an earlier date and time than the specific Task reference from the linked list. Update isClash accordingly
 bool TaskLinkedList::compareDateAndTime(Task & curTask, Task & listTask, bool & isClash){
 		Date *curDate = new Date;
 		Date *listDate = new Date;
@@ -148,8 +148,9 @@ int TaskLinkedList::getInsertIndex(Task & curTask, bool & isClash){
 	return i;
 }
 
-//Pre-condition: input a Task reference to be added into the linked list 
-//Post-condition: return true if the task is added into the linked list in an sorted manner
+//Pre-condition: input a Task reference to be added into the linked list, check if any task clashes and update isClash to be true if it does 
+//				 isClash has to be false when it is passed over
+//Post-condition: return true if the task is added into the linked list in an sorted manner. isClash is updated accordingly
 bool TaskLinkedList::insert(Task & curTask, bool & isClash){
 	int newSize = getSize() + 1;
 	int index = getInsertIndex(curTask, isClash);
@@ -269,26 +270,40 @@ std::string TaskLinkedList::toLowerCase(std::string line){
 	return line;
 }
 
+//pre-condition:input day, month and year in int and convert them into a string in this format dd/mm/yy
+//				assume that the day and month are greater than 0. While year are at least 4 digits (the first digit is not 0)
+//post-condtion: return a string date form from individual int day, month, year
 std::string TaskLinkedList::getStringDate(int day, int month, int year){
 	std::string date, dateD, dateM, dateY;
-	std::ostringstream convert;
-	convert << day;
-	dateD = convert.str;
-	dateD = dateD + "/";
+	std::ostringstream convert1;
+	convert1 << day;
+	dateD = convert1.str();
+	if(day <= 9){
+		dateD = "0" + dateD + "/";
+	}else{
+		dateD = dateD + "/";
+	}
 
-	std::ostringstream convert;
-	convert << month;
-	dateM = convert.str;
-	dateM = dateM + "/";
+	std::ostringstream convert2;
+	convert2 << month;
+	dateM = convert2.str();
+	if(month <= 9){
+		dateM = "0" + dateM + "/";
+	}else{
+		dateM = dateM + "/";
+	}
 
-	std::ostringstream convert;
-	convert << year;
-	dateY = convert.str;
+	std::ostringstream convert3;
+	convert3 << year;
+	dateY = convert3.str();
 
 	date = dateD + dateM + dateY;
 	return date;
 }
 
+//pre-condition: input a tempTask and the starting and ending dates and push in the dates that are within the range of the starting and ending dates
+//				 consider the maximum number of days to be 31 for all cases
+//post-condition: return a tempTask with the range of dates added at the back
 std::string TaskLinkedList::compareAndIncludeRange(std::string tempTask, int *startDay, int *startMonth, int *startYear, int *endDay, int *endMonth, int *endYear){
 	int i, j, k;
 
@@ -343,17 +358,20 @@ std::string TaskLinkedList::compareAndIncludeRange(std::string tempTask, int *st
 	return tempTask;
 }
 
+//precondition: input a string date and convert into individual day, month and year as integers
+//				string must be in the format dd/mm/yyyy
+//postcondition: pointers are updated (day, month, year as int)
 void TaskLinkedList::getIntDate(std::string date, int *day, int *month, int *year){
 	std::string sDay = date.substr(0,2);
 	std::string sMonth = date.substr(3,2);
 	std::string sYear = date.substr(6,9);
 
-	std::stringstream ss(sDay);
-	ss >> *day;
-	std::stringstream ss(sMonth);
-	ss >> *month;
-	std::stringstream ss(sYear);
-	ss >> *year;
+	std::stringstream ss1(sDay);
+	ss1 >> *day;
+	std::stringstream ss2(sMonth);
+	ss2 >> *month;
+	std::stringstream ss3(sYear);
+	ss3 >> *year;
 }
 
 //only check for range of dates entered in proper date format dd/mm/yyyy
@@ -386,6 +404,8 @@ std::string TaskLinkedList::includeRangeOfDates(std::string tempTask){
 }
 	
 //Pre-condition: input a vector of individual keywords and an empty vector of taskList to store the task that are found from the linked list which contains all of the keywords 
+//				 check for the range in dates for from to as well
+//				 will only take into consideration range in dates if the user inputs the date in the right format or uses words like today, tmr,.. (dd/mm/yyyy)
 //Post-condition: return true if at least 1 task is found to contain all of the keywords from the vector and updates the taskList vector accordingly
 bool TaskLinkedList::retrieve(const std::vector<std::string> keywords, std::vector<std::string> & taskList){
 	ListNode *cur = _head;
