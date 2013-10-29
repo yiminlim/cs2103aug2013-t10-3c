@@ -294,7 +294,7 @@ bool Task::isValidYear(int year) {
 	Boundary values: -1, 1
 */
 bool Task::isEmptyTime(int time) {
-	return time = -1;
+	return time == -1;
 }
 
 /* 
