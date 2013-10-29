@@ -369,17 +369,17 @@ std::string TaskLinkedList::includeRangeOfDates(std::string tempTask){
 		tempTask = compareAndIncludeRange(tempTask, startDay, startMonth, startYear, endDay, endMonth, endYear);
 	
 		delete startDay;
-		startDay == NULL;
+		startDay = NULL;
 		delete startMonth;
-		startMonth == NULL;	
+		startMonth = NULL;	
 		delete startYear;
-		startYear == NULL;
+		startYear = NULL;
 		delete endDay;
-		endDay == NULL;
+		endDay = NULL;
 		delete endMonth;
-		endMonth == NULL;
+		endMonth = NULL;
 		delete endYear;
-		endYear == NULL;
+		endYear = NULL;
 	}
 
 	return tempTask;
