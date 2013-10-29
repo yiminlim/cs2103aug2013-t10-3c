@@ -41,8 +41,10 @@ public:
 	//Returns true if task is added to linked list
 	bool insert(Task &);
 
+	//Return the nidex of the first task that is not overdued
 	int getIndex(Date);
 
+	//remove the task pointed to by the index
 	void remove(int);
 
 	//Update the linked list such that it does not contain overdued due items

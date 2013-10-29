@@ -155,8 +155,9 @@ bool DoneLinkedList::insert(Task & curTask){
 	return true;
 }
 
-//Pre-condition: input a string containing the output format of the task to be deleted from the linked list and a pointer indicating the index, search for the task in the linked list and obtain the index of the task
-//Post-condition: return true if task is found in the linked list and the index pointer will be updated accordingly
+//Pre-condition: input a date today and compare to get the index pointing to the first task that is not overdued
+//				 does not take into consideration to
+//Post-condition: return an index pointing to the first task that is not overdued
 int DoneLinkedList::getIndex(Date today){
 	ListNode *cur = _head;
 	int index=1; 
@@ -193,6 +194,8 @@ int DoneLinkedList::getIndex(Date today){
 	return index;
 }
 
+//pre-condition: input an index and remove the task from the linked list which the index points to
+//post-condition: task pointed by the index is deleted
 void DoneLinkedList::remove(int index){
 	ListNode *cur;
 	--_size;
@@ -211,7 +214,7 @@ void DoneLinkedList::remove(int index){
 }
 
 //pre-condition: input a Date today that stores day, month and year individully as integers and update the linked list such that tasks before this date are all removed
-//post-condition: linked list do not contain any overdued done items
+//post-condition: linked list do not contain any overdued done items in terms of date wise (not timewise)
 void DoneLinkedList::update(Date today){
 	int index = getIndex(today);
 
