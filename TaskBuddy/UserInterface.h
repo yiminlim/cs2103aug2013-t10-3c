@@ -9,8 +9,6 @@ private:
 	TaskLogic tbLogic; 
 
 	static const std::string COMMAND_ADD;
-	static const std::string COMMAND_BLOCKOFF;
-	static const std::string COMMAND_END;
 	static const std::string COMMAND_DELETE;
 	static const std::string COMMAND_SEARCH;
 	static const std::string COMMAND_EDIT;
@@ -24,6 +22,8 @@ private:
 	static const std::string COMMAND_EXIT;	
 
 	static const std::string KEYWORD_TODAY;
+	static const std::string KEYWORD_BLOCKOFF;
+	static const std::string KEYWORD_END;
 
 	static const std::string MESSAGE_TODAY_TASK;
 	static const std::string MESSAGE_NO_TASK_TODAY;
@@ -63,7 +63,7 @@ public:
 	//Post-condition: task without command word in a string format will be return
 	//Equivalence Partition: any command keyword
 	//Boundary:	empty String, any other words
-	std::string readTask(const std::string);
+	std::string readTask(const std::string, const std::string);
 
 	//To display welcome message
 	//Precondition: display only after program is initialised

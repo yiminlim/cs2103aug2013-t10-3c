@@ -112,8 +112,8 @@ bool TaskLogic::add(const std::string taskString, bool& isClash){
 			update(COMMAND_ADD, taskObjectVector[0].getTask(), "");
 		else
 			checkAdded = false;
-		if(clash)
-			isClash = true;
+		//if(clash)
+		//	isClash = true;
 	}
 	return checkAdded;
 }
