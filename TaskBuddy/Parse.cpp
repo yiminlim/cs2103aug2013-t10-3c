@@ -1,6 +1,8 @@
 #include "Parse.h" 
 #include <iostream>
 
+//-----CONSTANT STRINGS------------------------------------------------------------------------
+
 const std::string Parse::KEYWORD_EMPTY = "";
 const std::string Parse::KEYWORD_LOCATION = "at";
 const std::string Parse::KEYWORD_STARTING = "from";
@@ -9,8 +11,13 @@ const std::string Parse::KEYWORD_DEADLINE = "by";
 const std::string Parse::KEYWORD_BLOCK = "blockoff";
 const std::string Parse::KEYWORD_BLOCK_BRACKETS = "(blockoff)";
 
-//takes in Task string and breaks it down into its various Task details
+//-----PROCESSING METHODS----------------------------------------------------------------------
 
+/*
+	Purpose: Takes task string from user input and processes it into its various Task variables.
+	Pre-conditions: Default values ("" for string, empty values for date & time, false for block) have been initialised for parameters.
+	Post-conditions: Parameters are updated by reference based on task string.
+*/
 void Parse::processTaskStringFromUI(std::string taskString, std::string & action, std::string & location, std::vector<Date> & startingDate, std::vector<int> & startingTime, std::vector<Date> & endingDate, std::vector<int> & endingTime, std::vector<Date> & deadlineDate, std::vector<int> & deadlineTime, bool & block, std::vector<std::string> & dateVector){
 	std::istringstream userInputTask(taskString);
 	std::string word;
@@ -110,6 +117,11 @@ void Parse::processTaskStringFromUI(std::string taskString, std::string & action
 	return;
 }
 
+/*
+	Purpose: Takes task string from file storage and processes it into its various Task variables.
+	Pre-conditions: Default values ("" for string, empty values for date & time, false for block) have been initialised for parameters.
+	Post-conditions: Parameters are updated by reference based on task string. 
+*/
 void Parse::processTaskStringFromFile(std::string taskString, std::string & action, std::string & location, std::vector<Date> & startingDate, std::vector<int> & startingTime, std::vector<Date> & endingDate, std::vector<int> & endingTime, std::vector<Date> & deadlineDate, std::vector<int> & deadlineTime, bool & block, std::vector<std::string> & dateVector){
 	std::istringstream fileTask(taskString);
 	std::string word;
@@ -204,10 +216,16 @@ void Parse::processTaskStringFromFile(std::string taskString, std::string & acti
 	return;
 }
 
-bool Parse::isKeyword(std::string word) {
-	return word == KEYWORD_DEADLINE || word == KEYWORD_ENDING || word == KEYWORD_LOCATION || word == KEYWORD_STARTING || word == KEYWORD_BLOCK;
-}
+//-----CONVERSION METHODS----------------------------------------------------------------------
 
+/*
+	Purpose: Takes a date in string type and converts it into Date type.
+	Pre-conditions: Date string is in the correct format 'day/month/year'.
+	Post-conditions: Returns date with correct day/month/year values.
+	Equivalence Partitions: "", 1 '/', 2 '/'
+	Boundary values: '', 1 '/', 2 '/'
+*/
+//Implement check to make sure user input 2 '/' and 3 numbers 
 Date Parse::convertToDate(std::string dateString){
 	Date date; 
 	char dateSeparator = '/';
@@ -231,23 +249,14 @@ Date Parse::convertToDate(std::string dateString){
 	return date;
 }
 
-
-bool Parse::isDayKeyword(std::string word) {
-	std::string dayKeywords[20] = {"today","tmr","tomorrow","mon","monday","tue","tues","tuesday","wed","wednesday","thu", "thur","thurs","thursday","fri","friday","sat","saturday","sun","sunday"};
-	
-	for(int i = 0; word[i] != '\0'; i++){
-		word[i] = tolower(word[i]);
-	}
-
-	for (int i = 0; i < 20; i++) {
-		if (word == dayKeywords[i]) {
-			return true;
-		}
-	}
-
-	return false;
-}
-
+/*
+	Purpose: Takes a time in string type and converts it into integer type.
+	Pre-conditions: Time string is made up of 4 numerical digits.
+	Post-conditions: Returns time as an integer type value. 
+	Equivalence Partitions: less than 4 digits, 4 digits, 5 digits 
+	Boundary values: 3 digits, 4 digits, 5 digits
+*/
+//Implement check to make sure 4 digits?
 int Parse::convertToTime(std::string timeString){
 	int time;
 	std::istringstream timeInput(timeString);
@@ -257,6 +266,12 @@ int Parse::convertToTime(std::string timeString){
 	return time;
 }
 
+/*
+	Purpose: Takes a day keyword and changes it into its corresponding date string.
+	Pre-conditions: Parameter dayKeyword is valid, dateStrings vector has been initialised correctly.
+	Post-conditions: Returns date string corresponding to day keyword input by user. 
+*/
+//No instance of invalid because it will check if valid before calling
 std::string Parse::changeDayToDate(std::string dayKeyword, std::vector<std::string> dateStrings) {
 	if (dayKeyword == "today") {
 		return dateStrings[0];
@@ -289,46 +304,37 @@ std::string Parse::changeDayToDate(std::string dayKeyword, std::vector<std::stri
 		return NULL; // need to return error or something!
 }
 
-/*std::string Parse::formatTask(std::string action, std::string location, Date startingDate, int startingTime, Date endingDate, int endingTime, Date deadlineDate, int deadlineTime, bool isDeadLineType) {
-	std::ostringstream output;
-	if (isDeadLineType) {
-		assert (deadlineTime >= 0 && deadlineTime <= 2359);
-		output << "by " << deadlineDate._day << "/" << deadlineDate._month << "/" << deadlineDate._year;
-		output << " " << formatTimeOutputString(deadlineTime) << " hrs";
-		output << ": " << action;
-		if (location.size() > 0) {
-			output << " at " << location;
-		}
-	}
-	else {
-		output << startingDate._day << "/" << startingDate._month << "/" << startingDate._year;
-		output << " " << formatTimeOutputString(startingTime) << " hrs";
-		if (endingDate._day && endingDate._month && endingDate._year) {
-			output << " - " << endingDate._day << "/" << endingDate._month << "/" << endingDate._year;
-			output << " " << formatTimeOutputString(endingTime) << " hrs";
-		}
-		output << ": " << action;
-		if (location.size() > 0) {
-		output << " at " << location;
-		}
-	}
+//-----CHECK METHODS---------------------------------------------------------------------------
 
-	return output.str();
-}
+/*
+	Purpose: Checks if word is a keyword or not.
+	Pre-conditions: String word has been initialised.
+	Post-conditions: Returns true if it is a keyword and false otherwise.
+	Equivalence Partitions: valid keyword, invalid keyword
 */
-/*std::string Parse::formatTimeOutputString(int time){
-	std::ostringstream timeString;
+bool Parse::isKeyword(std::string word) {
+	return word == KEYWORD_DEADLINE || word == KEYWORD_ENDING || word == KEYWORD_LOCATION || word == KEYWORD_STARTING || word == KEYWORD_BLOCK;
+}
 
-	if (time < 1000) {
-		timeString << "0";
+/*
+	Purpose: Checks if word is a valid day keyword or not. 
+	Pre-conditions: String word has been initialised. 
+	Post-conditions: Returns true if it is a day keyword and false otherwise. 
+	Equivalence Partitions: valid day keyword, invalid day keyword
+*/
+//Change to constant strings
+bool Parse::isDayKeyword(std::string word) {
+	std::string dayKeywords[20] = {"today","tmr","tomorrow","mon","monday","tue","tues","tuesday","wed","wednesday","thu", "thur","thurs","thursday","fri","friday","sat","saturday","sun","sunday"};
+	
+	for(int i = 0; word[i] != '\0'; i++){
+		word[i] = tolower(word[i]);
 	}
-	if (time < 100) {
-		timeString << "0";
-	}
-	if (time < 10) {
-		timeString << "0";
-	}
-	timeString << time;
 
-	return timeString.str();
-}*/
+	for (int i = 0; i < 20; i++) {
+		if (word == dayKeywords[i]) {
+			return true;
+		}
+	}
+
+	return false;
+}

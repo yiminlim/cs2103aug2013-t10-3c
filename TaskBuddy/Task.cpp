@@ -227,7 +227,7 @@ std::string Task::formatTimeOutputString(int time){
 	Pre-condition: Task object deadline date values have been initialised.
 	Post-condition: Returns true if deadlineDate is not empty (i.e. 0/0/0) and false otherwise. 
 	Equivalence Partitions: day/month/year = 0, valid integer values.
-	Boundary values: 0, 1.
+	Boundary values: 0, 1
 */
 bool Task::isDeadlineType() {
 	return (_deadlineDate._day && _deadlineDate._month && _deadlineDate._year);
