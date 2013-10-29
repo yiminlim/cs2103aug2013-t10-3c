@@ -73,7 +73,7 @@ public:
 //-----FORMATTING METHODS----------------------------------------------------------------------
 
 	//Formats the task output string for display to user
-	std::string Task::formatTask(std::string, std::string, Date, int, Date, int, Date, int, bool);
+	std::string Task::formatTask();
 
 	//Formats the time output string from integer type value
 	std::string formatTimeOutputString(int);
