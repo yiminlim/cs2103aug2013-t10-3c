@@ -9,6 +9,7 @@ class Parse{
 private:
 //-----CONSTANT STRINGS------------------------------------------------------------------------
 
+	//KEYWORDS
 	static const std::string KEYWORD_EMPTY;
 	static const std::string KEYWORD_LOCATION;
 	static const std::string KEYWORD_STARTING;
@@ -16,6 +17,32 @@ private:
 	static const std::string KEYWORD_DEADLINE;
 	static const std::string KEYWORD_BLOCK;
 	static const std::string KEYWORD_BLOCK_BRACKETS;
+
+	//DAY KEYWORDS
+	static const std::string DAY_KEYWORD_TODAY;
+	static const std::string DAY_KEYWORD_TOMORROW;
+	static const std::string DAY_KEYWORD_TMR;
+	static const std::string DAY_KEYWORD_MONDAY;
+	static const std::string DAY_KEYWORD_MON;
+	static const std::string DAY_KEYWORD_TUESDAY;
+	static const std::string DAY_KEYWORD_TUES;
+	static const std::string DAY_KEYWORD_TUE;
+	static const std::string DAY_KEYWORD_WEDNESDAY;
+	static const std::string DAY_KEYWORD_WED;
+	static const std::string DAY_KEYWORD_THURSDAY;
+	static const std::string DAY_KEYWORD_THURS;
+	static const std::string DAY_KEYWORD_THUR;
+	static const std::string DAY_KEYWORD_THU;
+	static const std::string DAY_KEYWORD_FRIDAY;
+	static const std::string DAY_KEYWORD_FRI;
+	static const std::string DAY_KEYWORD_SATURDAY;
+	static const std::string DAY_KEYWORD_SAT;
+	static const std::string DAY_KEYWORD_SUNDAY;
+	static const std::string DAY_KEYWORD_SUN;
+
+//-----CONSTANT INTEGERS-----------------------------------------------------------------------
+
+	static const int EMPTY_TIME;
 
 public:
 //-----PROCESSING METHODS----------------------------------------------------------------------

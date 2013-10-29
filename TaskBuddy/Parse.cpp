@@ -3,6 +3,7 @@
 
 //-----CONSTANT STRINGS------------------------------------------------------------------------
 
+//KEYWORDS
 const std::string Parse::KEYWORD_EMPTY = "";
 const std::string Parse::KEYWORD_LOCATION = "at";
 const std::string Parse::KEYWORD_STARTING = "from";
@@ -10,6 +11,32 @@ const std::string Parse::KEYWORD_ENDING = "to";
 const std::string Parse::KEYWORD_DEADLINE = "by";
 const std::string Parse::KEYWORD_BLOCK = "blockoff";
 const std::string Parse::KEYWORD_BLOCK_BRACKETS = "(blockoff)";
+
+//DAY KEYWORDS
+const std::string Parse::DAY_KEYWORD_TODAY = "today";
+const std::string Parse::DAY_KEYWORD_TOMORROW = "tomorrow";
+const std::string Parse::DAY_KEYWORD_TMR = "tmr";
+const std::string Parse::DAY_KEYWORD_MONDAY = "monday";
+const std::string Parse::DAY_KEYWORD_MON = "mon";
+const std::string Parse::DAY_KEYWORD_TUESDAY = "tuesday";
+const std::string Parse::DAY_KEYWORD_TUES = "tues";
+const std::string Parse::DAY_KEYWORD_TUE = "tue";
+const std::string Parse::DAY_KEYWORD_WEDNESDAY = "wednesday";
+const std::string Parse::DAY_KEYWORD_WED = "wed";
+const std::string Parse::DAY_KEYWORD_THURSDAY = "thursday";
+const std::string Parse::DAY_KEYWORD_THURS = "thurs";
+const std::string Parse::DAY_KEYWORD_THUR = "thur";
+const std::string Parse::DAY_KEYWORD_THU = "thu";
+const std::string Parse::DAY_KEYWORD_FRIDAY = "friday";
+const std::string Parse::DAY_KEYWORD_FRI = "fri";
+const std::string Parse::DAY_KEYWORD_SATURDAY = "saturday";
+const std::string Parse::DAY_KEYWORD_SAT = "sat";
+const std::string Parse::DAY_KEYWORD_SUNDAY = "sunday";
+const std::string Parse::DAY_KEYWORD_SUN = "sun";
+
+//-----VALUES----------------------------------------------------------------------------------
+
+const int Parse::EMPTY_TIME = -1;
 
 //-----PROCESSING METHODS----------------------------------------------------------------------
 
@@ -59,7 +86,7 @@ void Parse::processTaskStringFromUI(std::string taskString, std::string & action
 			}
 			else {
 				startingTime.push_back(convertToTime(taskDetails[i]));
-				endingTime.push_back(-1);
+				endingTime.push_back(EMPTY_TIME);
 			}
 		}
 		else if (keyword == KEYWORD_ENDING) {
@@ -99,19 +126,19 @@ void Parse::processTaskStringFromUI(std::string taskString, std::string & action
 		deadlineDate.push_back(Date());
 	}
 	if (deadlineTime.empty()) {
-		deadlineTime.push_back(-1);
+		deadlineTime.push_back(EMPTY_TIME);
 	}
 	if (startingDate.empty()) {
 		startingDate.push_back(Date());
 	}
 	if (startingTime.empty()) {
-		startingTime.push_back(-1);
+		startingTime.push_back(EMPTY_TIME);
 	}
 	if (endingDate.empty()) {
 		endingDate.push_back(Date());
 	}
 	if (endingTime.empty()) {
-		endingTime.push_back(-1);
+		endingTime.push_back(EMPTY_TIME);
 	}
 		
 	return;
@@ -198,19 +225,19 @@ void Parse::processTaskStringFromFile(std::string taskString, std::string & acti
 		deadlineDate.push_back(Date());
 	}
 	if (deadlineTime.empty()) {
-		deadlineTime.push_back(-1);
+		deadlineTime.push_back(EMPTY_TIME);
 	}
 	if (startingDate.empty()) {
 		startingDate.push_back(Date());
 	}
 	if (startingTime.empty()) {
-		startingTime.push_back(-1);
+		startingTime.push_back(EMPTY_TIME);
 	}
 	if (endingDate.empty()) {
 		endingDate.push_back(Date());
 	}
 	if (endingTime.empty()) {
-		endingTime.push_back(-1);
+		endingTime.push_back(EMPTY_TIME);
 	}
 
 	return;
@@ -273,31 +300,31 @@ int Parse::convertToTime(std::string timeString){
 */
 //No instance of invalid because it will check if valid before calling
 std::string Parse::changeDayToDate(std::string dayKeyword, std::vector<std::string> dateStrings) {
-	if (dayKeyword == "today") {
+	if (dayKeyword == DAY_KEYWORD_TODAY) {
 		return dateStrings[0];
 	}
-	else if (dayKeyword == "mon" || dayKeyword == "monday") {
+	else if (dayKeyword == DAY_KEYWORD_MONDAY || dayKeyword == DAY_KEYWORD_MON) {
 		return dateStrings[1]; 
 	}
-	else if (dayKeyword == "tue" || dayKeyword == "tues" || dayKeyword == "tuesday") {
+	else if (dayKeyword == DAY_KEYWORD_TUESDAY || dayKeyword == DAY_KEYWORD_TUES || dayKeyword == DAY_KEYWORD_TUE) {
 		return dateStrings[2]; 
 	}
-	else if (dayKeyword == "wed" || dayKeyword == "wednesday") {
+	else if (dayKeyword == DAY_KEYWORD_WEDNESDAY || dayKeyword == DAY_KEYWORD_WED) {
 		return dateStrings[3];
 	}
-	else if (dayKeyword == "thu" || dayKeyword == "thur"|| dayKeyword == "thurs" || dayKeyword == "thursday") {
+	else if (dayKeyword == DAY_KEYWORD_THURSDAY || dayKeyword == DAY_KEYWORD_THURS|| dayKeyword == DAY_KEYWORD_THUR || dayKeyword == DAY_KEYWORD_THU) {
 		return dateStrings[4]; 
 	}
-	else if (dayKeyword == "fri" || dayKeyword == "friday") {
+	else if (dayKeyword == DAY_KEYWORD_FRIDAY || dayKeyword == DAY_KEYWORD_FRI) {
 		return dateStrings[5]; 
 	}
-	else if (dayKeyword == "sat" || dayKeyword == "saturday") {
+	else if (dayKeyword == DAY_KEYWORD_SATURDAY || dayKeyword == DAY_KEYWORD_SAT) {
 		return dateStrings[6]; 
 	}
-	else if (dayKeyword == "sun" || dayKeyword == "sunday") {
+	else if (dayKeyword == DAY_KEYWORD_SUNDAY || dayKeyword == DAY_KEYWORD_SUN) {
 		return dateStrings[7]; 
 	}
-	else if (dayKeyword == "tmr" || dayKeyword == "tomorrow") {
+	else if (dayKeyword == DAY_KEYWORD_TOMORROW || dayKeyword == DAY_KEYWORD_TMR) {
 		return dateStrings[8];
 	}
 	else
@@ -324,7 +351,7 @@ bool Parse::isKeyword(std::string word) {
 */
 //Change to constant strings
 bool Parse::isDayKeyword(std::string word) {
-	std::string dayKeywords[20] = {"today","tmr","tomorrow","mon","monday","tue","tues","tuesday","wed","wednesday","thu", "thur","thurs","thursday","fri","friday","sat","saturday","sun","sunday"};
+	std::string dayKeywords[20] = {DAY_KEYWORD_TODAY, DAY_KEYWORD_TOMORROW, DAY_KEYWORD_TMR, DAY_KEYWORD_MONDAY, DAY_KEYWORD_MON, DAY_KEYWORD_TUESDAY, DAY_KEYWORD_TUES, DAY_KEYWORD_TUE, DAY_KEYWORD_WEDNESDAY, DAY_KEYWORD_WED, DAY_KEYWORD_THURSDAY, DAY_KEYWORD_THURS, DAY_KEYWORD_THUR, DAY_KEYWORD_THU, DAY_KEYWORD_FRIDAY, DAY_KEYWORD_FRI, DAY_KEYWORD_SATURDAY, DAY_KEYWORD_SAT, DAY_KEYWORD_SUNDAY, DAY_KEYWORD_SUN};
 	
 	for(int i = 0; word[i] != '\0'; i++){
 		word[i] = tolower(word[i]);
