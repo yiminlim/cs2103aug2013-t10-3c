@@ -154,3 +154,68 @@ bool DoneLinkedList::insert(Task & curTask){
 	}
 	return true;
 }
+
+//Pre-condition: input a string containing the output format of the task to be deleted from the linked list and a pointer indicating the index, search for the task in the linked list and obtain the index of the task
+//Post-condition: return true if task is found in the linked list and the index pointer will be updated accordingly
+int DoneLinkedList::getIndex(Date today){
+	ListNode *cur = _head;
+	int index=1; 
+	Date *date = new Date;
+	int *time = new int;
+	
+	while(cur != NULL){
+		obtainDateAndTime(cur->item, date, time);
+		if(today._year > date->_year){
+			index++;
+		}else if(today._year < date->_year){
+			return index;
+		}else if(today._month > date->_month){
+			index++;
+		}else if(today._month < date->_month){
+			return index;
+		}else if(today._day > date->_day){
+			index++;
+		}else if(today._day < date->_day){
+			return index;
+		}else{
+			return index;
+		}
+		cur = cur->next;
+	}
+
+	delete cur;
+	cur = NULL;
+	delete date;
+	date = NULL;
+	delete time;
+	time = NULL;
+
+	return index;
+}
+
+void DoneLinkedList::remove(int index){
+	ListNode *cur;
+	--_size;
+
+	if (index == 1){
+		cur = _head;
+		_head = _head->next;
+	} 
+	else{
+		ListNode *prev = traverseTo(index-1);
+		cur = prev->next;
+		prev->next = cur->next;
+	}
+	delete cur;
+	cur = NULL;
+}
+
+//pre-condition: input a Date today that stores day, month and year individully as integers and update the linked list such that tasks before this date are all removed
+//post-condition: linked list do not contain any overdued done items
+void DoneLinkedList::update(Date today){
+	int index = getIndex(today);
+
+	for(int i=1; i<index; i++){
+		remove(i);
+	}
+}

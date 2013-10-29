@@ -40,3 +40,11 @@ public:
 	
 	//Returns true if task is added to linked list
 	bool insert(Task &);
+
+	int getIndex(Date);
+
+	void remove(int);
+
+	//Update the linked list such that it does not contain overdued due items
+	void update(Date);
+};
