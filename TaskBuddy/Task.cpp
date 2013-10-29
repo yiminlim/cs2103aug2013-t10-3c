@@ -258,6 +258,7 @@ bool Task::isValidDate(Date date) {
 	Boundary values: 0, 1, 2, 30, 31, 32
 */
 bool Task::isValidDay(int day) {
+	return day >= 1 && day <= 31;
 }
 
 /* 
@@ -268,6 +269,7 @@ bool Task::isValidDay(int day) {
 	Boundary values: 0, 1, 2, 11, 12, 13
 */
 bool Task::isValidMonth(int month) {
+	return month >= 1 && month <= 12;
 }
 
 /* 
@@ -278,6 +280,7 @@ bool Task::isValidMonth(int month) {
 	Boundary values:  0, 1, 2
 */
 bool Task::isValidYear(int year) {
+	return year > 0;
 }
 
 /* 
