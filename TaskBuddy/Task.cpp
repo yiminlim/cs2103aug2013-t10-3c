@@ -300,8 +300,10 @@ bool Task::isEmptyTime(int time) {
 	Post-condition: Returns true if time is valid and false otherwise. 
 */
 bool Task::isValidTime(int time) {
-	
-	return true;
+	int hour = time/100;
+	int mins = time - (hour*100);
+
+	return isValidHour(hour) && isValidMins(mins);
 }
 
 /* 
@@ -312,6 +314,7 @@ bool Task::isValidTime(int time) {
 	Boundary values: 0, 1, 2, 22, 23, 24
 */
 bool Task::isValidHour(int hour) {
+	return hour >= 1 && hour <= 23;
 }
 
 /* 
@@ -322,4 +325,5 @@ bool Task::isValidHour(int hour) {
 	Boundary values: 0, 1, 2, 58, 59, 60
 */
 bool Task::isValidMins(int mins) {
+	return mins >= 1 && mins <= 59;
 }
