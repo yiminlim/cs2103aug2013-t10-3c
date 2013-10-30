@@ -12,12 +12,14 @@ private:
 	static const std::string COMMAND_DELETE;
 	static const std::string COMMAND_SEARCH;
 	static const std::string COMMAND_EDIT;
+	static const std::string COMMAND_MARKDONE;
+	static const std::string COMMAND_DONELIST;
 	static const std::string COMMAND_EDITBLOCK;
 	static const std::string COMMAND_ADDBLOCK;	
 	static const std::string COMMAND_EDITALL;
 	static const std::string COMMAND_DELETEBLOCK;
 	static const std::string COMMAND_FINALISE;
-	static const std::string COMMAND_FINALIZE;
+	static const std::string COMMAND_FINALIZE;	
 	static const std::string COMMAND_UNDO;
 	static const std::string COMMAND_CLEAR;
 	static const std::string COMMAND_EXIT;	
@@ -35,6 +37,7 @@ private:
 	static const std::string MESSAGE_ADD;
 	static const std::string MESSAGE_DELETE;
 	static const std::string MESSAGE_EDIT;
+	static const std::string MESSAGE_MARKDONE;
 	static const std::string MESSAGE_UNDO;
 	static const std::string MESSAGE_AVAILABLE_BLOCKS;
 	static const std::string MESSAGE_ADDBLOCK;
@@ -45,6 +48,8 @@ private:
 	static const std::string MESSAGE_INVALID_SEARCH;
 	static const std::string MESSAGE_INVALID_DELETE;
 	static const std::string MESSAGE_INVALID_EDIT;
+	static const std::string MESSAGE_INVALID_MARKDONE;
+	static const std::string MESSAGE_INVALID_DONELIST;
 	static const std::string MESSAGE_INVALID_UNDO;
 	static const std::string MESSAGE_INVALID_ADDBLOCK;
 	static const std::string MESSAGE_INVALID_EDITALL;

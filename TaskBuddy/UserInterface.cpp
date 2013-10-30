@@ -4,6 +4,8 @@ const std::string UserInterface::COMMAND_ADD = "add";
 const std::string UserInterface::COMMAND_DELETE = "delete";
 const std::string UserInterface::COMMAND_SEARCH = "search";
 const std::string UserInterface::COMMAND_EDIT = "edit";
+const std::string UserInterface::COMMAND_MARKDONE = "markdone";
+const std::string UserInterface::COMMAND_DONELIST = "donelist";
 const std::string UserInterface::COMMAND_EDITBLOCK = "editblock";
 const std::string UserInterface::COMMAND_ADDBLOCK = "addblock";
 const std::string UserInterface::COMMAND_EDITALL = "editall";
@@ -24,9 +26,10 @@ const std::string UserInterface::KEYWORD_END = "end";
 const std::string UserInterface::MESSAGE_TODAY_TASK = "Task(s) due by TODAY!";
 const std::string UserInterface::MESSAGE_NO_TASK_TODAY = "No task due today!";
 const std::string UserInterface::MESSAGE_COMMAND = "command: ";
-const std::string UserInterface::MESSAGE_ADD = "Task is added";
-const std::string UserInterface::MESSAGE_DELETE = "Task is deleted";
-const std::string UserInterface::MESSAGE_EDIT = "Task is edited";
+const std::string UserInterface::MESSAGE_ADD = "Task has been added";
+const std::string UserInterface::MESSAGE_DELETE = "Task has been deleted";
+const std::string UserInterface::MESSAGE_EDIT = "Task has been edited";
+const std::string UserInterface::MESSAGE_MARKDONE = "Task has been marked done";
 const std::string UserInterface::MESSAGE_UNDO = "Previous command is undone";
 const std::string UserInterface::MESSAGE_AVAILABLE_BLOCKS = "Available Blocks: ";
 const std::string UserInterface::MESSAGE_ADDBLOCK = "All blocking of dates are successful";
@@ -37,6 +40,8 @@ const std::string UserInterface::MESSAGE_INVALID_ADD = "Task cannot be added";
 const std::string UserInterface::MESSAGE_INVALID_SEARCH = "No task is found";
 const std::string UserInterface::MESSAGE_INVALID_DELETE = "Task cannot be deleted";
 const std::string UserInterface::MESSAGE_INVALID_EDIT = "Task cannot be edited";
+const std::string UserInterface::MESSAGE_INVALID_MARKDONE = "Task cannot be marked done";
+const std::string UserInterface::MESSAGE_INVALID_DONELIST = "No tasks that are marked done is found";
 const std::string UserInterface::MESSAGE_INVALID_UNDO = "Previous command cannot be undone";
 const std::string UserInterface::MESSAGE_INVALID_ADDBLOCK = "Blocking of dates has failed";
 const std::string UserInterface::MESSAGE_INVALID_EDITALL = "Editing of tasks in all blocked slots has failed";
@@ -66,6 +71,7 @@ void UserInterface::commandUI(){
 	bool isClash = false;
 	std::string command;
 	std::vector<std::string> display;
+	std::vector<std::string> doneList;
 
 	do{
 		std::cout << MESSAGE_COMMAND;
@@ -94,7 +100,7 @@ void UserInterface::commandUI(){
 		else if (command == COMMAND_DELETE){
 			std::stringstream ss(readTask(command, KEYWORD_EMPTY_STRING));
 			while (!ss.eof() && ss >> option){
-				if (tbLogic.del(display[option-1],false)){
+				if (tbLogic.del(display[option-1], false)){
 					tbLogic.save();
 					displaySuccessfulMessage(command);			
 				}
@@ -113,7 +119,28 @@ void UserInterface::commandUI(){
 			else{
 				displayFailMessage(command);
 			}
+			display.clear();, KEYWORD_EMPTY_STRING)
+		}
+		else if (command == COMMAND_MARKDONE){
+			std::stringstream ss(readTask(command, KEYWORD_EMPTY_STRING));
+			while (!ss.eof() && ss >> option){
+				if (tbLogic.markDone(display[option-1])){
+					tbLogic.save();
+					displaySuccessfulMessage(command);
+				}
+				else{
+					displayFailMessage(command);
+				}
+			}
 			display.clear();
+		}
+		else if (command == COMMAND_DONELIST){
+			if (tbLogic.retrieveDoneList(doneList)){
+				displayInformationInVector(doneList);
+			}
+			else{
+				displayFailMessage(command);
+			}
 		}
 		else if (command == COMMAND_EDITBLOCK){
 			std::cin >> option;
@@ -295,6 +322,9 @@ void UserInterface::displaySuccessfulMessage(const std::string command){
 	else if (command == COMMAND_EDIT){
 		std::cout << MESSAGE_EDIT;
 	}
+	else if (command == COMMAND_MARKDONE){
+		std::cout << MESSAGE_MARKDONE;
+	}
 	else if (command == COMMAND_UNDO){
 		std::cout << MESSAGE_UNDO;
 	}
@@ -332,6 +362,12 @@ void UserInterface::displayFailMessage(const std::string command){
 	}
 	else if (command == COMMAND_EDIT){
 		std::cout << MESSAGE_INVALID_EDIT << std::endl;
+	}
+	else if (command == COMMAND_MARKDONE){
+		std::cout << MESSAGE_INVALID_MARKDONE << std::endl;
+	}
+	else if (command == COMMAND_DONELIST){
+		std::cout << MESSAGE_INVALID_DONELIST << std::endl;
 	}
 	else if (command == COMMAND_UNDO){
 		std::cout << MESSAGE_INVALID_UNDO << std::endl;
