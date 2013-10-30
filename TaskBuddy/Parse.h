@@ -14,6 +14,7 @@ private:
 	static const std::string KEYWORD_STARTING;
 	static const std::string KEYWORD_ENDING;
 	static const std::string KEYWORD_DEADLINE;
+	static const std::string KEYWORD_HOURS;
 	static const std::string KEYWORD_BLOCK;
 	static const std::string KEYWORD_BLOCK_BRACKETS;
 

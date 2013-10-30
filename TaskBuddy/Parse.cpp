@@ -8,6 +8,7 @@ const std::string Parse::KEYWORD_LOCATION = "at";
 const std::string Parse::KEYWORD_STARTING = "from";
 const std::string Parse::KEYWORD_ENDING = "to";
 const std::string Parse::KEYWORD_DEADLINE = "by";
+const std::string Parse::KEYWORD_HOURS = "hrs";
 const std::string Parse::KEYWORD_BLOCK = "blockoff";
 const std::string Parse::KEYWORD_BLOCK_BRACKETS = "(blockoff)";
 
@@ -173,13 +174,16 @@ void Parse::processTaskStringFromFile(std::string taskString, std::string & acti
 	if (taskDetails[0] == KEYWORD_DEADLINE) {
 		unsigned int i = 1;
 
-		while (i < taskDetails.size() && taskDetails[i] != SYMBOL_COLLON) {
+		while (i < taskDetails.size() && taskDetails[i] != KEYWORD_HOURS && taskDetails[i] != SYMBOL_COLLON) {
 			if (taskDetails[i].find(DATE_SEPARATOR) != std::string::npos) {
 				deadlineDate.push_back(convertToDate(taskDetails[i]));
 			}
 			else {
 				deadlineTime.push_back(convertToTime(taskDetails[i]));
 			}
+			i++;
+		}
+		if (taskDetails[i] == KEYWORD_HOURS) {
 			i++;
 		}
 
@@ -214,7 +218,7 @@ void Parse::processTaskStringFromFile(std::string taskString, std::string & acti
 	else {
 		unsigned int i = 0;
 
-		while (i < taskDetails.size() && taskDetails[i] != SYMBOL_DASH && taskDetails[i] != SYMBOL_COLLON) {
+		while (i < taskDetails.size() && taskDetails[i] != KEYWORD_HOURS && taskDetails[i] != SYMBOL_COLLON && taskDetails[i] != SYMBOL_DASH) {
 			if (taskDetails[i].find(DATE_SEPARATOR) != std::string::npos) {
 				startingDate.push_back(convertToDate(taskDetails[i]));
 			}
@@ -224,17 +228,24 @@ void Parse::processTaskStringFromFile(std::string taskString, std::string & acti
 			i++;
 		}
 
-		if (i < taskDetails.size() && taskDetails[i] == SYMBOL_DASH) {
+		if (taskDetails[i] == KEYWORD_HOURS) {
+			i++;
+		}
+		if (taskDetails[i] == SYMBOL_DASH) {
 			i++;
 		}
 
-		while (i < taskDetails.size() && taskDetails[i] != SYMBOL_COLLON) {
+		while (i < taskDetails.size() && taskDetails[i] != KEYWORD_HOURS && taskDetails[i] != SYMBOL_COLLON) {
 			if (taskDetails[i].find(DATE_SEPARATOR) != std::string::npos) {
 				endingDate.push_back(convertToDate(taskDetails[i]));
 			}
 			else {
 				endingTime.push_back(convertToTime(taskDetails[i]));
 			}
+			i++;
+		}
+
+		if (taskDetails[i] == KEYWORD_HOURS) {
 			i++;
 		}
 
