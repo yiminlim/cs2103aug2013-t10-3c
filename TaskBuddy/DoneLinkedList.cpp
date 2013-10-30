@@ -222,3 +222,12 @@ void DoneLinkedList::update(Date today){
 		remove(i);
 	}
 }
+
+void DoneLinkedList::retrieveAll(std::vector<std::string> & tbDoneVector){
+	ListNode *cur = _head;
+
+	while (cur != NULL){
+		tbDoneVector.push_back(cur->item.getTask());
+		cur = cur->next;
+	}
+}

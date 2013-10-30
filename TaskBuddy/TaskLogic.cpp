@@ -30,6 +30,8 @@ void TaskLogic::initLogic(){
 	for (unsigned int i = 0; i < tbVector.size(); i++){
 		addExistingTask(tbVector[i]); 
 	}
+	Date today = taskParse.convertToDate(dateVector[0]);
+	tbDoneLinkedList.update(today);
 	return;
 }
 
@@ -156,6 +158,7 @@ bool TaskLogic::del(const std::string taskString, bool isUndoDel){
 
 	return checkDeleted;
 }
+
 
 //-----SEARCH TASK--------------------------------------------------------------------------------------------------
 
@@ -478,4 +481,25 @@ std::string TaskLogic::getActionLocation(std::string taskString){
 	if(location != "")
 		taskActionLocation = taskActionLocation + " at " + location; //just the common details. i.e action and location only
 	return taskActionLocation;
+}
+
+//-----Mark Done----------------------------------------------------------------------------------------------------------
+bool TaskLogic::markDone(std::string taskString){
+	if(!del(taskString,false))
+		return false;
+	std::vector<Task> taskObjectVector;
+	
+	taskObjectVector = createTask(taskString, 2);    
+	if(tbDoneLinkedList.insert(taskObjectVector[0]))
+		return true;
+	else
+		return false;
+}
+
+bool TaskLogic::retrieveDoneList(std::vector<std::string>& tbDoneVector){
+	tbDoneLinkedList.retrieveAll(tbDoneVector);
+	if(tbDoneVector.empty())
+		return false;
+	else
+		return true;
 }

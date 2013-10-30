@@ -6,15 +6,17 @@
 #include "Date.h"
 #include "Task.h"
 #include "TaskLinkedList.h"
+#include "DoneLinkedList.h"
 #include "Storage.h"
 #include "Parse.h"
 
 class TaskLogic{
 private:
 	TaskLinkedList tbLinkedList; // all the commands will be going through tbLogic to change the TaskLinkedList
-    Storage tbStorage; 
+	DoneLinkedList tbDoneLinkedList;
+	Storage tbStorage; 
 	Parse taskParse;
-	//std::vector<std::string> tbVector;
+
 	std::vector<std::string> dateVector; //dateVector[0] : today, dateVector[1] : coming Monday, ....dateVector[7] : coming Sunday, dateVector[8] : tomorrow (all in the form : dd/mm/yy)
 	std::stack<std::string> commandStackHistory;
 	std::stack<std::string> taskStackHistory;
@@ -98,4 +100,10 @@ public:
 	std::string extractDate(std::string);
 
 	std::string getActionLocation(std::string);
+
+//-----MARK DONE------------------------------------------------------------------------------------------------
+	bool markDone(std::string taskString); 
+
+	bool retrieveDoneList(std::vector<std::string> &);
+
 };

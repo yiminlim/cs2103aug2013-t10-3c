@@ -49,4 +49,7 @@ public:
 
 	//Update the linked list such that it does not contain overdued due items
 	void update(Date);
+
+	//Retrieves all task from DoneLinkedList
+	void retrieveAll(std::vector<std::string> &);
 };
