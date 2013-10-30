@@ -501,6 +501,7 @@ void TaskLinkedList::setBlock(std::string task){
 	while(cur != NULL){
 		if (cur->item.getTask() == task){ 
 			cur->item.setBlock(true);
+			return;
 		}
 		else{
 			cur = cur->next;
