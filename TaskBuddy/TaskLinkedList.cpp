@@ -211,7 +211,7 @@ void TaskLinkedList::checkIfRemainingBlockTask(std::string line){
 	std::vector<std::string> keywords;
 	std::vector<std::string> taskList;
 	int *index = new int;
-	ListNode *cur;
+	ListNode *cur = new ListNode;
 	splitIntoKeywords(line, keywords);
 	keywords.push_back("blockoff");
 

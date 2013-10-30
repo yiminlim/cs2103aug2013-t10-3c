@@ -134,13 +134,7 @@ void Parse::processTaskStringFromUI(std::string taskString, std::string & action
 			}
 		}
 	}
-	//Exceptions
-	//if deadlineDate && startingDate both not empty throw exception (user input from and by tgt)
-	//if any vector size > 1 and block is false, throw exception (user input two froms/bys)
-	//check each date for validity before adding, if invalid throw exception
-	//check action not "", else throw exception 
-	//check that ending date isn't filled while starting date no inputs 
-	//check that ending && deadline not filled together
+
 	if (deadlineDate.empty()) {
 		deadlineDate.push_back(Date());
 	}
@@ -241,7 +235,7 @@ void Parse::processTaskStringFromFile(std::string taskString, std::string & acti
 			i++;
 		}
 
-		while (i < taskDetails.size() && taskDetails[i] != KEYWORD_HOURS && taskDetails[i] != SYMBOL_COLLON) {
+		while (i < taskDetails.size() && taskDetails[i] != KEYWORD_HOURS && taskDetails[i] != SYMBOL_COLLON) { 
 			if (taskDetails[i].find(DATE_SEPARATOR) != std::string::npos) {
 				endingDate.push_back(convertToDate(taskDetails[i]));
 			}
