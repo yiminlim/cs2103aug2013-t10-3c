@@ -108,7 +108,7 @@ bool TaskLogic::add(const std::string taskString, bool& isClash){
 
 	for(unsigned int i = 0; i < taskObjectVector.size() ; i++){
 		clash = false;
-		if(tbLinkedList.insert(taskObjectVector[i], clash))
+		if(tbLinkedList.insert(taskObjectVector[i]))              //remove clash as parameter to let program compile first cause Sharmane haven't include
 			update(COMMAND_ADD, taskObjectVector[0].getTask(), "");
 		else
 			checkAdded = false;
