@@ -94,7 +94,7 @@ void UserInterface::commandUI(){
 		else if (command == COMMAND_DELETE){
 			std::stringstream ss(readTask(command, KEYWORD_EMPTY_STRING));
 			while (!ss.eof() && ss >> option){
-				if (tbLogic.del(display[option-1])){
+				if (tbLogic.del(display[option-1],false)){
 					tbLogic.save();
 					displaySuccessfulMessage(command);			
 				}
@@ -251,7 +251,7 @@ void UserInterface::editBlockUI(const std::string stringToEditBlock){
 		command = COMMAND_DELETEBLOCK;
 		std::stringstream ss(readTask(command, KEYWORD_EMPTY_STRING));
 		while (!ss.eof() && ss >> option){
-			if (tbLogic.del(blockTaskVector[option-1])){
+			if (tbLogic.del(blockTaskVector[option-1], false)){
 				tbLogic.save();
 				displaySuccessfulMessage(command);			
 			}

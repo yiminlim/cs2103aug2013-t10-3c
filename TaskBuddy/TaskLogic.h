@@ -50,7 +50,7 @@ public:
 //-----DELETE TASK-------------------------------------------------------------------------------------------
 
 	//delete a task from the list at the index given
-	bool del(const std::string);
+	bool del(const std::string, bool);
 
 //-----SEARCH TASK-------------------------------------------------------------------------------------------
 
@@ -76,7 +76,7 @@ public:
 
 	//delete all the blocks of the string given
 	//finaliseBlock is the same as deleteBlock. Just give in all those that is meant to be deleted. If only one left, send in isBloack = false
-	bool finaliseBlock(const int, std::vector<std::string> &);
+	bool finaliseBlock(int, std::vector<std::string> &);
 
 //-----UNDO---------------------------------------------------------------------------------------------------
 

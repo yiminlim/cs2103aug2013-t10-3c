@@ -127,9 +127,9 @@ bool TaskLogic::add(const std::string taskString, bool& isClash){
 */
 bool TaskLogic::addExistingTask(const std::string taskString){
 	std::vector<Task> taskObjectVector;
-	bool isClash = true; //PLEASE CHECK
+	bool isClash = false;
     taskObjectVector = createTask(taskString, 2);     //generating task from file
-	if(tbLinkedList.insert(taskObjectVector[0], isClash))
+	if(tbLinkedList.insert(taskObjectVector[0], isClash))  //there is no need to check if isClashed since these are pre-existing task.
 		return true;
 	else
 		return false;
@@ -139,18 +139,20 @@ bool TaskLogic::addExistingTask(const std::string taskString){
 	
 /*
 	Purpose: Search for a Task with the taskString and delete it from tbLinkedList.
+			 isUndoDel indicates if it was a delete function call from undo, thus no updating required.
 	Pre-conditions: taskString is not empty and should be in the proper format
 	Post-conditions: true is returned only if the task is found successfully and removed from tbLinkedList
 	Equivalence Partition: Empty string, Invalid string, Valid string
 	Boundary: Empty string, Any valid string, Any invalid string
 */
-bool TaskLogic::del(const std::string taskString){
+bool TaskLogic::del(const std::string taskString, bool isUndoDel){
 	bool checkDeleted = true;
 
 	checkDeleted = tbLinkedList.remove(taskString, getActionLocation(taskString));
 
 	if(checkDeleted)
-		update(COMMAND_DELETE, taskString, "");
+		if(!isUndoDel)
+			update(COMMAND_DELETE, taskString, "");
 
 	return checkDeleted;
 }
@@ -272,7 +274,7 @@ bool TaskLogic::getBlock(std::string& taskString, std::string& taskActionLocatio
 bool TaskLogic::editBlock(const std::string newTaskActionLocation, std::vector<std::string>& blockTaskVector){
 	bool isValidEdit = true;
 	for(unsigned int i = 0; i < blockTaskVector.size(); i++){
-		if(!edit(newTaskActionLocation, blockTaskVector[i]))
+		if(!edit( blockTaskVector[i], newTaskActionLocation))
 			isValidEdit = false;
 	}
 	return isValidEdit;
@@ -303,11 +305,12 @@ bool TaskLogic::addBlock(const std::string taskString, const std::string origina
 	Equivalence Partition: valid int index, invalid int index, empty vector, empty strings, valid strings, invalid strings
 	Boundary: index 0, index 1, index size-1, any invalid index, Empty vector, Empty strings, Any valid strings, Any invalid strings
 */
-bool TaskLogic::finaliseBlock(const int delIndex, std::vector<std::string>& blockTaskVector){
+bool TaskLogic::finaliseBlock(int delIndex, std::vector<std::string>& blockTaskVector){
 	unsigned int count = 0;
+	delIndex -= 1; //convert to 0-based
 	for(unsigned int i=0; i < blockTaskVector.size() ; i++){
 		if(i != delIndex){
-			del(blockTaskVector[i]);
+			del(blockTaskVector[i],false);
 			count++;
 		}
 	}
@@ -351,7 +354,7 @@ bool TaskLogic::undo(){
 	bool result = true;
 
 	if(commandStackHistory.top() == COMMAND_EDIT){
-		if(!del(taskStackHistory.top()))
+		if(!del(taskStackHistory.top(),true))
 			result = false;
 		taskStackHistory.pop();   //if delete fails we should still remove the task to be done from the system?
 		
@@ -362,7 +365,7 @@ bool TaskLogic::undo(){
 		commandStackHistory.pop();  //whether result true or not, let the command be popped out cos otherwise it can never be done
 	}
 	else if(commandStackHistory.top() == COMMAND_ADD){
-		if(!del(taskStackHistory.top()))
+		if(!del(taskStackHistory.top(),true))
 			result = false;
 		taskStackHistory.pop();
 		
@@ -471,6 +474,8 @@ std::string TaskLogic::getActionLocation(std::string taskString){
 	bool isBlock = false;
 	taskParse.processTaskStringFromFile(taskString,action,location,startingDateVector,startingTimeVector,endingDateVector,endingTimeVector,deadlineDateVector,deadlineTimeVector,isBlock,dateVector);
 	
-	std::string taskActionLocation = action + " at " + location; //just the common details. i.e action and location only
+	std::string taskActionLocation = action;
+	if(location != "")
+		taskActionLocation = taskActionLocation + " at " + location; //just the common details. i.e action and location only
 	return taskActionLocation;
 }
