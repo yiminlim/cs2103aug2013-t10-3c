@@ -22,52 +22,91 @@ private:
 	bool _block;
 
 public:
-	//empty constructor
+//-----CONSTRUCTORS----------------------------------------------------------------------------
+
+	//Default constructor
 	Task();
 
-	//constructor
+	//Constructor with components
 	Task(std::string, std::string, Date, int, Date, int, Date, int, bool);
 
-	//formats the task output string
-	std::string Task::formatTask(std::string, std::string, Date, int, Date, int, Date, int, bool);
+//-----GET METHODS-----------------------------------------------------------------------------
 
-	//returns formatted task output string
+	//Returns formatted task output string
 	std::string getTask();
 
-	//returns task action
+	//Returns task action string
 	std::string getAction();
 
-	//returns task location
+	//Returns task location string
 	std::string getLocation();
 
-	//returns task starting date
+	//Returns task starting date
 	Date getStartingDate();
 
-	//returns task starting time
+	//Returns task starting time
 	int getStartingTime();
 
-	//returns tsak ending date
+	//Returns task ending date
 	Date getEndingDate();
 
-	//returns task ending time
+	//Returns task ending time
 	int getEndingTime();
 
-	//returns task deadline date
+	//Returns task deadline date
 	Date getDeadlineDate();
 
-	//returns task deadline time
+	//Returns task deadline time
 	int getDeadlineTime();
 
-	//returns task status
+	//Returns task status
 	char getStatus();
 
-	//returns whether block or not
+	//Returns whether task is part of a block
 	bool getBlock();
 
-	//set block
+//-----SET METHODS-----------------------------------------------------------------------------
+
+	//Set whether task is part of a block
 	void setBlock(bool);
 
-	std::string formatTimeOutputString(int time);
+//-----FORMATTING METHODS----------------------------------------------------------------------
 
+	//Formats the task output string for display to user
+	std::string Task::formatTask();
+
+	//Formats the time output string from integer type value
+	std::string formatTimeOutputString(int);
+
+//-----CHECK METHODS---------------------------------------------------------------------------
+	
+	//Checks if task is deadline type
 	bool isDeadlineType();
+
+	//Checks if date value is empty i.e. 0/0/0
+	bool isEmptyDate(Date);
+
+	//Checks if date value is valid
+	bool isValidDate(Date);
+
+	//Checks if day value of date is valid
+	bool isValidDay(int);
+
+	//Checks if month value of date is valid
+	bool isValidMonth(int);
+
+	//Checks if year value of date is valid
+	bool isValidYear(int);
+
+	//Checks if time value is empty i.e. -1
+	bool isEmptyTime(int);
+
+	//Checks if time value is valid 
+	bool isValidTime(int);
+
+	//Checks if hour value of time is valid
+	bool isValidHour(int);
+
+	//Checks if minutes value of time is valid
+	bool isValidMins(int);
 };
