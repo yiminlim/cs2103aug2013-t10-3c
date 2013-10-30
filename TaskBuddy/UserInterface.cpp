@@ -119,7 +119,7 @@ void UserInterface::commandUI(){
 			else{
 				displayFailMessage(command);
 			}
-			display.clear();, KEYWORD_EMPTY_STRING)
+			display.clear();
 		}
 		else if (command == COMMAND_MARKDONE){
 			std::stringstream ss(readTask(command, KEYWORD_EMPTY_STRING));
@@ -141,6 +141,7 @@ void UserInterface::commandUI(){
 			else{
 				displayFailMessage(command);
 			}
+			doneList.clear();
 		}
 		else if (command == COMMAND_EDITBLOCK){
 			std::cin >> option;
