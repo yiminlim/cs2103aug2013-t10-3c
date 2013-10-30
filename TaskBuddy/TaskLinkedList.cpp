@@ -355,7 +355,7 @@ void TaskLinkedList::getIntDate(std::string date, int *day, int *month, int *yea
 	ss3 >> *year;
 }
 
-//only check for range of dates entered in proper date format dd/mm/yyyy
+//only check for range of dates entered in proper date format dd/mm/yyyy (note that the first digit day and month entered cannot have 0) 
 std::string TaskLinkedList::includeRangeOfDates(std::string tempTask){
 	if((tempTask).find("-") != std::string::npos){
 		std::vector<std::string> words;
