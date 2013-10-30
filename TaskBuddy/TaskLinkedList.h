@@ -30,16 +30,16 @@ public:
 	int getSize();
 
 	//determine if the task has a starting date and time or deadline date and time and pass back the one with the value
-	void obtainDateAndTime(Task &, Date*, int*);
+	void obtainDateAndTime(Task &, Date*, int*, int*);
 
 	//Returns true if the curTask is of an earlier date and time than listTask
-	bool compareDateAndTime(Task &, Task &);
+	bool compareDateAndTime(Task &, Task &, bool &);
 
 	//Returns the index at which a Task is to be added
-	int getInsertIndex(Task &);
+	int getInsertIndex(Task &, bool &);
 	
-	//Returns true if task is added to linked list
-	bool insert(Task &);
+	//Returns true if task is added to linked list. Check if there are any clashes.
+	bool insert(Task &, bool &);
 
 	//Returns the index of the task to be removed
 	bool getRemoveIndex(std::string, int*);
@@ -55,6 +55,18 @@ public:
 
 	//Convert string into lowercase
 	std::string toLowerCase(std::string);
+
+	//convert int to string for date
+	std::string getStringDate(int, int, int);
+
+	//compare the range of dates and add the range into the task output format
+	std::string compareAndIncludeRange(std::string, int*, int*, int*, int*, int*, int*);
+
+	//convert string to int for date
+	void getIntDate(std::string, int*, int*, int*);
+
+	//"main functoin" to call the other functions to assist in including range in dates into temptask for searching
+	std::string includeRangeOfDates(std::string);
 
 	//Pass over a vector of keywords and an empty vector of string for me to return those strings with the words in it
 	bool retrieve(const std::vector<std::string>, std::vector<std::string> &);
