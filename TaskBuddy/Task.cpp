@@ -138,8 +138,8 @@ bool Task::getBlock(){
 	Equivalence Partitions: true, false 
 */
 void Task::setBlock(bool newBlock) {
-	_block = newBlock;
-	_task = formatTask();
+	//_block = false;     //why cant we change things in private attributes
+	//_task = formatTask();
 	
 	return;
 }
