@@ -235,7 +235,7 @@ void Parse::processTaskStringFromFile(std::string taskString, std::string & acti
 			i++;
 		}
 
-		while (i < taskDetails.size() && taskDetails[i] != KEYWORD_HOURS && taskDetails[i] != SYMBOL_COLLON) {
+		while (i < taskDetails.size() && taskDetails[i] != (KEYWORD_HOURS + SYMBOL_COLLON)) {
 			if (taskDetails[i].find(DATE_SEPARATOR) != std::string::npos) {
 				endingDate.push_back(convertToDate(taskDetails[i]));
 			}
