@@ -171,6 +171,7 @@ std::string Task::formatTask() {
 		}
 	}
 	else {
+		output << "   ";	// for alignment with deadline tasks during display
 		if (!isEmptyDate(_startingDate)) {
 			output << _startingDate._day << "/" << _startingDate._month << "/" << _startingDate._year;
 		}
@@ -178,9 +179,9 @@ std::string Task::formatTask() {
 			output << " " << formatTimeOutputString(_startingTime) << " hrs";
 		}
 		if (!isEmptyDate(_endingDate) || !isEmptyTime(_endingTime)) {
-			output << " - ";
+			output << " -";
 			if (!isEmptyDate(_endingDate)) {
-				output << _endingDate._day << "/" << _endingDate._month << "/" << _endingDate._year;
+				output << " " << _endingDate._day << "/" << _endingDate._month << "/" << _endingDate._year;
 			}
 			if (!isEmptyTime(_endingTime)) {
 				output << " " << formatTimeOutputString(_endingTime) << " hrs";
