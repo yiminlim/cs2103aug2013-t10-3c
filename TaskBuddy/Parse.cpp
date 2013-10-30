@@ -4,13 +4,19 @@
 //-----CONSTANT STRINGS------------------------------------------------------------------------
 
 //KEYWORDS
-const std::string Parse::KEYWORD_EMPTY = "";
 const std::string Parse::KEYWORD_LOCATION = "at";
 const std::string Parse::KEYWORD_STARTING = "from";
 const std::string Parse::KEYWORD_ENDING = "to";
 const std::string Parse::KEYWORD_DEADLINE = "by";
 const std::string Parse::KEYWORD_BLOCK = "blockoff";
 const std::string Parse::KEYWORD_BLOCK_BRACKETS = "(blockoff)";
+
+//MISC
+const std::string Parse::EMPTY_STRING = "";
+const std::string Parse::SINGLE_SPACE = " ";
+const std::string Parse::DATE_SEPARATOR = "/";
+const std::string Parse::SYMBOL_DASH = "-";
+const std::string Parse::SYMBOL_COLLON = ":";
 
 //DAY KEYWORDS
 const std::string Parse::DAY_KEYWORD_TODAY = "today";
@@ -34,7 +40,7 @@ const std::string Parse::DAY_KEYWORD_SAT = "sat";
 const std::string Parse::DAY_KEYWORD_SUNDAY = "sunday";
 const std::string Parse::DAY_KEYWORD_SUN = "sun";
 
-//-----VALUES----------------------------------------------------------------------------------
+//-----CONSTANT INTEGERS-----------------------------------------------------------------------
 
 const int Parse::EMPTY_TIME = -1;
 
@@ -45,7 +51,7 @@ const int Parse::EMPTY_TIME = -1;
 	Pre-conditions: Default values ("" for string, empty values for date & time, false for block) have been initialised for parameters.
 	Post-conditions: Parameters are updated by reference based on task string.
 */
-void Parse::processTaskStringFromUI(std::string taskString, std::string & action, std::string & location, std::vector<Date> & startingDate, std::vector<int> & startingTime, std::vector<Date> & endingDate, std::vector<int> & endingTime, std::vector<Date> & deadlineDate, std::vector<int> & deadlineTime, bool & block, std::vector<std::string> & dateVector){
+void Parse::processTaskStringFromUI(std::string taskString, std::string & action, std::string & location, std::vector<Date> & startingDate, std::vector<int> & startingTime, std::vector<Date> & endingDate, std::vector<int> & endingTime, std::vector<Date> & deadlineDate, std::vector<int> & deadlineTime, bool & block, std::vector<std::string> & dateVector) {
 	std::istringstream userInputTask(taskString);
 	std::string word;
 	std::vector<std::string> taskDetails;
@@ -54,7 +60,7 @@ void Parse::processTaskStringFromUI(std::string taskString, std::string & action
 		taskDetails.push_back(word);
 	}
 
-	std::string keyword = KEYWORD_EMPTY;
+	std::string keyword = EMPTY_STRING;
 
 	for (unsigned int i = 0; i < taskDetails.size(); i++) { //must always start with command
 		if (isKeyword(taskDetails[i])) {
@@ -63,20 +69,20 @@ void Parse::processTaskStringFromUI(std::string taskString, std::string & action
 				block = true;
 			}
 		}
-		else if (keyword == KEYWORD_EMPTY) {
-			if (action != "") {
-				action += " ";
+		else if (keyword == EMPTY_STRING) {
+			if (action != EMPTY_STRING) {
+				action += SINGLE_SPACE;
 			}
 			action += taskDetails[i];
 		}
 		else if (keyword == KEYWORD_LOCATION) {
-			if (location != "") {
-				location += " ";
+			if (location != EMPTY_STRING) {
+				location += SINGLE_SPACE;
 			}
 			location += taskDetails[i];
 		}
 		else if (keyword == KEYWORD_STARTING) {
-			if (taskDetails[i].find("/") != std::string::npos) {
+			if (taskDetails[i].find(DATE_SEPARATOR) != std::string::npos) {
 				startingDate.push_back(convertToDate(taskDetails[i]));
 				endingDate.push_back(Date()); //check
 			} 
@@ -90,27 +96,33 @@ void Parse::processTaskStringFromUI(std::string taskString, std::string & action
 			}
 		}
 		else if (keyword == KEYWORD_ENDING) {
-			if (taskDetails[i].find("/") != std::string::npos) {
-				if(!endingDate.empty())
+			if (taskDetails[i].find(DATE_SEPARATOR) != std::string::npos) {
+				if (!endingDate.empty()) {
 					endingDate[endingDate.size()-1] = convertToDate(taskDetails[i]);
-				else
+				}
+				else {
 					endingDate.push_back(convertToDate(taskDetails[i]));
+				}
 			}
 			else if (isDayKeyword(taskDetails[i])) {
-				if(!endingDate.empty())
+				if(!endingDate.empty()) {
 					endingDate[endingDate.size()-1] = convertToDate(changeDayToDate(taskDetails[i], dateVector));
-				else
-					endingDate.push_back(convertToDate(changeDayToDate(taskDetails[i], dateVector)))	;
+				}
+				else {
+					endingDate.push_back(convertToDate(changeDayToDate(taskDetails[i], dateVector)));
+				}
 			}
 			else {
-				if(!endingTime.empty())
+				if (!endingTime.empty()) {
 					endingTime[endingTime.size()-1] = convertToTime(taskDetails[i]);
-				else
+				}
+				else {
 					endingTime.push_back(convertToTime(taskDetails[i]));
+				}
 			}
 		}
 		else if (keyword == KEYWORD_DEADLINE) {
-			if (taskDetails[i].find("/") != std::string::npos) {
+			if (taskDetails[i].find(DATE_SEPARATOR) != std::string::npos) {
 				deadlineDate.push_back(convertToDate(taskDetails[i]));
 			}
 			else if (isDayKeyword(taskDetails[i])) {
@@ -157,14 +169,27 @@ void Parse::processTaskStringFromFile(std::string taskString, std::string & acti
 	while (fileTask >> word) {
 		taskDetails.push_back(word);
 	}
-
+	
 	if (taskDetails[0] == KEYWORD_DEADLINE) {
-		deadlineDate.push_back(convertToDate(taskDetails[1]));
-		deadlineTime.push_back(convertToTime(taskDetails[2]));
-		unsigned int i = 4;
+		unsigned int i = 1;
+
+		while (i < taskDetails.size() && taskDetails[i] != SYMBOL_COLLON) {
+			if (taskDetails[i].find(DATE_SEPARATOR) != std::string::npos) {
+				deadlineDate.push_back(convertToDate(taskDetails[i]));
+			}
+			else {
+				deadlineTime.push_back(convertToTime(taskDetails[i]));
+			}
+			i++;
+		}
+
+		if (taskDetails[i] == SYMBOL_COLLON) {
+			i++;
+		}
+
 		while (i < taskDetails.size() && taskDetails[i] != KEYWORD_LOCATION && taskDetails[i] != KEYWORD_BLOCK_BRACKETS) {
-			if (action != "") {
-				action += " ";
+			if (action != EMPTY_STRING) {
+				action += SINGLE_SPACE;
 			}
 			action += taskDetails[i];
 			i++;
@@ -175,8 +200,8 @@ void Parse::processTaskStringFromFile(std::string taskString, std::string & acti
 		}
 
 		while (i < taskDetails.size() && taskDetails[i] != KEYWORD_BLOCK_BRACKETS) {
-			if (location != "") {
-				location += " ";
+			if (location != EMPTY_STRING) {
+				location += SINGLE_SPACE;
 			}
 			location += taskDetails[i];
 			i++;
@@ -187,18 +212,39 @@ void Parse::processTaskStringFromFile(std::string taskString, std::string & acti
 		} 
 	}
 	else {
-		startingDate.push_back(convertToDate(taskDetails[0]));
-		startingTime.push_back(convertToTime(taskDetails[1]));
-		unsigned int i = 3;
-		if (taskDetails[3] == "-") {
-			endingDate.push_back(convertToDate(taskDetails[4]));
-			endingTime.push_back(convertToTime(taskDetails[5]));
-			i = 7;
+		unsigned int i = 0;
+
+		while (i < taskDetails.size() && taskDetails[i] != SYMBOL_DASH && taskDetails[i] != SYMBOL_COLLON) {
+			if (taskDetails[i].find(DATE_SEPARATOR) != std::string::npos) {
+				startingDate.push_back(convertToDate(taskDetails[i]));
+			}
+			else {
+				startingTime.push_back(convertToTime(taskDetails[i]));
+			}
+			i++;
+		}
+
+		if (i < taskDetails.size() && taskDetails[i] == SYMBOL_DASH) {
+			i++;
+		}
+
+		while (i < taskDetails.size() && taskDetails[i] != SYMBOL_COLLON) {
+			if (taskDetails[i].find(DATE_SEPARATOR) != std::string::npos) {
+				endingDate.push_back(convertToDate(taskDetails[i]));
+			}
+			else {
+				endingTime.push_back(convertToTime(taskDetails[i]));
+			}
+			i++;
+		}
+
+		if (taskDetails[i] == SYMBOL_COLLON) {
+			i++;
 		}
 
 		while (i < taskDetails.size() && taskDetails[i] != KEYWORD_LOCATION && taskDetails[i] != KEYWORD_BLOCK_BRACKETS) {
-			if (action != "") {
-				action += " ";
+			if (action != EMPTY_STRING) {
+				action += SINGLE_SPACE;
 			}
 			action += taskDetails[i];
 			i++;
@@ -209,8 +255,8 @@ void Parse::processTaskStringFromFile(std::string taskString, std::string & acti
 		}
 
 		while (i < taskDetails.size() && taskDetails[i] != KEYWORD_BLOCK_BRACKETS) {
-			if (location != "") {
-				location += " ";
+			if (location != EMPTY_STRING) {
+				location += SINGLE_SPACE;
 			}
 			location += taskDetails[i];
 			i++;
@@ -255,11 +301,9 @@ void Parse::processTaskStringFromFile(std::string taskString, std::string & acti
 //Implement check to make sure user input 2 '/' and 3 numbers 
 Date Parse::convertToDate(std::string dateString){
 	Date date; 
-	char dateSeparator = '/';
 
-
-	size_t posFirstDateSeparator = dateString.find(dateSeparator);
-	size_t posSecondDateSeparator = dateString.find(dateSeparator, posFirstDateSeparator+1);
+	size_t posFirstDateSeparator = dateString.find(DATE_SEPARATOR);
+	size_t posSecondDateSeparator = dateString.find(DATE_SEPARATOR, posFirstDateSeparator+1);
 
 	std::string dayString = dateString.substr(0, posFirstDateSeparator-0); 
 	std::string monthString = dateString.substr(posFirstDateSeparator+1, posSecondDateSeparator-posFirstDateSeparator-1);
@@ -349,11 +393,10 @@ bool Parse::isKeyword(std::string word) {
 	Post-conditions: Returns true if it is a day keyword and false otherwise. 
 	Equivalence Partitions: valid day keyword, invalid day keyword
 */
-//Change to constant strings
 bool Parse::isDayKeyword(std::string word) {
 	std::string dayKeywords[20] = {DAY_KEYWORD_TODAY, DAY_KEYWORD_TOMORROW, DAY_KEYWORD_TMR, DAY_KEYWORD_MONDAY, DAY_KEYWORD_MON, DAY_KEYWORD_TUESDAY, DAY_KEYWORD_TUES, DAY_KEYWORD_TUE, DAY_KEYWORD_WEDNESDAY, DAY_KEYWORD_WED, DAY_KEYWORD_THURSDAY, DAY_KEYWORD_THURS, DAY_KEYWORD_THUR, DAY_KEYWORD_THU, DAY_KEYWORD_FRIDAY, DAY_KEYWORD_FRI, DAY_KEYWORD_SATURDAY, DAY_KEYWORD_SAT, DAY_KEYWORD_SUNDAY, DAY_KEYWORD_SUN};
 	
-	for(int i = 0; word[i] != '\0'; i++){
+	for(int i = 0; word[i] != '\0'; i++) {
 		word[i] = tolower(word[i]);
 	}
 
