@@ -162,7 +162,7 @@ std::string Task::formatTask() {
 		if (!isEmptyTime(_deadlineTime)) {
 			output << " " << formatTimeOutputString(_deadlineTime) << " hrs";
 		}
-		output << ": " << _action;
+		output << " : " << _action;
 		if (_location.size() > 0) {
 			output << " at " << _location;
 		}
@@ -186,7 +186,7 @@ std::string Task::formatTask() {
 				output << " " << formatTimeOutputString(_endingTime) << " hrs";
 			}
 		}
-		output << ": " << _action;
+		output << " : " << _action;
 		if (_location.size() > 0) {
 			output << " at " << _location;
 		}
