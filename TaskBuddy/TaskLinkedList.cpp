@@ -274,31 +274,9 @@ std::string TaskLinkedList::toLowerCase(std::string line){
 //				assume that the day and month are greater than 0. While year are at least 4 digits (the first digit is not 0)
 //post-condtion: return a string date form from individual int day, month, year
 std::string TaskLinkedList::getStringDate(int day, int month, int year){
-	std::string date, dateD, dateM, dateY;
-	std::ostringstream convert1;
-	convert1 << day;
-	dateD = convert1.str();
-	if(day <= 9){
-		dateD = "0" + dateD + "/";
-	}else{
-		dateD = dateD + "/";
-	}
-
-	std::ostringstream convert2;
-	convert2 << month;
-	dateM = convert2.str();
-	if(month <= 9){
-		dateM = "0" + dateM + "/";
-	}else{
-		dateM = dateM + "/";
-	}
-
-	std::ostringstream convert3;
-	convert3 << year;
-	dateY = convert3.str();
-
-	date = dateD + dateM + dateY;
-	return date;
+	std::ostringstream output;
+	output << day << "/" << month << "/" << year; 
+	return output.str();
 }
 
 //pre-condition: input a tempTask and the starting and ending dates and push in the dates that are within the range of the starting and ending dates
@@ -310,11 +288,11 @@ std::string TaskLinkedList::compareAndIncludeRange(std::string tempTask, int *st
 	if (*startYear != *endYear){
 		for(i=*startYear; i<*endYear; i++){
 			for(j=1; j<=12; j++){
-				if(i == *startYear){
+				if(i == *startYear && j==1){
 					j=*startMonth;
 				}
 				for(k=1; k<=31; k++){
-					if(i == *startYear){
+					if(j == *startMonth && k==1){
 						k=*startDay;
 					}
 					tempTask = tempTask + getStringDate(k,j,i);
@@ -334,8 +312,8 @@ std::string TaskLinkedList::compareAndIncludeRange(std::string tempTask, int *st
 		i = *startYear;
 		for(j=*startMonth; j<*endMonth; j++){
 			for(k=1; k<=31; k++){
-				if(j == *startMonth){
-					j = *startDay;
+				if(j == *startMonth && k==1){
+					k = *startDay;
 				}
 				tempTask = tempTask + getStringDate(k, j, i);
 			}
@@ -362,15 +340,18 @@ std::string TaskLinkedList::compareAndIncludeRange(std::string tempTask, int *st
 //				string must be in the format dd/mm/yyyy
 //postcondition: pointers are updated (day, month, year as int)
 void TaskLinkedList::getIntDate(std::string date, int *day, int *month, int *year){
-	std::string sDay = date.substr(0,2);
-	std::string sMonth = date.substr(3,2);
-	std::string sYear = date.substr(6,9);
+	size_t posFirstDateSeparator = date.find("/");
+	size_t posSecondDateSeparator = date.find("/", posFirstDateSeparator+1);
+	
+	std::string sDay = date.substr(0,posFirstDateSeparator-0);
+	std::string sMonth = date.substr(posFirstDateSeparator+1, posSecondDateSeparator-posFirstDateSeparator-1);
+	std::string sYear = date.substr(posSecondDateSeparator+1);
 
-	std::stringstream ss1(sDay);
+	std::istringstream ss1(sDay);
 	ss1 >> *day;
-	std::stringstream ss2(sMonth);
+	std::istringstream ss2(sMonth);
 	ss2 >> *month;
-	std::stringstream ss3(sYear);
+	std::istringstream ss3(sYear);
 	ss3 >> *year;
 }
 
@@ -379,10 +360,15 @@ std::string TaskLinkedList::includeRangeOfDates(std::string tempTask){
 	if((tempTask).find("-") != std::string::npos){
 		std::vector<std::string> words;
 		splitIntoKeywords(tempTask, words);
+		int i = 0;
 
 		int *startDay = new int, *startMonth = new int, *startYear = new int, *endDay = new int, *endMonth = new int, *endYear = new int;
-		getIntDate(words[0], startDay, startMonth, startYear);
-		getIntDate(words[4], endDay, endMonth, endYear);
+		getIntDate(words[i], startDay, startMonth, startYear);
+
+		while (words[i] != "-"){
+			i++;
+		}
+		getIntDate(words[i+1], endDay, endMonth, endYear);
 
 		tempTask = compareAndIncludeRange(tempTask, startDay, startMonth, startYear, endDay, endMonth, endYear);
 	
