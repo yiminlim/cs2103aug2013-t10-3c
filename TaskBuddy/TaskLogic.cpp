@@ -7,6 +7,7 @@
 const std::string TaskLogic::COMMAND_ADD = "add";
 const std::string TaskLogic::COMMAND_DELETE = "delete";
 const std::string TaskLogic::COMMAND_EDIT = "edit";
+const std::string TaskLogic::COMMAND_MARKDONE = "markdone";
 
 TaskLogic::TaskLogic(){
 
@@ -332,7 +333,7 @@ bool TaskLogic::finaliseBlock(int delIndex, std::vector<std::string>& blockTaskV
 */
 void TaskLogic::update(std::string command, std::string newTask, std::string oldTask){
 
-	if (command == COMMAND_EDIT){
+	if (command == COMMAND_EDIT || command == COMMAND_MARKDONE){
 		commandStackHistory.push(command);   // newTask is to be added in, while old task is to be deleted.
 		taskStackHistory.push(oldTask);  //deleted
 		taskStackHistory.push(newTask);  //added
@@ -380,7 +381,18 @@ bool TaskLogic::undo(){
 		taskStackHistory.pop();
 		
 		commandStackHistory.pop();
-	}	
+	}
+	else if(commandStackHistory.top() == COMMAND_MARKDONE){
+		if(!tbDoneLinkedList.removeTask(taskStackHistory.top()))
+			result = false;
+		taskStackHistory.pop();   //if delete fails we should still remove the task to be done from the system?
+		
+		if(!addExistingTask(taskStackHistory.top()))
+			result = false;
+		taskStackHistory.pop();
+	
+		commandStackHistory.pop();  //whether result true or not, let the command be popped out cos otherwise it can never be done
+	}
 	else if(commandStackHistory.empty())
 		result = false;
 	else
@@ -485,14 +497,17 @@ std::string TaskLogic::getActionLocation(std::string taskString){
 
 //-----Mark Done----------------------------------------------------------------------------------------------------------
 bool TaskLogic::markDone(std::string taskString){
-	if(!del(taskString,false))
+	if(!del(taskString,false)) 
 		return false;
 	std::vector<Task> taskObjectVector;
 	
-	taskObjectVector = createTask(taskString, 2);    
-	if(tbDoneLinkedList.insert(taskObjectVector[0]))
+	taskObjectVector = createTask(taskString, 2);
+
+
+	if(tbDoneLinkedList.insert(taskObjectVector[0])){
+		update(COMMAND_MARKDONE,taskString,taskString);
 		return true;
-	else
+	}else
 		return false;
 }
 

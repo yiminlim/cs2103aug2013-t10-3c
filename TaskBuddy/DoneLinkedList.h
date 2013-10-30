@@ -47,6 +47,8 @@ public:
 	//remove the task pointed to by the index
 	void remove(int);
 
+	bool removeTask(std::string);
+
 	//Update the linked list such that it does not contain overdued due items
 	void update(Date);
 

@@ -24,6 +24,7 @@ private:
 	static const std::string COMMAND_ADD;
 	static const std::string COMMAND_DELETE;
 	static const std::string COMMAND_EDIT;
+	static const std::string COMMAND_MARKDONE;
 
 public:
 

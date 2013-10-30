@@ -213,6 +213,23 @@ void DoneLinkedList::remove(int index){
 	cur = NULL;
 }
 
+bool DoneLinkedList::removeTask(std::string task){
+	ListNode *cur = _head;
+	int index = 1;
+	
+	while (cur != NULL){
+		if (task == cur->item.getTask()){
+			remove(index);
+			return true;
+		}
+		else{
+			cur = cur->next;
+			index++;
+		}
+	}
+	return false;
+}
+
 //pre-condition: input a Date today that stores day, month and year individully as integers and update the linked list such that tasks before this date are all removed
 //post-condition: linked list do not contain any overdued done items in terms of date wise (not timewise)
 void DoneLinkedList::update(Date today){
