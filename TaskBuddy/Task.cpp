@@ -171,6 +171,7 @@ std::string Task::formatTask() {
 		}
 	}
 	else {
+		output << "   ";	// for alignment with deadline tasks during display
 		if (!isEmptyDate(_startingDate)) {
 			output << _startingDate._day << "/" << _startingDate._month << "/" << _startingDate._year;
 		}
