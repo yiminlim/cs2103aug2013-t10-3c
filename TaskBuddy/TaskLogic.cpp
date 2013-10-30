@@ -108,7 +108,7 @@ bool TaskLogic::add(const std::string taskString, bool& isClash){
 
 	for(unsigned int i = 0; i < taskObjectVector.size() ; i++){
 		clash = false;
-		if(tbLinkedList.insert(taskObjectVector[i]))              //remove clash as parameter to let program compile first cause Sharmane haven't include
+		if(tbLinkedList.insert(taskObjectVector[i], isClash))              //remove clash as parameter to let program compile first cause Sharmane haven't include
 			update(COMMAND_ADD, taskObjectVector[0].getTask(), "");
 		else
 			checkAdded = false;
@@ -126,9 +126,10 @@ bool TaskLogic::add(const std::string taskString, bool& isClash){
 	Boundary: Empty string, Any valid string, Any invalid string
 */
 bool TaskLogic::addExistingTask(const std::string taskString){
-	std::vector<Task> taskObjectVector; 
+	std::vector<Task> taskObjectVector;
+	bool isClash = true; //PLEASE CHECK
     taskObjectVector = createTask(taskString, 2);     //generating task from file
-	if(tbLinkedList.insert(taskObjectVector[0]))
+	if(tbLinkedList.insert(taskObjectVector[0], isClash))
 		return true;
 	else
 		return false;
@@ -194,6 +195,7 @@ bool TaskLogic::edit(std::string taskString, std::string editString){
 	std::vector<int> newStartingTime, newEndingTime, newDeadlineTime, currentStartingTime, currentEndingTime, currentDeadlineTime; 
 	bool isBlock = false;
 	bool newIsBlock = false;
+	bool isClash = false;  //PLEASE CHECK!!!
 
 	stringParse(taskString,2,currentAction,currentLocation,currentStartingDate,currentStartingTime,currentEndingDate,currentEndingTime,currentDeadlineDate,currentDeadlineTime, isBlock);
 	stringParse(editString,1,newAction,newLocation,newStartingDate,newStartingTime,newEndingDate,newEndingTime,newDeadlineDate,newDeadlineTime, newIsBlock);  
@@ -231,7 +233,7 @@ bool TaskLogic::edit(std::string taskString, std::string editString){
 	Task taskObject(newAction,newLocation,newStartingDate[0],newStartingTime[0],newEndingDate[0],newEndingTime[0],newDeadlineDate[0],newDeadlineTime[0],newIsBlock);
 	
 	tbLinkedList.remove(taskString, getActionLocation(taskString));
-	tbLinkedList.insert(taskObject);
+	tbLinkedList.insert(taskObject, isClash);
 
 	update(COMMAND_EDIT, taskObject.getTask(), taskString);
 	return true; // need to do checking
