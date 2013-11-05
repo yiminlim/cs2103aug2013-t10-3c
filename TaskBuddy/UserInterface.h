@@ -2,11 +2,14 @@
 
 #include <iostream>
 #include <sstream>
+#include <Windows.h>
+#include <tchar.h>
 #include "TaskLogic.h"
 
 class UserInterface{
 private:
-	TaskLogic tbLogic; 
+	TaskLogic tbLogic;
+	HANDLE hConsole;
 
 	static const std::string COMMAND_ADD;
 	static const std::string COMMAND_DELETE;
