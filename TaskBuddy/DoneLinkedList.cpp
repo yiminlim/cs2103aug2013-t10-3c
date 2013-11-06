@@ -203,7 +203,7 @@ void DoneLinkedList::remove(int index){
 	if (index == 1){
 		cur = _head;
 		_head = _head->next;
-	} 
+	}
 	else{
 		ListNode *prev = traverseTo(index-1);
 		cur = prev->next;
@@ -236,7 +236,18 @@ void DoneLinkedList::update(Date today){
 	int index = getIndex(today);
 
 	for(int i=1; i<index; i++){
-		remove(i);
+		remove(1);
+	}
+}
+
+//pre-condition: input an empty vector and copy all the output format of the tasks in the linked list into this vector
+//post-condition: the entire output format of the tasks in the linked list is copied over into the vector
+void DoneLinkedList::updateStorageVector(std::vector<std::string> & tbDoneVector){
+	ListNode *cur = _head;
+
+	while (cur != NULL){
+		tbDoneVector.push_back(cur->item.getTask());
+		cur = cur->next;
 	}
 }
 

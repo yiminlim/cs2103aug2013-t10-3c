@@ -8,9 +8,12 @@ const std::string TaskLogic::COMMAND_ADD = "add";
 const std::string TaskLogic::COMMAND_DELETE = "delete";
 const std::string TaskLogic::COMMAND_EDIT = "edit";
 const std::string TaskLogic::COMMAND_MARKDONE = "markdone";
+const std::string TaskLogic::FILENAME_TB_STORAGE = "taskBuddyStorage.txt";
+const std::string TaskLogic::FILENAME_TB_DONE_STORAGE = "taskBuddyDoneStorage.txt";
+const std::string TaskLogic::FILENAME_TB_OVERDUE_STORAGE = "taskBuddyOverdueStorage.txt";
 
 TaskLogic::TaskLogic(){
-
+	
 }
 
 TaskLogic::~TaskLogic(){
@@ -26,11 +29,21 @@ TaskLogic::~TaskLogic(){
 */
 void TaskLogic::initLogic(){
 	initDate();
+	tbStorage.initStorage(FILENAME_TB_STORAGE);
+	tbDoneStorage.initStorage(FILENAME_TB_DONE_STORAGE);
+	
 	std::vector<std::string> tbVector;
+	std::vector<std::string> tbDoneVector;
 	tbStorage.getExistingTasks(tbVector);
-	for (unsigned int i = 0; i < tbVector.size(); i++){
-		addExistingTask(tbVector[i]); 
+	tbDoneStorage.getExistingTasks(tbDoneVector);
+	
+	for(unsigned int i = 0; i < tbVector.size(); i++){
+		addExistingTask(tbVector[i]);
 	}
+	for(unsigned int i = 0; i < tbDoneVector.size(); i++){
+		addExistingDoneTask(tbDoneVector[i]);
+	}
+		
 	Date today = taskParse.convertToDate(dateVector[0]);
 	tbDoneLinkedList.update(today);
 	return;
@@ -87,12 +100,12 @@ void TaskLogic::save(){
 	tbStorage.saveTasksIntoFile(tbVector);
 }
 
-/*
-	Purpose: Do necessary calling of destructors in LinkedList
-*/
-void TaskLogic::exitLogic(){
-	//tbVector.clear();
+void TaskLogic::saveDone(){
+    std::vector<std::string> tbDoneVector;
+	tbDoneLinkedList.updateStorageVector(tbDoneVector);
+	tbDoneStorage.saveTasksIntoFile(tbDoneVector);
 }
+
 
 //-----ADD TASK---------------------------------------------------------------------------------------------------
 
@@ -133,6 +146,16 @@ bool TaskLogic::addExistingTask(const std::string taskString){
 	bool isClash = false;
     taskObjectVector = createTask(taskString, 2);     //generating task from file
 	if(tbLinkedList.insert(taskObjectVector[0], isClash))  //there is no need to check if isClashed since these are pre-existing task.
+		return true;
+	else
+		return false;
+}
+
+bool TaskLogic::addExistingDoneTask(const std::string taskString){
+	std::vector<Task> taskObjectVector;
+	bool isClash = false;
+    taskObjectVector = createTask(taskString, 2);     //generating task from file
+	if(tbDoneLinkedList.insert(taskObjectVector[0]))  //there is no need to check if isClashed since these are pre-existing task.
 		return true;
 	else
 		return false;

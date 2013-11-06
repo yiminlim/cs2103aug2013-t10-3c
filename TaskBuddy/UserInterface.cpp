@@ -135,6 +135,7 @@ void UserInterface::commandUI(){
 			while (!ss.eof() && ss >> option){
 				if (tbLogic.markDone(display[option-1])){
 					tbLogic.save();
+					tbLogic.saveDone();
 					displaySuccessfulMessage(command);
 				}
 				else{
@@ -162,6 +163,7 @@ void UserInterface::commandUI(){
 		else if (command == COMMAND_UNDO){
 			if (tbLogic.undo()){
 				displaySuccessfulMessage(command);
+				tbLogic.saveDone();
 			}
 			else{
 				displayFailMessage(command);
@@ -173,7 +175,6 @@ void UserInterface::commandUI(){
 			display.clear();
 		}
 		else if (command == COMMAND_EXIT){
-			tbLogic.exitLogic();
 			displaySuccessfulMessage(command);
 			contProgram = false;
 		}

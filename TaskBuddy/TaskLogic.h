@@ -15,6 +15,7 @@ private:
 	TaskLinkedList tbLinkedList; // all the commands will be going through tbLogic to change the TaskLinkedList
 	DoneLinkedList tbDoneLinkedList;
 	Storage tbStorage; 
+	Storage tbDoneStorage;
 	Parse taskParse;
 
 	std::vector<std::string> dateVector; //dateVector[0] : today, dateVector[1] : coming Monday, ....dateVector[7] : coming Sunday, dateVector[8] : tomorrow (all in the form : dd/mm/yy)
@@ -25,6 +26,9 @@ private:
 	static const std::string COMMAND_DELETE;
 	static const std::string COMMAND_EDIT;
 	static const std::string COMMAND_MARKDONE;
+	static const std::string FILENAME_TB_STORAGE;
+	static const std::string FILENAME_TB_DONE_STORAGE;
+	static const std::string FILENAME_TB_OVERDUE_STORAGE;
 
 public:
 
@@ -41,7 +45,7 @@ public:
 	//Takes in filename and stores all tasks inside tbLinkedList into the file to prepare for exit.
 	void save();
 	
-	void exitLogic();
+	void saveDone();
 
 //-----ADD TASK----------------------------------------------------------------------------------------------
 
@@ -49,6 +53,8 @@ public:
 
 	//add a new task to the list (search for correct index first)
 	bool addExistingTask(const std::string); //for initLogic use only
+
+	bool addExistingDoneTask(const std::string); //for initLogic use only
 
 //-----DELETE TASK-------------------------------------------------------------------------------------------
 
