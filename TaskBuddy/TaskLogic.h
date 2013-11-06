@@ -49,7 +49,7 @@ public:
 
 //-----ADD TASK----------------------------------------------------------------------------------------------
 
-	bool add(const std::string, bool&);
+	bool add(const std::string, bool&, std::vector<std::string>&);
 
 	//add a new task to the list (search for correct index first)
 	bool addExistingTask(const std::string); //for initLogic use only

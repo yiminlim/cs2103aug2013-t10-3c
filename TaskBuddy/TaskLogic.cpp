@@ -116,7 +116,7 @@ void TaskLogic::saveDone(){
 	Equivalence Partition: Empty string, Invalid string, Valid string
 	Boundary: Empty string, Any valid string, Any invalid string
 */
-bool TaskLogic::add(const std::string taskString, bool& isClash){
+bool TaskLogic::add(const std::string taskString, bool& isClash, std::vector<std::string>& clashTasks){
 	std::vector<Task> taskObjectVector; 
     taskObjectVector = createTask(taskString, 1);   //generating task from user input.
 	bool checkAdded = true;
@@ -124,7 +124,7 @@ bool TaskLogic::add(const std::string taskString, bool& isClash){
 
 	for(unsigned int i = 0; i < taskObjectVector.size() ; i++){
 		clash = false;
-		if(tbLinkedList.insert(taskObjectVector[i], isClash))              //remove clash as parameter to let program compile first cause Sharmane haven't include
+		if(tbLinkedList.insert(taskObjectVector[i], isClash, clashTasks))              //remove clash as parameter to let program compile first cause Sharmane haven't include
 			update(COMMAND_ADD, taskObjectVector[0].getTask(), "");
 		else
 			checkAdded = false;
