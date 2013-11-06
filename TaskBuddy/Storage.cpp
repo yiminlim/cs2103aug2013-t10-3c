@@ -1,7 +1,11 @@
 #include "Storage.h"
 
 Storage::Storage(){
-	_fileName = "taskBuddyStorage.txt";
+
+}
+
+void Storage::initStorage(std::string storageFileName){
+	_fileName = storageFileName;
 }
 
 void Storage::getExistingTasks(std::vector<std::string>& taskStorage){
