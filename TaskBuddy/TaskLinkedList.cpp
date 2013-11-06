@@ -43,7 +43,7 @@ int TaskLinkedList::getSize(){
 //				 for empty Date, it is declared as 0
 //Post-condition: the pointer indicating date and time will be updated to store either the startingDate and startingTime or the deadlineDate and deadlineTime of the respective Task. 
 void TaskLinkedList::obtainDateAndTime(Task & task, Date *date, int *time, int *endTime){
-	if (task.getDeadlineTime() == -1){
+	if (task.getDeadlineDate()._day == 0){
 		date->_day = task.getStartingDate()._day;
 		date->_month = task.getStartingDate()._month;
 		date->_year = task.getStartingDate()._year;
@@ -531,5 +531,55 @@ void TaskLinkedList::setBlock(std::string task){
 		else{
 			cur = cur->next;
 		}
+	}
+}
+
+void TaskLinkedList::getOverdueList(Date today, std::vector<std::string> & overdueList){
+	ListNode *cur = _head;
+
+	while(cur != NULL){
+		if (cur->item.getDeadlineDate()._day == 0){
+			if(cur->item.getStartingDate()._year < today._year){
+				overdueList.push_back(cur->item.getTask());
+			}
+			else if(cur->item.getStartingDate()._year > today._year){
+				return;
+			}
+			else if(cur->item.getStartingDate()._month < today._month){
+				overdueList.push_back(cur->item.getTask());
+			}
+			else if(cur->item.getStartingDate()._month > today._month){
+				return;
+			}
+			else if(cur->item.getStartingDate()._day < today._day){
+				overdueList.push_back(cur->item.getTask());
+			}
+			else if(cur->item.getStartingDate()._day >= today._day){
+				return;
+			}
+		}
+
+		else if(cur->item.getStartingDate()._day == 0){
+			if(cur->item.getDeadlineDate()._year < today._year){
+				overdueList.push_back(cur->item.getTask());
+			}
+			else if(cur->item.getDeadlineDate()._year > today._year){
+				return;
+			}
+			else if(cur->item.getDeadlineDate()._month < today._month){
+				overdueList.push_back(cur->item.getTask());
+			}
+			else if(cur->item.getDeadlineDate()._month > today._month){
+				return;
+			}
+			else if(cur->item.getDeadlineDate()._day < today._day){
+				overdueList.push_back(cur->item.getTask());
+			}
+			else if(cur->item.getDeadlineDate()._day >= today._day){
+				return;
+			}
+		}
+
+		cur = cur->next;
 	}
 }
