@@ -78,4 +78,43 @@ public:
 
 	//Checks if word is a valid day keyword or not
 	bool isDayKeyword(std::string);
+
+	//Checks if date value is empty i.e. 0/0/0
+	bool isEmptyDate(Date);
+
+	//Checks if date value is valid
+	bool isValidDate(Date);
+
+	//Checks if day value of date is valid
+	bool isValidDay(int);
+
+	//Checks if month value of date is valid
+	bool isValidMonth(int);
+
+	//Checks if year value of date is valid
+	bool isValidYear(int);
+
+	//Checks if time value is empty i.e. -1
+	bool isEmptyTime(int);
+
+	//Checks if time value is valid 
+	bool isValidTime(int);
+
+	//Checks if hour value of time is valid
+	bool isValidHour(int);
+
+	//Checks if minutes value of time is valid
+	bool isValidMins(int);
+
+	//Checks if end date is not before the start date
+	bool isValidEndDate(Date, Date);
+
+	//Checks if end time is after the start time
+	bool isValidEndTime(int, int);
+
+	//Checks if the input year format is correct (yyyy)
+	bool isValidYearFormat(std::string);
+
+	//Checks if the input time format is correct (yyyy)
+	bool isValidTimeFormat(std::string);
 };
