@@ -91,11 +91,13 @@ void TaskLogic::initDate(){
 }
 
 void TaskLogic::initOverdue(){
+	Date today = taskParse.convertToDate(dateVector[0]);
+	
 	tbOverdueStorage.initStorage(FILENAME_TB_OVERDUE_STORAGE);
 	std::vector<std::string> tbOverdueVector;
 	tbOverdueStorage.getExistingTasks(tbOverdueVector);
 
-	tbLinkedList.getOverdueList(tbOverdueVector);
+	tbLinkedList.getOverdueList(today, tbOverdueVector);
 	for(unsigned int i=0; i< tbOverdueVector.size(); i++){
 		del(tbOverdueVector[i], false);
 		addOverdueTask(tbOverdueVector[i]);
@@ -187,14 +189,11 @@ bool TaskLogic::addExistingDoneTask(const std::string taskString){
 		return false;
 }
 
-bool TaskLogic::addOverdueTask(const std::string taskString){
+void TaskLogic::addOverdueTask(const std::string taskString){
 	std::vector<Task> taskObjectVector;
 	bool isClash = false;
     taskObjectVector = createTask(taskString, 2);     //generating task from file
-	if(tbOverdueLinkedList.insert(taskObjectVector[0]))  //there is no need to check if isClashed since these are pre-existing task.
-		return true;
-	else
-		return false;
+	tbOverdueLinkedList.insert(taskObjectVector[0]);  //there is no need to check if isClashed since these are pre-existing task.
 }
 
 
@@ -589,7 +588,7 @@ bool TaskLogic::markDone(std::string taskString){
 }
 
 bool TaskLogic::retrieveDoneList(std::vector<std::string>& tbDoneVector){
-	tbDoneLinkedList.retrieveAll(tbDoneVector);
+	tbDoneLinkedList.updateStorageVector(tbDoneVector);
 	if(tbDoneVector.empty())
 		return false;
 	else
@@ -604,7 +603,7 @@ void TaskLogic::clearOverdueList(){
 }
 
 bool TaskLogic::retrieveOverdueList(std::vector<std::string>& tbOverdueVector){
-	tbOverdueLinkedList.retrieveAll(tbOverdueVector);
+	tbOverdueLinkedList.updateStorageVector(tbOverdueVector);
 	if(tbOverdueVector.empty())
 		return false;
 	else
