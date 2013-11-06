@@ -255,13 +255,3 @@ void DoneLinkedList::updateStorageVector(std::vector<std::string> & tbDoneVector
 		cur = cur->next;
 	}
 }
-
-void DoneLinkedList::retrieveAll(std::vector<std::string> & tbDoneVector){
-	assert (tbDoneVector.empty());
-	ListNode *cur = _head;
-
-	while (cur != NULL){
-		tbDoneVector.push_back(cur->item.getTask());
-		cur = cur->next;
-	}
-}
