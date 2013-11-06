@@ -320,6 +320,15 @@ Date Parse::convertToDate(std::string dateString){
 	std::string monthString = dateString.substr(posFirstDateSeparator+1, posSecondDateSeparator-posFirstDateSeparator-1);
 	std::string yearString = dateString.substr(posSecondDateSeparator+1);
 
+	try {
+		if (!isValidYearFormat(yearString)) {
+			throw(std::runtime_error("maanahafj"));
+		}
+	}
+	catch(std::runtime_error &error) {
+		throw;
+	}
+
 	std::istringstream dayInput(dayString);
 	std::istringstream monthInput(monthString);
 	std::istringstream yearInput(yearString);
@@ -341,6 +350,16 @@ Date Parse::convertToDate(std::string dateString){
 //Implement check to make sure 4 digits?
 int Parse::convertToTime(std::string timeString){
 	int time;
+
+	try {
+		if (!isValidTimeFormat(timeString)) {
+			throw(std::runtime_error("Invalid time input"));
+		}
+	}
+	catch(std::runtime_error &error) {
+		throw;
+	}
+
 	std::istringstream timeInput(timeString);
 	
 	timeInput >> time;
@@ -505,6 +524,17 @@ bool Parse::isValidTime(int time) {
 */
 bool Parse::isValidHour(int hour) {
 	return hour >= 1 && hour <= 23;
+}
+
+/* 
+	Purpose: Checks if minutes value of time is valid. 
+	Pre-condition: Minutes value is an integer.
+	Post-condition: Returns true if minutes value of time is valid and false otherwise. 
+	Equivalence Partitions: < 1, 1-59, > 59
+	Boundary values: 0, 1, 2, 58, 59, 60
+*/
+bool Parse::isValidMins(int mins) {
+	return mins >= 1 && mins <= 59;
 }
 
 /* 
