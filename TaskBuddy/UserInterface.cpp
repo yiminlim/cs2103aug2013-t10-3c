@@ -57,6 +57,15 @@ UserInterface::UserInterface(){
 
 //To initialise the program by calling for TaskLogic initialisation function
 void UserInterface::initUI(){
+	COORD screenBufferSize = {110, 300};
+	SMALL_RECT consoleWindowSize = {0, 0, 109, 50};
+
+	hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+	SetConsoleScreenBufferSize(hConsole, screenBufferSize);
+	SetConsoleWindowInfo(hConsole, TRUE, &consoleWindowSize);
+	TCHAR programTitle[20] = TEXT("Task Buddy");
+	SetConsoleTitle(programTitle);
+
 	tbLogic.initLogic();
 	displayWelcomeMessage();
 	displayTodayTask();
@@ -227,6 +236,9 @@ void UserInterface::displayTodayTask(){
 	if (tbLogic.generalSearch(KEYWORD_TODAY, todayTask)){
 		std::cout << MESSAGE_TODAY_TASK << std::endl;
 		for (unsigned int i = 0; i < todayTask.size(); i++){
+			if (i < 9){ 
+				std::cout << KEYWORD_SPACE;
+			}
 			std::cout << i+1 << KEYWORD_BULLETING << todayTask[i] << std::endl;
 		}
 	}
@@ -308,6 +320,9 @@ void UserInterface::editBlockUI(const std::string stringToEditBlock){
 //To display all information in a vector
 void UserInterface::displayInformationInVector(std::vector<std::string> vec){
 	for (unsigned int i = 0; i < vec.size(); i++){
+		if (i < 9){
+			std::cout << KEYWORD_SPACE;
+		}
 		std::cout << i+1 << KEYWORD_BULLETING << vec[i] << std::endl;
 	}
 }
