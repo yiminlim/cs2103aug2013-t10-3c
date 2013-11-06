@@ -100,12 +100,27 @@ bool TaskLinkedList::compareDateAndTime(Task & curTask, Task & listTask, bool & 
 		else if (*curTime == *listTime){
 			isClash = true; //both froms
 			clashTasks.push_back(listTask.getTask());
-			condition = false;
+			if (*endCurTime == -1 && *endListTime == -1){
+				condition = true;
+			} 
+			else if (*endCurTime != -1 && *endListTime != -1){
+				if (*endListTime < *endCurTime){
+					condition = false;
+				}else{
+					condition = true;
+				}
+			}
+			else if(*endCurTime != -1 && *endListTime == -1){
+				condition = false;
+			}
+			else if(*endCurTime == -1 && *endListTime != -1){
+				condition = true;
+			}
 		}
 		else if (*curTime > *listTime){
 			condition = false; 
-			if (*endCurTime == -1 ){
-				if (*endListTime > *curTime || (*endListTime != -1 && *endCurTime != -1)){ //both from to
+			if (*endCurTime == -1 || (*endListTime != -1 && *endCurTime != -1)){ //both from to
+				if (*endListTime > *curTime){
 					isClash = true; //cur is from, list is from to
 					clashTasks.push_back(listTask.getTask());
 				}
@@ -134,6 +149,7 @@ bool TaskLinkedList::compareDateAndTime(Task & curTask, Task & listTask, bool & 
 int TaskLinkedList::getInsertIndex(Task & curTask, bool & isClash, std::vector<std::string>& clashTasks){
 	ListNode *cur = _head;
 	int i = 1;
+	bool dummy;
 
 	if (isEmpty()){
 		return i;
@@ -141,14 +157,22 @@ int TaskLinkedList::getInsertIndex(Task & curTask, bool & isClash, std::vector<s
 
 	while (cur != NULL){
 		if (compareDateAndTime(curTask, cur->item, isClash, clashTasks)){
-			return i;
+			if (isClash){
+				cur = cur->next;
+				while (cur != NULL){
+					dummy = compareDateAndTime(curTask, cur->item, isClash, clashTasks);
+					cur = cur->next;
+				}
+				return i;
+			}else{
+				return i;
+			}
 		} 
 		else{
 			cur = cur->next;
 			i++;
 		}
 	} 
-
 	return i;
 }
 
@@ -157,6 +181,7 @@ int TaskLinkedList::getInsertIndex(Task & curTask, bool & isClash, std::vector<s
 //				 clashTasks must be empty
 //Post-condition: return true if the task is added into the linked list in an sorted manner. isClash is updated accordingly
 bool TaskLinkedList::insert(Task & curTask, bool & isClash, std::vector<std::string>& clashTasks){
+	assert(curTask.getTask() != "");
 	assert(clashTasks.empty());
 	assert(!isClash);
 	int newSize = getSize() + 1;
@@ -242,6 +267,7 @@ void TaskLinkedList::checkIfRemainingBlockTask(std::string line){
 //Pre-condition: input a string containing the output format of the task to be deleted from the linked list and a line containing the action and location to cater in the fact that if there's only one task block remaining, it will be unblocked
 //Post-condition: return true if the task is found and deleted from the linked list, if task comes from a block, the last block will be unblocked.
 bool TaskLinkedList::remove(std::string task, std::string line){
+	assert(task != "" && line != "");
 	int *index = new int;
 	*index = 1;
 	bool condition = false;
@@ -494,6 +520,7 @@ void TaskLinkedList::updateStorageVector(std::vector<std::string> & tbVector){
 //				 the task must be found in the linked list to successfully change the block to true
 //Post-condition: the task passed in is set as true for it's bool block
 void TaskLinkedList::setBlock(std::string task){
+	assert(task != "");
 	ListNode *cur = _head;
 
 	while(cur != NULL){
