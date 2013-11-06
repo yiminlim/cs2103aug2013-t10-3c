@@ -1,4 +1,5 @@
 #include "DoneLinkedList.h"
+#include <assert.h>
 
 DoneLinkedList::DoneLinkedList(){
 	_head = NULL;
@@ -38,7 +39,7 @@ int DoneLinkedList::getSize(){
 }
 
 //Pre-condition: input in a Task reference and two pointers indicating date and time 
-//				 the task have to have either a startingDate and startingTime or a deadlineDate and deadlineTime
+//				 for empty Date, it is declared with 0
 //				 for empty time, it is declared with a value -1
 //Post-condition: the pointer indicating date and time will be updated to store either the startingDate and startingTime or the deadlineDate and deadlineTime of the respective Task. 
 void DoneLinkedList::obtainDateAndTime(Task & task, Date *date, int *time){
@@ -130,6 +131,7 @@ int DoneLinkedList::getInsertIndex(Task & curTask){
 //Pre-condition: input a Task reference to be added into the linked list 
 //Post-condition: return true if the task is added into the linked list in an sorted manner
 bool DoneLinkedList::insert(Task & curTask){
+	assert (curTask.getTask() != "");
 	int newSize = getSize() + 1;
 	int index = getInsertIndex(curTask);
 
@@ -197,6 +199,7 @@ int DoneLinkedList::getIndex(Date today){
 //pre-condition: input an index and remove the task from the linked list which the index points to
 //post-condition: task pointed by the index is deleted
 void DoneLinkedList::remove(int index){
+	assert (index > 0 && index < getSize()+1);
 	ListNode *cur;
 	--_size;
 
@@ -233,6 +236,7 @@ bool DoneLinkedList::removeTask(std::string task){
 //pre-condition: input a Date today that stores day, month and year individully as integers and update the linked list such that tasks before this date are all removed
 //post-condition: linked list do not contain any overdued done items in terms of date wise (not timewise)
 void DoneLinkedList::update(Date today){
+	assert (today._day != 0 && today._month != 0 && today._year != 0);
 	int index = getIndex(today);
 
 	for(int i=1; i<index; i++){
@@ -243,6 +247,7 @@ void DoneLinkedList::update(Date today){
 //pre-condition: input an empty vector and copy all the output format of the tasks in the linked list into this vector
 //post-condition: the entire output format of the tasks in the linked list is copied over into the vector
 void DoneLinkedList::updateStorageVector(std::vector<std::string> & tbDoneVector){
+	assert (tbDoneVector.empty());
 	ListNode *cur = _head;
 
 	while (cur != NULL){
@@ -252,6 +257,7 @@ void DoneLinkedList::updateStorageVector(std::vector<std::string> & tbDoneVector
 }
 
 void DoneLinkedList::retrieveAll(std::vector<std::string> & tbDoneVector){
+	assert (tbDoneVector.empty());
 	ListNode *cur = _head;
 
 	while (cur != NULL){
