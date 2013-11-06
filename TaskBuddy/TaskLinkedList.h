@@ -33,13 +33,13 @@ public:
 	void obtainDateAndTime(Task &, Date*, int*, int*);
 
 	//Returns true if the curTask is of an earlier date and time than listTask
-	bool compareDateAndTime(Task &, Task &, bool &);
+	bool compareDateAndTime(Task &, Task &, bool &, std::vector<std::string>&);
 
 	//Returns the index at which a Task is to be added
-	int getInsertIndex(Task &, bool &);
+	int getInsertIndex(Task &, bool &, std::vector<std::string>&);
 	
 	//Returns true if task is added to linked list. Check if there are any clashes.
-	bool insert(Task &, bool &);
+	bool insert(Task &, bool &, std::vector<std::string>&);
 
 	//Returns the index of the task to be removed
 	bool getRemoveIndex(std::string, int*);
