@@ -45,6 +45,9 @@
     <ClCompile Include="..\TaskBuddy\DoneLinkedList.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\TaskBuddy\OverdueLinkedList.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\TaskBuddy\Date.h">
@@ -69,6 +72,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\TaskBuddy\DoneLinkedList.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\TaskBuddy\OverdueLinkedList.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

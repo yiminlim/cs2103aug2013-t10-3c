@@ -46,6 +46,8 @@ void TaskLogic::initLogic(){
 		
 	Date today = taskParse.convertToDate(dateVector[0]);
 	tbDoneLinkedList.update(today);
+
+	initOverdue();
 	return;
 }
 
@@ -88,6 +90,20 @@ void TaskLogic::initDate(){
    return;
 }
 
+void TaskLogic::initOverdue(){
+	Date today = taskParse.convertToDate(dateVector[0]);
+	
+	tbOverdueStorage.initStorage(FILENAME_TB_OVERDUE_STORAGE);
+	std::vector<std::string> tbOverdueVector;
+	tbOverdueStorage.getExistingTasks(tbOverdueVector);
+
+	tbLinkedList.getOverdueList(today, tbOverdueVector);
+	for(unsigned int i=0; i< tbOverdueVector.size(); i++){
+		del(tbOverdueVector[i], false);
+		addOverdueTask(tbOverdueVector[i]);
+	}
+}
+
 /*
 	Purpose: Get task in string format from TaskLinkedList and saves them into a storage file.
 	Post-Conditions: Task are saved into storage file in sorted order and in proper string format.
@@ -104,6 +120,12 @@ void TaskLogic::saveDone(){
     std::vector<std::string> tbDoneVector;
 	tbDoneLinkedList.updateStorageVector(tbDoneVector);
 	tbDoneStorage.saveTasksIntoFile(tbDoneVector);
+}
+
+void TaskLogic::saveOverdue(){
+    std::vector<std::string> tbOverdueVector;
+	tbOverdueLinkedList.updateStorageVector(tbOverdueVector);
+	tbOverdueStorage.saveTasksIntoFile(tbOverdueVector);
 }
 
 
@@ -166,6 +188,14 @@ bool TaskLogic::addExistingDoneTask(const std::string taskString){
 	else
 		return false;
 }
+
+void TaskLogic::addOverdueTask(const std::string taskString){
+	std::vector<Task> taskObjectVector;
+	bool isClash = false;
+    taskObjectVector = createTask(taskString, 2);     //generating task from file
+	tbOverdueLinkedList.insert(taskObjectVector[0]);  //there is no need to check if isClashed since these are pre-existing task.
+}
+
 
 //-----DELETE TASK-------------------------------------------------------------------------------------------------
 	
@@ -471,17 +501,25 @@ std::vector<Task> TaskLogic::createTask(std::string taskString, int method){
 
 	//MUST DO A CHECK TO ENSURE THAT StartingDate Vector and Endng Date Vector must be the same size!
 	
-	for(unsigned int i = 0 ; i < startingDateVector.size() && startingDateVector[i].isValidDate(); i++){
-		Date deadlineDate;
-		int deadlineTime = -1;
-		Task taskObject(action,location,startingDateVector[i],startingTimeVector[i],endingDateVector[i],endingTimeVector[i],deadlineDate,deadlineTime,isBlock);
+	if(startingDateVector.size()==1 && !startingDateVector[0].isValidDate() && endingDateVector.size()==1 && !endingDateVector[0].isValidDate()){
+		Date deadlineDate, startingDate, endingDate;
+		int deadlineTime = -1, startingTime = -1, endingTime = -1;
+		Task taskObject(action,location,startingDate,startingTime,endingDate,endingTime,deadlineDate,deadlineTime,isBlock);
 		taskObjectVector.push_back(taskObject);
 	}
-	for(unsigned int i = 0 ; i < deadlineDateVector.size() && deadlineDateVector[i].isValidDate() ; i++){
-		Date startingDate, endingDate;
-		int startingTime = -1, endingTime = -1;
-		Task taskObject(action,location,startingDate,startingTime,endingDate,endingTime,deadlineDateVector[i],deadlineTimeVector[i],isBlock);
-		taskObjectVector.push_back(taskObject);
+	else{
+		for(unsigned int i = 0 ; i < startingDateVector.size() && startingDateVector[i].isValidDate(); i++){
+			Date deadlineDate;
+			int deadlineTime = -1;
+			Task taskObject(action,location,startingDateVector[i],startingTimeVector[i],endingDateVector[i],endingTimeVector[i],deadlineDate,deadlineTime,isBlock);
+			taskObjectVector.push_back(taskObject);
+		}
+		for(unsigned int i = 0 ; i < deadlineDateVector.size() && deadlineDateVector[i].isValidDate() ; i++){
+			Date startingDate, endingDate;
+			int startingTime = -1, endingTime = -1;
+			Task taskObject(action,location,startingDate,startingTime,endingDate,endingTime,deadlineDateVector[i],deadlineTimeVector[i],isBlock);
+			taskObjectVector.push_back(taskObject);
+		}
 	}
 	//task string must be created upon constrution!
 
@@ -533,7 +571,7 @@ std::string TaskLogic::getActionLocation(std::string taskString){
 	return taskActionLocation;
 }
 
-//-----Mark Done----------------------------------------------------------------------------------------------------------
+//-----MARK DONE----------------------------------------------------------------------------------------------------------
 bool TaskLogic::markDone(std::string taskString){
 	if(!del(taskString,false)) 
 		return false;
@@ -550,8 +588,23 @@ bool TaskLogic::markDone(std::string taskString){
 }
 
 bool TaskLogic::retrieveDoneList(std::vector<std::string>& tbDoneVector){
-	tbDoneLinkedList.retrieveAll(tbDoneVector);
+	tbDoneLinkedList.updateStorageVector(tbDoneVector);
 	if(tbDoneVector.empty())
+		return false;
+	else
+		return true;
+}
+
+
+//-----OVERDUE------------------------------------------------------------------------------------------------------------
+
+void TaskLogic::clearOverdueList(){
+	tbOverdueLinkedList.clear();
+}
+
+bool TaskLogic::retrieveOverdueList(std::vector<std::string>& tbOverdueVector){
+	tbOverdueLinkedList.updateStorageVector(tbOverdueVector);
+	if(tbOverdueVector.empty())
 		return false;
 	else
 		return true;

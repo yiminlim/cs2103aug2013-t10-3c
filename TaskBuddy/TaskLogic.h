@@ -8,6 +8,7 @@
 #include "Task.h"
 #include "TaskLinkedList.h"
 #include "DoneLinkedList.h"
+#include "OverdueLinkedList.h"
 #include "Storage.h"
 #include "Parse.h"
 
@@ -15,8 +16,10 @@ class TaskLogic{
 private:
 	TaskLinkedList tbLinkedList; // all the commands will be going through tbLogic to change the TaskLinkedList
 	DoneLinkedList tbDoneLinkedList;
+	OverdueLinkedList tbOverdueLinkedList;
 	Storage tbStorage; 
 	Storage tbDoneStorage;
+	Storage tbOverdueStorage;
 	Parse taskParse;
 
 	std::vector<std::string> dateVector; //dateVector[0] : today, dateVector[1] : coming Monday, ....dateVector[7] : coming Sunday, dateVector[8] : tomorrow (all in the form : dd/mm/yy)
@@ -43,10 +46,14 @@ public:
 
 	void initDate();
 
+	void initOverdue();
+
 	//Takes in filename and stores all tasks inside tbLinkedList into the file to prepare for exit.
 	void save();
 	
 	void saveDone();
+
+	void saveOverdue();
 
 //-----ADD TASK----------------------------------------------------------------------------------------------
 
@@ -56,6 +63,8 @@ public:
 	bool addExistingTask(const std::string); //for initLogic use only
 
 	bool addExistingDoneTask(const std::string); //for initLogic use only
+
+	void addOverdueTask(const std::string); //for initLogic use only
 
 //-----DELETE TASK-------------------------------------------------------------------------------------------
 
@@ -114,4 +123,9 @@ public:
 
 	bool retrieveDoneList(std::vector<std::string> &);
 
+//-----OVERDUE--------------------------------------------------------------------------------------------------
+
+	void clearOverdueList();
+
+	bool retrieveOverdueList(std::vector<std::string> &);
 };

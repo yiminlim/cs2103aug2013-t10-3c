@@ -43,7 +43,7 @@ int TaskLinkedList::getSize(){
 //				 for empty Date, it is declared as 0
 //Post-condition: the pointer indicating date and time will be updated to store either the startingDate and startingTime or the deadlineDate and deadlineTime of the respective Task. 
 void TaskLinkedList::obtainDateAndTime(Task & task, Date *date, int *time, int *endTime){
-	if (task.getDeadlineTime() == -1){
+	if (task.getDeadlineDate()._day == 0){
 		date->_day = task.getStartingDate()._day;
 		date->_month = task.getStartingDate()._month;
 		date->_year = task.getStartingDate()._year;
@@ -90,14 +90,14 @@ bool TaskLinkedList::compareDateAndTime(Task & curTask, Task & listTask, bool & 
 		}
 		else if (*curTime < *listTime){
 			condition = true;
-			if (*endListTime == -1 || (*endListTime != -1 && *endCurTime != -1)){ //both from to
+			if ((*endListTime == -1 && *endCurTime != -1 && curDate->_day != 0 && listDate->_day != 0)|| (*endListTime != -1 && *endCurTime != -1 && curDate->_day != 0 && listDate->_day != 0)){ //both from to
 				if (*endCurTime > *listTime){
 					isClash = true; //cur is from to, list is from
 					clashTasks.push_back(listTask.getTask());
 				}
 			}
 		}
-		else if (*curTime == *listTime){
+		else if (*curTime == *listTime && *curTime != -1){
 			isClash = true; //both froms
 			clashTasks.push_back(listTask.getTask());
 			if (*endCurTime == -1 && *endListTime == -1){
@@ -119,7 +119,7 @@ bool TaskLinkedList::compareDateAndTime(Task & curTask, Task & listTask, bool & 
 		}
 		else if (*curTime > *listTime){
 			condition = false; 
-			if (*endCurTime == -1 || (*endListTime != -1 && *endCurTime != -1)){ //both from to
+			if ((*endCurTime == -1 && *endListTime != -1 && curDate->_day != 0 && listDate->_day != 0)|| (*endListTime != -1 && *endCurTime != -1 && curDate->_day != 0 && listDate->_day != 0)){ //both from to
 				if (*endListTime > *curTime){
 					isClash = true; //cur is from, list is from to
 					clashTasks.push_back(listTask.getTask());
@@ -267,7 +267,7 @@ void TaskLinkedList::checkIfRemainingBlockTask(std::string line){
 //Pre-condition: input a string containing the output format of the task to be deleted from the linked list and a line containing the action and location to cater in the fact that if there's only one task block remaining, it will be unblocked
 //Post-condition: return true if the task is found and deleted from the linked list, if task comes from a block, the last block will be unblocked.
 bool TaskLinkedList::remove(std::string task, std::string line){
-	assert(task != "" && line != "");
+	assert(task != "");
 	int *index = new int;
 	*index = 1;
 	bool condition = false;
@@ -531,5 +531,70 @@ void TaskLinkedList::setBlock(std::string task){
 		else{
 			cur = cur->next;
 		}
+	}
+}
+
+//Pre-condition: input a today date and an empty vector of overduelist to compare the dates and store overdue task in taskLinkedList into overduelinkedlist instead
+//Post-condition: overdue items from taskLinkedList are stored in the vector and returned
+void TaskLinkedList::getOverdueList(Date today, std::vector<std::string> & overdueList){
+	assert(overdueList.empty());
+	ListNode *cur = _head;
+
+	while(cur != NULL){
+		if (cur->item.getDeadlineDate()._day == 0){
+			if(cur->item.getStartingDate()._year < today._year){
+				if (cur->item.getStartingDate()._year!=0){
+					overdueList.push_back(cur->item.getTask());
+				}
+			}
+			else if(cur->item.getStartingDate()._year > today._year){
+				return;
+			}
+			else if(cur->item.getStartingDate()._month < today._month){
+				if (cur->item.getStartingDate()._month!=0){
+					overdueList.push_back(cur->item.getTask());
+				}
+			}
+			else if(cur->item.getStartingDate()._month > today._month){
+				return;
+			}
+			else if(cur->item.getStartingDate()._day < today._day){
+				if (cur->item.getStartingDate()._day!=0){
+					overdueList.push_back(cur->item.getTask());
+				}
+			}
+			else if(cur->item.getStartingDate()._day >= today._day){
+				return;
+			}
+		}
+
+		else if(cur->item.getStartingDate()._day == 0){
+			if(cur->item.getDeadlineDate()._year < today._year){
+				if (cur->item.getDeadlineDate()._year!=0){
+					overdueList.push_back(cur->item.getTask());
+				}
+			}
+			else if(cur->item.getDeadlineDate()._year > today._year){
+				return;
+			}
+			else if(cur->item.getDeadlineDate()._month < today._month){
+				if (cur->item.getDeadlineDate()._month!=0){
+					overdueList.push_back(cur->item.getTask());
+				}
+			}
+			else if(cur->item.getDeadlineDate()._month > today._month){
+				return;
+			}
+			else if(cur->item.getDeadlineDate()._day < today._day){
+				if (cur->item.getDeadlineDate()._day!=0){
+					overdueList.push_back(cur->item.getTask());
+				}
+			}
+			else if(cur->item.getDeadlineDate()._day >= today._day){
+				return;
+			}
+		}
+
+		cur = cur->next;
 	}
 }
