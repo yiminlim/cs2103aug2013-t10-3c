@@ -82,7 +82,23 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="DoneLinkedListTest.cpp" />
+    <ClCompile Include="LogicTest.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="ParseTest.cpp" />
+    <ClCompile Include="StorageTest.cpp" />
+    <ClCompile Include="TaskLinkedListTest.cpp" />
+    <ClCompile Include="TaskTest.cpp" />
+    <ClCompile Include="UserInterfaceTest.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="DoneLinkedListTest.h" />
+    <ClInclude Include="LogicTest.h" />
+    <ClInclude Include="ParseTest.h" />
+    <ClInclude Include="StorageTest.h" />
+    <ClInclude Include="TaskLinkedListTest.h" />
+    <ClInclude Include="TaskTest.h" />
+    <ClInclude Include="UserInterfaceTest.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
