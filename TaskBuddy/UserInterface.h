@@ -39,6 +39,7 @@ private:
 	static const std::string MESSAGE_NO_TASK_TODAY;
 	static const std::string MESSAGE_COMMAND;
 	static const std::string MESSAGE_ADD;
+	static const std::string MESSAGE_CLASH;
 	static const std::string MESSAGE_DELETE;
 	static const std::string MESSAGE_EDIT;
 	static const std::string MESSAGE_MARKDONE;

@@ -27,6 +27,7 @@ const std::string UserInterface::MESSAGE_TODAY_TASK = "Task(s) due by TODAY!";
 const std::string UserInterface::MESSAGE_NO_TASK_TODAY = "No task due today!";
 const std::string UserInterface::MESSAGE_COMMAND = "command: ";
 const std::string UserInterface::MESSAGE_ADD = "Task has been added";
+const std::string UserInterface::MESSAGE_CLASH = "Task added clashes with the following task: ";
 const std::string UserInterface::MESSAGE_DELETE = "Task has been deleted";
 const std::string UserInterface::MESSAGE_EDIT = "Task has been edited";
 const std::string UserInterface::MESSAGE_MARKDONE = "Task has been marked done";
@@ -81,17 +82,22 @@ void UserInterface::commandUI(){
 	std::string command;
 	std::vector<std::string> display;
 	std::vector<std::string> doneList;
+	std::vector<std::string> clashVector;
 	
 	do{
 		try{
 			std::cout << MESSAGE_COMMAND;
 			std::cin >> command;
-			space = getchar();						//Is it possible for space to obtain a char other than space?
+			space = getchar();						
 
 			if (command == COMMAND_ADD){		
-				if (tbLogic.add(readTask(command, KEYWORD_EMPTY_STRING), isClash)){
+				if (tbLogic.add(readTask(command, KEYWORD_EMPTY_STRING), isClash, clashVector)){
+					displaySuccessfulMessage(command);
+					if(isClash){
+						std::cout << MESSAGE_CLASH << std::endl;
+						displayInformationInVector(clashVector);
+					}
 					tbLogic.save();
-					displaySuccessfulMessage(command);				
 				}
 				else{
 					displayFailMessage(command);
@@ -182,7 +188,6 @@ void UserInterface::commandUI(){
 			}
 			else{
 				throw std::runtime_error(MESSAGE_INVALID_COMMAND);
-				displayFailMessage(KEYWORD_EMPTY_STRING);
 			}
 		}
 		catch(std::runtime_error &error){
@@ -407,8 +412,5 @@ void UserInterface::displayFailMessage(const std::string command){
 	}
 	else if (command == COMMAND_FINALISE || command == COMMAND_FINALIZE){
 		std::cout << MESSAGE_INVALID_FINALISE << std::endl;
-	}
-	else{
-		std::cout << MESSAGE_INVALID_COMMAND << std::endl;
 	}
 }
