@@ -320,6 +320,15 @@ Date Parse::convertToDate(std::string dateString){
 	std::string monthString = dateString.substr(posFirstDateSeparator+1, posSecondDateSeparator-posFirstDateSeparator-1);
 	std::string yearString = dateString.substr(posSecondDateSeparator+1);
 
+	try {
+		if (!isValidYearFormat(yearString)) {
+			throw(std::runtime_error("maanahafj"));
+		}
+	}
+	catch(std::runtime_error &error) {
+		throw;
+	}
+
 	std::istringstream dayInput(dayString);
 	std::istringstream monthInput(monthString);
 	std::istringstream yearInput(yearString);
@@ -341,6 +350,16 @@ Date Parse::convertToDate(std::string dateString){
 //Implement check to make sure 4 digits?
 int Parse::convertToTime(std::string timeString){
 	int time;
+
+	try {
+		if (!isValidTimeFormat(timeString)) {
+			throw(std::runtime_error("Invalid time input"));
+		}
+	}
+	catch(std::runtime_error &error) {
+		throw;
+	}
+
 	std::istringstream timeInput(timeString);
 	
 	timeInput >> time;
@@ -418,4 +437,142 @@ bool Parse::isDayKeyword(std::string word) {
 	}
 
 	return false;
+}
+
+/* 
+	Purpose: Checks if date value is empty i.e. 0/0/0. 
+	Pre-condition: Date value has been initialised.
+	Post-condition: Returns true if date is empty (i.e. 0/0/0) and false otherwise.
+	Equivalence Partitions: day/month/year = 0, valid integer values.
+	Boundary values: 0, 1
+*/
+bool Parse::isEmptyDate(Date date) {
+	return (date._day == 0 && date._month == 0 && date._year == 0);
+}
+
+/* 
+	Purpose: Checks if date value is valid. 
+	Pre-condition: Date value has been initialised.
+	Post-condition: Returns true if date is valid and false otherwise. 
+*/
+bool Parse::isValidDate(Date date) {
+	return isValidDay(date._day) && isValidMonth(date._month) && isValidYear(date._year);
+}
+
+/* 
+	Purpose: Checks if day value of year is valid. 
+	Pre-condition: Day value has been initialised.
+	Post-condition: Returns true if day value of date is valid and false otherwise. 
+	Equivalence Partitions: < 1, 1-31, > 31
+	Boundary values: 0, 1, 2, 30, 31, 32
+*/
+bool Parse::isValidDay(int day) {
+	return day >= 1 && day <= 31;
+}
+
+/* 
+	Purpose: Checks if month value of date is valid. 
+	Pre-condition: Month value has been initialised.
+	Post-condition: Returns true if month value of date is valid and false otherwise. 
+	Equivalence Partitions: < 1, 1-12, > 12
+	Boundary values: 0, 1, 2, 11, 12, 13
+*/
+bool Parse::isValidMonth(int month) {
+	return month >= 1 && month <= 12;
+}
+
+/* 
+	Purpose: Checks if year value of date is valid. 
+	Pre-condition: Year value has been initialised.
+	Post-condition: Returns true if year value of date is valid and false otherwise. 
+	Equivalence Partitions: < 1, >= 1
+	Boundary values:  0, 1, 2
+*/
+bool Parse::isValidYear(int year) {
+	return year > 0;
+}
+
+/* 
+	Purpose: Checks if time value is empty i.e. -1. 
+	Pre-condition: Time value has been initialised.
+	Post-condition: Returns true if time is empty (i.e. -1) and false otherwise. 
+	Equivalence Partitions: -1, any positive integer
+	Boundary values: -1, 1
+*/
+bool Parse::isEmptyTime(int time) {
+	return time == -1;
+}
+
+/* 
+	Purpose: Checks if time value is valid. 
+	Pre-condition: Time value has been initialised.
+	Post-condition: Returns true if time is valid and false otherwise. 
+*/
+bool Parse::isValidTime(int time) {
+	int hour = time/100;
+	int mins = time - (hour*100);
+
+	return isValidHour(hour) && isValidMins(mins);
+}
+
+/* 
+	Purpose: Checks if hour value of time is valid. 
+	Pre-condition: Hour value is an integer.
+	Post-condition: Returns true if hour value of time is valid and false otherwise. 
+	Equivalence Partitions: < 1, 1-23, > 23 
+	Boundary values: 0, 1, 2, 22, 23, 24
+*/
+bool Parse::isValidHour(int hour) {
+	return hour >= 1 && hour <= 23;
+}
+
+/* 
+	Purpose: Checks if minutes value of time is valid. 
+	Pre-condition: Minutes value is an integer.
+	Post-condition: Returns true if minutes value of time is valid and false otherwise. 
+	Equivalence Partitions: < 1, 1-59, > 59
+	Boundary values: 0, 1, 2, 58, 59, 60
+*/
+bool Parse::isValidMins(int mins) {
+	return mins >= 1 && mins <= 59;
+}
+
+/* 
+	Purpose: Checks if end date is not before start date. 
+	Pre-condition: Dates are valid.
+	Post-condition: Returns true if starting date value is not before ending date and false otherwise. 
+*/
+bool Parse::isValidEndDate(Date startingDate, Date endingDate) {
+	return startingDate._year <= endingDate._year && startingDate._month <= endingDate._month && startingDate._day <= endingDate._year;
+}
+
+/* 
+	Purpose: Checks if end time is after start time. 
+	Pre-condition: Minutes value is an integer.
+	Post-condition: Returns true if ending time value of time is after starting time and false otherwise. 
+*/
+bool Parse::isValidEndTime(int startingTime, int endingTime) {
+	return startingTime < endingTime;
+}
+
+/* 
+	Purpose: Checks if the input year format is correct (yyyy). 
+	Pre-condition: String is not empty.
+	Post-condition: Returns true if year string has 4 characters and false otherwise. 
+	Equivalence Partitions: less than 4 characters, 4 characters, more than 4 characters
+	Boundary values: 3 characters, 4 characters, 5 characters
+*/
+bool Parse::isValidYearFormat(std::string yearString) {
+	return yearString.size() == 4;
+}
+
+/* 
+	Purpose: Checks if the input time format is correct. 
+	Pre-condition: String is not empty.
+	Post-condition: Returns true if year string has 4 characters and false otherwise. 
+	Equivalence Partitions: less than 4 characters, 4 characters, more than 4 characters
+	Boundary values: 3 characters, 4 characters, 5 characters
+*/
+bool Parse::isValidTimeFormat(std::string timeString) {
+	return timeString.size() == 4;
 }
