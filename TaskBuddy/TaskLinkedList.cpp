@@ -104,8 +104,8 @@ bool TaskLinkedList::compareDateAndTime(Task & curTask, Task & listTask, bool & 
 		}
 		else if (*curTime > *listTime){
 			condition = false; 
-			if (*endCurTime == -1 ){
-				if (*endListTime > *curTime || (*endListTime != -1 && *endCurTime != -1)){ //both from to
+			if (*endCurTime == -1 || (*endListTime != -1 && *endCurTime != -1)){ //both from to
+				if (*endListTime > *curTime){
 					isClash = true; //cur is from, list is from to
 					clashTasks.push_back(listTask.getTask());
 				}
@@ -134,6 +134,7 @@ bool TaskLinkedList::compareDateAndTime(Task & curTask, Task & listTask, bool & 
 int TaskLinkedList::getInsertIndex(Task & curTask, bool & isClash, std::vector<std::string>& clashTasks){
 	ListNode *cur = _head;
 	int i = 1;
+	bool dummy;
 
 	if (isEmpty()){
 		return i;
@@ -141,14 +142,22 @@ int TaskLinkedList::getInsertIndex(Task & curTask, bool & isClash, std::vector<s
 
 	while (cur != NULL){
 		if (compareDateAndTime(curTask, cur->item, isClash, clashTasks)){
-			return i;
+			if (isClash){
+				cur = cur->next;
+				while (cur != NULL){
+					dummy = compareDateAndTime(curTask, cur->item, isClash, clashTasks);
+					cur = cur->next;
+				}
+				return i;
+			}else{
+				return i;
+			}
 		} 
 		else{
 			cur = cur->next;
 			i++;
 		}
 	} 
-
 	return i;
 }
 
