@@ -8,6 +8,7 @@
 #include "Task.h"
 #include "TaskLinkedList.h"
 #include "DoneLinkedList.h"
+#include "OverdueLinkedList.h"
 #include "Storage.h"
 #include "Parse.h"
 
@@ -63,7 +64,7 @@ public:
 
 	bool addExistingDoneTask(const std::string); //for initLogic use only
 
-	bool addOverdueTask(const std::string); //for initLogic use only
+	void addOverdueTask(const std::string); //for initLogic use only
 
 //-----DELETE TASK-------------------------------------------------------------------------------------------
 

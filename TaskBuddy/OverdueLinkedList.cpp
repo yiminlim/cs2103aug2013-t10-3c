@@ -49,9 +49,15 @@ void OverdueLinkedList::insert(Task & curTask){
 	newTask->item = curTask;
 	newTask->next = NULL;
 
-	ListNode *prev = traverseTo(index-1);
-	newTask->next = prev->next;
-	prev->next = newTask;
+	if (index == 1){
+			newTask->next = _head;
+			_head = newTask;
+	} 
+	else{
+		ListNode *prev = traverseTo(index-1);
+		newTask->next = prev->next;
+		prev->next = newTask;
+	}
 }
 
 //Pre-condition: call this function to remove the first item in the linked list
