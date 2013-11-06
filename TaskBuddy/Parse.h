@@ -109,6 +109,9 @@ public:
 	//Checks if end date is not before the start date
 	bool isValidEndDate(Date, Date);
 
+	//Checks if dates are equal
+	bool isSameDate(Date, Date);
+
 	//Checks if end time is after the start time
 	bool isValidEndTime(int, int);
 

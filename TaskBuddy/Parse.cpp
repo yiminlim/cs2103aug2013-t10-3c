@@ -175,7 +175,7 @@ void Parse::processTaskStringFromUI(std::string taskString, std::string & action
 		if (!block && ((!startingDate.empty() && !deadlineDate.empty()) || (!endingDate.empty() && !deadlineDate.empty()))) {
 			throw (std::runtime_error("Task should indicate only either a start or deadline"));
 		}
-		for (int i = 0; i < startingDate.size(); i++) {
+		for (unsigned int i = 0; i < startingDate.size(); i++) {
 			if (!isEmptyDate(startingDate[i]) &&!isEmptyDate(endingDate[i]) && isEmptyTime(startingTime[i]) && !isEmptyTime(endingTime[i])) {
 				throw (std::runtime_error("No starting time to match ending time"));
 			}
@@ -183,6 +183,17 @@ void Parse::processTaskStringFromUI(std::string taskString, std::string & action
 				throw (std::runtime_error("No ending time to match starting time"));
 			}
 		}
+		for (unsigned int i = 0; i < startingDate.size(); i++) {
+			if (!isValidEndDate(startingDate[i],endingDate[i])) {
+				throw (std::runtime_error("End date occurs before start date"));
+			}
+			else if (isSameDate(startingDate[i], endingDate[i])) {
+				if (!isValidEndTime(startingTime[i], endingTime[i])) {
+					throw (std::runtime_error("End time occurs before start time"));
+				}
+			}
+		}
+
 	}
 	catch (std::runtime_error &error) {
 		throw;
@@ -613,6 +624,15 @@ bool Parse::isValidMins(int mins) {
 */
 bool Parse::isValidEndDate(Date startingDate, Date endingDate) {
 	return startingDate._year <= endingDate._year && startingDate._month <= endingDate._month && startingDate._day <= endingDate._year;
+}
+
+/* 
+	Purpose: Checks if dates are equal. 
+	Pre-condition: Dates are valid.
+	Post-condition: Returns true if  dates have same value and false otherwise. 
+*/
+bool Parse::isSameDate(Date firstDate, Date secondDate) {
+	return firstDate._year == secondDate._year && firstDate._month == secondDate._month && firstDate._day == secondDate._year;
 }
 
 /* 
