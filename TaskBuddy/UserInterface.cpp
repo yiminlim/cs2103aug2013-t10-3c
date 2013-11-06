@@ -272,11 +272,13 @@ void UserInterface::displayTodayTask(){
 void UserInterface::editBlockUI(const std::string stringToEditBlock){
 	char space;
 	int option;
+	bool isClash = false;
 	std::string command;
 	std::string taskString;
 	std::string taskActionLocation;
 	std::string originalTaskString = stringToEditBlock;
 	std::vector<std::string> blockTaskVector;
+	std::vector<std::string> clashVector;
 
 	if (tbLogic.getBlock(originalTaskString, taskActionLocation, blockTaskVector)){
 		std::cout << MESSAGE_AVAILABLE_BLOCKS << std::endl;
@@ -290,9 +292,14 @@ void UserInterface::editBlockUI(const std::string stringToEditBlock){
 
 	if (command == COMMAND_ADD){
 		command = COMMAND_ADDBLOCK;
-		if (tbLogic.addBlock(readTask(command, taskActionLocation), originalTaskString)){
-			tbLogic.save();
+		if (tbLogic.addBlock(readTask(command, taskActionLocation), originalTaskString, isClash, clashVector)){
 			displaySuccessfulMessage(command);
+			if (isClash){
+				std::cout << MESSAGE_CLASH << std::endl;
+				displayInformationInVector(clashVector);
+			}
+			tbLogic.save();
+			clashVector.clear();
 		}
 		else{
 			displayFailMessage(command);
