@@ -1,5 +1,6 @@
 #include "TaskLogic.h"
 #include <typeinfo>
+#include <exception>
 #include <iostream>
 #include <ctime>
 
@@ -147,9 +148,10 @@ bool TaskLogic::add(const std::string taskString, bool& isClash, std::vector<std
 */
 bool TaskLogic::addExistingTask(const std::string taskString){
 	std::vector<Task> taskObjectVector;
+	std::vector<std::string> dummyVector;
 	bool isClash = false;
     taskObjectVector = createTask(taskString, 2);     //generating task from file
-	if(tbLinkedList.insert(taskObjectVector[0], isClash))  //there is no need to check if isClashed since these are pre-existing task.
+	if(tbLinkedList.insert(taskObjectVector[0], isClash, dummyVector))  //there is no need to check if isClashed since these are pre-existing task.
 		return true;
 	else
 		return false;
@@ -222,11 +224,10 @@ bool TaskLogic::generalSearch(std::string userInput, std::vector<std::string>& v
 	Equivalence Partition: Empty strings, Invalid strings, Valid strings
 	Boundary: Empty strings, Any valid strings, Any invalid strings
 */
-bool TaskLogic::edit(std::string taskString, std::string editString){
+bool TaskLogic::edit(std::string taskString, std::string editString, bool isBlock, std::vector<std::string>& clashTasks){
 	std::string newTask, newAction = "", newLocation = "", currentAction = "", currentLocation = "";
 	std::vector<Date> newStartingDate, newEndingDate, newDeadlineDate, currentStartingDate, currentEndingDate, currentDeadlineDate;
 	std::vector<int> newStartingTime, newEndingTime, newDeadlineTime, currentStartingTime, currentEndingTime, currentDeadlineTime; 
-	bool isBlock = false;
 	bool newIsBlock = false;
 	bool isClash = false;  //PLEASE CHECK!!!
 
@@ -266,7 +267,7 @@ bool TaskLogic::edit(std::string taskString, std::string editString){
 	Task taskObject(newAction,newLocation,newStartingDate[0],newStartingTime[0],newEndingDate[0],newEndingTime[0],newDeadlineDate[0],newDeadlineTime[0],newIsBlock);
 	
 	tbLinkedList.remove(taskString, getActionLocation(taskString));
-	tbLinkedList.insert(taskObject, isClash);
+	tbLinkedList.insert(taskObject, isClash, clashTasks);
 
 	update(COMMAND_EDIT, taskObject.getTask(), taskString);
 	return true; // need to do checking
@@ -304,8 +305,10 @@ bool TaskLogic::getBlock(std::string& taskString, std::string& taskActionLocatio
 */
 bool TaskLogic::editBlock(const std::string newTaskActionLocation, std::vector<std::string>& blockTaskVector){
 	bool isValidEdit = true;
+	bool isClashDummy = false;
+	std::vector<std::string> dummyVector;
 	for(unsigned int i = 0; i < blockTaskVector.size(); i++){
-		if(!edit( blockTaskVector[i], newTaskActionLocation))
+		if(!edit( blockTaskVector[i], newTaskActionLocation, isClashDummy, dummyVector))
 			isValidEdit = false;
 	}
 	return isValidEdit;
@@ -318,11 +321,10 @@ bool TaskLogic::editBlock(const std::string newTaskActionLocation, std::vector<s
 	Equivalence Partition: Empty strings, Invalid strings, Valid strings
 	Boundary: Empty strings, Any valid strings, Any invalid strings
 */
-bool TaskLogic::addBlock(const std::string taskString, const std::string originalTaskString){
+bool TaskLogic::addBlock(const std::string taskString, const std::string originalTaskString, bool isClash, std::vector<std::string>& clashTasks){
 	tbLinkedList.setBlock(originalTaskString);   
-	bool isClash = false;
 	
-	if(add(taskString, isClash))
+	if(add(taskString, isClash, clashTasks))
 		return true;
 	else
 		return false;
