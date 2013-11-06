@@ -61,7 +61,7 @@ void TaskLinkedList::obtainDateAndTime(Task & task, Date *date, int *time, int *
 
 //Pre-condition: input the Task reference to be added and a specific Task reference from the linked list and sort them accordingly. Check along the way if there are any clashes
 //Post-condition: returns true if the Task reference to be added is of an earlier date and time than the specific Task reference from the linked list. Update isClash accordingly
-bool TaskLinkedList::compareDateAndTime(Task & curTask, Task & listTask, bool & isClash){
+bool TaskLinkedList::compareDateAndTime(Task & curTask, Task & listTask, bool & isClash, std::vector<std::string>& clashTasks){
 		Date *curDate = new Date;
 		Date *listDate = new Date;
 		int *curTime = new int, *listTime = new int, *endCurTime = new int, *endListTime = new int;
@@ -92,11 +92,13 @@ bool TaskLinkedList::compareDateAndTime(Task & curTask, Task & listTask, bool & 
 			if (*endListTime == -1 || (*endListTime != -1 && *endCurTime != -1)){ //both from to
 				if (*endCurTime > *listTime){
 					isClash = true; //cur is from to, list is from
+					clashTasks.push_back(listTask.getTask());
 				}
 			}
 		}
 		else if (*curTime == *listTime){
 			isClash = true; //both froms
+			clashTasks.push_back(listTask.getTask());
 			condition = false;
 		}
 		else if (*curTime > *listTime){
@@ -104,6 +106,7 @@ bool TaskLinkedList::compareDateAndTime(Task & curTask, Task & listTask, bool & 
 			if (*endCurTime == -1 ){
 				if (*endListTime > *curTime || (*endListTime != -1 && *endCurTime != -1)){ //both from to
 					isClash = true; //cur is from, list is from to
+					clashTasks.push_back(listTask.getTask());
 				}
 			}
 		}
@@ -127,7 +130,7 @@ bool TaskLinkedList::compareDateAndTime(Task & curTask, Task & listTask, bool & 
 
 //Pre-condition: input a Task reference to check for the index which it should be inserted into the linked list, in a sorted manner
 //Post-condition: return the index where the Task is supposed to be added at
-int TaskLinkedList::getInsertIndex(Task & curTask, bool & isClash){
+int TaskLinkedList::getInsertIndex(Task & curTask, bool & isClash, std::vector<std::string>& clashTasks){
 	ListNode *cur = _head;
 	int i = 1;
 
@@ -136,7 +139,7 @@ int TaskLinkedList::getInsertIndex(Task & curTask, bool & isClash){
 	}
 
 	while (cur != NULL){
-		if (compareDateAndTime(curTask, cur->item, isClash)){
+		if (compareDateAndTime(curTask, cur->item, isClash, clashTasks)){
 			return i;
 		} 
 		else{
@@ -151,9 +154,9 @@ int TaskLinkedList::getInsertIndex(Task & curTask, bool & isClash){
 //Pre-condition: input a Task reference to be added into the linked list, check if any task clashes and update isClash to be true if it does 
 //				 isClash has to be false when it is passed over
 //Post-condition: return true if the task is added into the linked list in an sorted manner. isClash is updated accordingly
-bool TaskLinkedList::insert(Task & curTask, bool & isClash){
+bool TaskLinkedList::insert(Task & curTask, bool & isClash, std::vector<std::string>& clashTasks){
 	int newSize = getSize() + 1;
-	int index = getInsertIndex(curTask, isClash);
+	int index = getInsertIndex(curTask, isClash, clashTasks);
 
 	if ( (index < 1) || (index > newSize) ){
 		return false;
