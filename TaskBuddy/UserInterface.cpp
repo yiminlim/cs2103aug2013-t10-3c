@@ -43,6 +43,7 @@ const std::string UserInterface::MESSAGE_EXIT = "Thank you for using Task Buddy!
 const std::string UserInterface::ERROR_NO_TASK_TODAY = "No task due today!";
 const std::string UserInterface::ERROR_INVALID_COMMAND = "Invalid command";
 const std::string UserInterface::ERROR_SEARCH_BEFORE = "Please search for the task before attempting to delete/ edit/ markdone/ editall";
+const std::string UserInterface::ERROR_OUT_OF_VECTOR_RANGE = "Please input a number within the range of the search";
 
 const std::string UserInterface::MESSAGE_INVALID_ADD = "Task cannot be added";
 const std::string UserInterface::MESSAGE_INVALID_SEARCH = "No task is found";
@@ -83,7 +84,7 @@ void UserInterface::initUI(){
 	
 //To read in different commands by user and call for the respective TaskLogic function
 void UserInterface::commandUI(){
-	int option;
+	unsigned int option;
 	char space;
 	bool contProgram = true;
 	bool isClash;
@@ -102,6 +103,7 @@ void UserInterface::commandUI(){
 
 			if ((currentCommand == COMMAND_DELETE || currentCommand == COMMAND_EDIT || currentCommand == COMMAND_MARKDONE || currentCommand == COMMAND_EDITBLOCK) &&
 				(previousCommand != COMMAND_SEARCH)){
+					std::cin >> option;
 					throw std::runtime_error(ERROR_SEARCH_BEFORE);
 			}
 
@@ -132,7 +134,10 @@ void UserInterface::commandUI(){
 			else if (currentCommand == COMMAND_DELETE){
 				std::stringstream ss(readTask(currentCommand, KEYWORD_EMPTY_STRING));
 				while (!ss.eof() && ss >> option){
-					if (tbLogic.del(display[option-1], false)){
+					if (option > display.size()){
+						throw std::runtime_error(ERROR_OUT_OF_VECTOR_RANGE);
+					}
+					else if (tbLogic.del(display[option-1], false)){
 						tbLogic.save();
 						displayMessage(currentCommand);			
 					}
@@ -144,7 +149,10 @@ void UserInterface::commandUI(){
 			}
 			else if (currentCommand == COMMAND_EDIT){
 				std::cin >> option;
-				if (tbLogic.edit(display[option-1], readTask(COMMAND_EDIT, KEYWORD_EMPTY_STRING), isClash, clashVector)){
+				if (option > display.size()){
+					throw std::runtime_error(ERROR_OUT_OF_VECTOR_RANGE);
+				}
+				else if (tbLogic.edit(display[option-1], readTask(COMMAND_EDIT, KEYWORD_EMPTY_STRING), isClash, clashVector)){
 					displayMessage(currentCommand);
 					if (isClash){
 						std::cout << MESSAGE_CLASH << std::endl;
@@ -161,7 +169,10 @@ void UserInterface::commandUI(){
 			else if (currentCommand == COMMAND_MARKDONE){
 				std::stringstream ss(readTask(currentCommand, KEYWORD_EMPTY_STRING));
 				while (!ss.eof() && ss >> option){
-					if (tbLogic.markDone(display[option-1])){
+					if (option > display.size()){
+						throw std::runtime_error(ERROR_OUT_OF_VECTOR_RANGE);
+					}
+					else if (tbLogic.markDone(display[option-1])){
 						tbLogic.save();
 						tbLogic.saveDone();
 						displayMessage(currentCommand);
@@ -193,6 +204,11 @@ void UserInterface::commandUI(){
 			}
 			else if (currentCommand == COMMAND_EDITBLOCK){
 				std::cin >> option;
+				
+				if (option > display.size()){
+					throw std::runtime_error(ERROR_OUT_OF_VECTOR_RANGE);
+				}
+				
 				system("CLS");
 				editBlockUI(display[option-1]);
 				display.clear();
