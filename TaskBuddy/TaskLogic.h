@@ -3,6 +3,7 @@
 #include <fstream>
 #include <assert.h>
 #include <stack>
+#include <exception>
 #include "Date.h"
 #include "Task.h"
 #include "TaskLinkedList.h"
