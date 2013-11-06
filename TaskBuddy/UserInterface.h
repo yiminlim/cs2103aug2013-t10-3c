@@ -55,6 +55,7 @@ private:
 	static const std::string ERROR_NO_TASK_TODAY;
 	static const std::string ERROR_INVALID_COMMAND;	
 	static const std::string ERROR_SEARCH_BEFORE;
+	static const std::string ERROR_OUT_OF_VECTOR_RANGE;
 
 	static const std::string MESSAGE_INVALID_ADD;
 	static const std::string MESSAGE_INVALID_SEARCH;
