@@ -118,7 +118,12 @@ void TaskLogic::saveDone(){
 */
 bool TaskLogic::add(const std::string taskString, bool& isClash, std::vector<std::string>& clashTasks){
 	std::vector<Task> taskObjectVector; 
-    taskObjectVector = createTask(taskString, 1);   //generating task from user input.
+    try{
+		taskObjectVector = createTask(taskString, 1);   //generating task from user input.
+	}
+	catch(std::runtime_error &error){
+		throw;
+	}
 	bool checkAdded = true;
 	bool clash;
 
@@ -143,9 +148,10 @@ bool TaskLogic::add(const std::string taskString, bool& isClash, std::vector<std
 */
 bool TaskLogic::addExistingTask(const std::string taskString){
 	std::vector<Task> taskObjectVector;
+	std::vector<std::string> dummyVector;
 	bool isClash = false;
     taskObjectVector = createTask(taskString, 2);     //generating task from file
-	if(tbLinkedList.insert(taskObjectVector[0], isClash))  //there is no need to check if isClashed since these are pre-existing task.
+	if(tbLinkedList.insert(taskObjectVector[0], isClash, dummyVector))  //there is no need to check if isClashed since these are pre-existing task.
 		return true;
 	else
 		return false;
@@ -218,11 +224,10 @@ bool TaskLogic::generalSearch(std::string userInput, std::vector<std::string>& v
 	Equivalence Partition: Empty strings, Invalid strings, Valid strings
 	Boundary: Empty strings, Any valid strings, Any invalid strings
 */
-bool TaskLogic::edit(std::string taskString, std::string editString){
+bool TaskLogic::edit(std::string taskString, std::string editString, bool isBlock, std::vector<std::string>& clashTasks){
 	std::string newTask, newAction = "", newLocation = "", currentAction = "", currentLocation = "";
 	std::vector<Date> newStartingDate, newEndingDate, newDeadlineDate, currentStartingDate, currentEndingDate, currentDeadlineDate;
 	std::vector<int> newStartingTime, newEndingTime, newDeadlineTime, currentStartingTime, currentEndingTime, currentDeadlineTime; 
-	bool isBlock = false;
 	bool newIsBlock = false;
 	bool isClash = false;  //PLEASE CHECK!!!
 
@@ -262,7 +267,7 @@ bool TaskLogic::edit(std::string taskString, std::string editString){
 	Task taskObject(newAction,newLocation,newStartingDate[0],newStartingTime[0],newEndingDate[0],newEndingTime[0],newDeadlineDate[0],newDeadlineTime[0],newIsBlock);
 	
 	tbLinkedList.remove(taskString, getActionLocation(taskString));
-	tbLinkedList.insert(taskObject, isClash);
+	tbLinkedList.insert(taskObject, isClash, clashTasks);
 
 	update(COMMAND_EDIT, taskObject.getTask(), taskString);
 	return true; // need to do checking
@@ -300,8 +305,10 @@ bool TaskLogic::getBlock(std::string& taskString, std::string& taskActionLocatio
 */
 bool TaskLogic::editBlock(const std::string newTaskActionLocation, std::vector<std::string>& blockTaskVector){
 	bool isValidEdit = true;
+	bool isClashDummy = false;
+	std::vector<std::string> dummyVector;
 	for(unsigned int i = 0; i < blockTaskVector.size(); i++){
-		if(!edit( blockTaskVector[i], newTaskActionLocation))
+		if(!edit( blockTaskVector[i], newTaskActionLocation, isClashDummy, dummyVector))
 			isValidEdit = false;
 	}
 	return isValidEdit;
@@ -314,11 +321,10 @@ bool TaskLogic::editBlock(const std::string newTaskActionLocation, std::vector<s
 	Equivalence Partition: Empty strings, Invalid strings, Valid strings
 	Boundary: Empty strings, Any valid strings, Any invalid strings
 */
-bool TaskLogic::addBlock(const std::string taskString, const std::string originalTaskString){
+bool TaskLogic::addBlock(const std::string taskString, const std::string originalTaskString, bool isClash, std::vector<std::string>& clashTasks){
 	tbLinkedList.setBlock(originalTaskString);   
-	bool isClash = false;
 	
-	if(add(taskString, isClash))
+	if(add(taskString, isClash, clashTasks))
 		return true;
 	else
 		return false;
@@ -428,13 +434,17 @@ bool TaskLogic::undo(){
 
 //method 1 : User Input ; Method 2 : Pre-Existing Task in file
 void TaskLogic::stringParse(const std::string taskString, const int method, std::string &action, std::string &location, std::vector<Date> &startingDateVector, std::vector<int> &startingTimeVector, std::vector<Date> &endingDateVector, std::vector<int> &endingTimeVector, std::vector<Date> &deadlineDateVector, std::vector<int> &deadlineTimeVector, bool &isBlock){
-	if(method == 1){
-		taskParse.processTaskStringFromUI(taskString,action,location,startingDateVector,startingTimeVector,endingDateVector,endingTimeVector,deadlineDateVector,deadlineTimeVector,isBlock,dateVector);
+	try{	
+		if(method == 1){
+			taskParse.processTaskStringFromUI(taskString,action,location,startingDateVector,startingTimeVector,endingDateVector,endingTimeVector,deadlineDateVector,deadlineTimeVector,isBlock,dateVector);
+		}
+		else if(method == 2){
+			taskParse.processTaskStringFromFile(taskString,action,location,startingDateVector,startingTimeVector,endingDateVector,endingTimeVector,deadlineDateVector,deadlineTimeVector,isBlock,dateVector);
+		}
 	}
-	else if(method == 2){
-		taskParse.processTaskStringFromFile(taskString,action,location,startingDateVector,startingTimeVector,endingDateVector,endingTimeVector,deadlineDateVector,deadlineTimeVector,isBlock,dateVector);
+	catch(std::runtime_error &error){
+		throw;
 	}
-
 	return;
 	//add in exceptions
 }
@@ -445,8 +455,12 @@ std::vector<Task> TaskLogic::createTask(std::string taskString, int method){
 	std::vector<Date> startingDateVector, endingDateVector, deadlineDateVector; 
 	std::vector<int> startingTimeVector, endingTimeVector, deadlineTimeVector; //check if we really want to set it as -1
 	bool isBlock = false;
-	stringParse(taskString,method,action,location,startingDateVector,startingTimeVector,endingDateVector,endingTimeVector,deadlineDateVector,deadlineTimeVector,isBlock);   
-	
+	try{
+		stringParse(taskString,method,action,location,startingDateVector,startingTimeVector,endingDateVector,endingTimeVector,deadlineDateVector,deadlineTimeVector,isBlock);   
+	}
+	catch(std::runtime_error &error){
+		throw;
+	}
 	if(startingDateVector.size() > 1 || endingDateVector.size() > 1 || deadlineDateVector.size() > 1)
 		isBlock = true;
 	
@@ -456,6 +470,7 @@ std::vector<Task> TaskLogic::createTask(std::string taskString, int method){
 	std::vector<Task> taskObjectVector;
 
 	//MUST DO A CHECK TO ENSURE THAT StartingDate Vector and Endng Date Vector must be the same size!
+	
 	for(unsigned int i = 0 ; i < startingDateVector.size() && startingDateVector[i].isValidDate(); i++){
 		Date deadlineDate;
 		int deadlineTime = -1;
