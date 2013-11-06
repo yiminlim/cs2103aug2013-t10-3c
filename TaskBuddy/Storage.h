@@ -13,6 +13,8 @@ public:
 
 	Storage();
 
+	void initStorage(std::string);
+
 	void getExistingTasks(std::vector<std::string> &);
 
 	void saveTasksIntoFile(std::vector<std::string> &);
