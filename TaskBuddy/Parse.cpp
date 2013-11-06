@@ -106,24 +106,21 @@ void Parse::processTaskStringFromUI(std::string taskString, std::string & action
 				if (!endingDate.empty()) {
 					endingDate[endingDate.size()-1] = convertToDate(taskDetails[i]);
 				}
-				/*else {
+				else {
 					endingDate.push_back(convertToDate(taskDetails[i]));
-				}*/
+				}
 			}
 			else if (isDayKeyword(taskDetails[i])) {
 				if(!endingDate.empty()) {
 					endingDate[endingDate.size()-1] = convertToDate(changeDayToDate(taskDetails[i], dateVector));
 				}
-				/*else {
+				else {
 					endingDate.push_back(convertToDate(changeDayToDate(taskDetails[i], dateVector)));
-				}*/
+				}
 			}
 			else if (!endingTime.empty()) {
 					endingTime[endingTime.size()-1] = convertToTime(taskDetails[i]);
-				}
-				/*else {
-					endingTime.push_back(convertToTime(taskDetails[i]));
-				}*/
+			}	
 		}
 		else if (keyword == KEYWORD_DEADLINE) {
 			if (taskDetails[i].find(DATE_SEPARATOR) != std::string::npos) {
@@ -184,7 +181,7 @@ void Parse::processTaskStringFromUI(std::string taskString, std::string & action
 			}
 		}
 		for (unsigned int i = 0; i < startingDate.size(); i++) {
-			if (!isValidEndDate(startingDate[i],endingDate[i])) {
+			if (!isValidEndDate(startingDate[i], endingDate[i])) {
 				throw (std::runtime_error("End date occurs before start date"));
 			}
 			else if (isSameDate(startingDate[i], endingDate[i])) {
@@ -193,7 +190,6 @@ void Parse::processTaskStringFromUI(std::string taskString, std::string & action
 				}
 			}
 		}
-
 	}
 	catch (std::runtime_error &error) {
 		throw;
@@ -402,7 +398,10 @@ Date Parse::convertToDate(std::string dateString){
 
 	try {
 		if (!isValidDate(date)) {
-			throw (std::runtime_error("Invalid date input"));
+			throw (std::runtime_error("Invalid date input: day/month/year out of range"));
+		}
+		else if (dateHasPassed(date)) {
+			throw (std::runtime_error("Invalid date input: date has already passed"));
 		}
 	}
 	catch (std::runtime_error &error) {
@@ -623,7 +622,7 @@ bool Parse::isValidMins(int mins) {
 	Post-condition: Returns true if starting date value is not before ending date and false otherwise. 
 */
 bool Parse::isValidEndDate(Date startingDate, Date endingDate) {
-	return startingDate._year <= endingDate._year && startingDate._month <= endingDate._month && startingDate._day <= endingDate._year;
+	return startingDate._year <= endingDate._year && startingDate._month <= endingDate._month && startingDate._day <= endingDate._day;
 }
 
 /* 
@@ -632,7 +631,7 @@ bool Parse::isValidEndDate(Date startingDate, Date endingDate) {
 	Post-condition: Returns true if  dates have same value and false otherwise. 
 */
 bool Parse::isSameDate(Date firstDate, Date secondDate) {
-	return firstDate._year == secondDate._year && firstDate._month == secondDate._month && firstDate._day == secondDate._year;
+	return firstDate._year == secondDate._year && firstDate._month == secondDate._month && firstDate._day == secondDate._day;
 }
 
 /* 
@@ -642,6 +641,15 @@ bool Parse::isSameDate(Date firstDate, Date secondDate) {
 */
 bool Parse::isValidEndTime(int startingTime, int endingTime) {
 	return startingTime < endingTime;
+}
+
+/* 
+	Purpose: Checks if the date has already passed. 
+	Pre-condition: Date is a valid date.
+	Post-condition: Returns true if date has already passed and false otherwise. 
+*/
+bool Parse::dateHasPassed(Date date) {
+	return !isValidEndDate(dateVector[0], date);
 }
 
 /* 
