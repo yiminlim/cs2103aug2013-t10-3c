@@ -27,6 +27,7 @@ const std::string UserInterface::MESSAGE_TODAY_TASK = "Task(s) due by TODAY!";
 const std::string UserInterface::MESSAGE_NO_TASK_TODAY = "No task due today!";
 const std::string UserInterface::MESSAGE_COMMAND = "command: ";
 const std::string UserInterface::MESSAGE_ADD = "Task has been added";
+const std::string UserInterface::MESSAGE_CLASH = "Task added clashes with the following task: ";
 const std::string UserInterface::MESSAGE_DELETE = "Task has been deleted";
 const std::string UserInterface::MESSAGE_EDIT = "Task has been edited";
 const std::string UserInterface::MESSAGE_MARKDONE = "Task has been marked done";
@@ -77,26 +78,33 @@ void UserInterface::commandUI(){
 	int option;
 	char space;
 	bool contProgram = true;
-	bool isClash = false;
+	bool isClash;
 	std::string command;
 	std::vector<std::string> display;
 	std::vector<std::string> doneList;
+	std::vector<std::string> clashVector;
 	
 	do{
 		try{
 			std::cout << MESSAGE_COMMAND;
 			std::cin >> command;
-			space = getchar();						//Is it possible for space to obtain a char other than space?
+			space = getchar();
+			isClash = false;
 
 			if (command == COMMAND_ADD){		
-				if (tbLogic.add(readTask(command, KEYWORD_EMPTY_STRING), isClash)){
+				if (tbLogic.add(readTask(command, KEYWORD_EMPTY_STRING), isClash, clashVector)){
+					displaySuccessfulMessage(command);
+					if (isClash){
+						std::cout << MESSAGE_CLASH << std::endl;
+						displayInformationInVector(clashVector);
+					}
 					tbLogic.save();
-					displaySuccessfulMessage(command);				
 				}
 				else{
 					displayFailMessage(command);
 				}
 				display.clear();
+				clashVector.clear();
 			}
 			else if (command == COMMAND_SEARCH){
 				display.clear();
@@ -122,14 +130,19 @@ void UserInterface::commandUI(){
 			}
 			else if (command == COMMAND_EDIT){
 				std::cin >> option;
-				if (tbLogic.edit(display[option-1], readTask(COMMAND_EDIT, KEYWORD_EMPTY_STRING))){
-					tbLogic.save();
+				if (tbLogic.edit(display[option-1], readTask(COMMAND_EDIT, KEYWORD_EMPTY_STRING), isClash, clashVector)){
 					displaySuccessfulMessage(command);
+					if (isClash){
+						std::cout << MESSAGE_CLASH << std::endl;
+						displayInformationInVector(clashVector);
+					}
+					tbLogic.save();
 				}
 				else{
 					displayFailMessage(command);
 				}
 				display.clear();
+				clashVector.clear();
 			}
 			else if (command == COMMAND_MARKDONE){
 				std::stringstream ss(readTask(command, KEYWORD_EMPTY_STRING));
@@ -182,7 +195,6 @@ void UserInterface::commandUI(){
 			}
 			else{
 				throw std::runtime_error(MESSAGE_INVALID_COMMAND);
-				displayFailMessage(KEYWORD_EMPTY_STRING);
 			}
 		}
 		catch(std::runtime_error &error){
@@ -260,11 +272,13 @@ void UserInterface::displayTodayTask(){
 void UserInterface::editBlockUI(const std::string stringToEditBlock){
 	char space;
 	int option;
+	bool isClash = false;
 	std::string command;
 	std::string taskString;
 	std::string taskActionLocation;
 	std::string originalTaskString = stringToEditBlock;
 	std::vector<std::string> blockTaskVector;
+	std::vector<std::string> clashVector;
 
 	if (tbLogic.getBlock(originalTaskString, taskActionLocation, blockTaskVector)){
 		std::cout << MESSAGE_AVAILABLE_BLOCKS << std::endl;
@@ -278,9 +292,14 @@ void UserInterface::editBlockUI(const std::string stringToEditBlock){
 
 	if (command == COMMAND_ADD){
 		command = COMMAND_ADDBLOCK;
-		if (tbLogic.addBlock(readTask(command, taskActionLocation), originalTaskString)){
-			tbLogic.save();
+		if (tbLogic.addBlock(readTask(command, taskActionLocation), originalTaskString, isClash, clashVector)){
 			displaySuccessfulMessage(command);
+			if (isClash){
+				std::cout << MESSAGE_CLASH << std::endl;
+				displayInformationInVector(clashVector);
+			}
+			tbLogic.save();
+			clashVector.clear();
 		}
 		else{
 			displayFailMessage(command);
@@ -407,8 +426,5 @@ void UserInterface::displayFailMessage(const std::string command){
 	}
 	else if (command == COMMAND_FINALISE || command == COMMAND_FINALIZE){
 		std::cout << MESSAGE_INVALID_FINALISE << std::endl;
-	}
-	else{
-		std::cout << MESSAGE_INVALID_COMMAND << std::endl;
 	}
 }

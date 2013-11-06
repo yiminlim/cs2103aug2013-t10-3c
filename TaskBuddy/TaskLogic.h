@@ -3,6 +3,7 @@
 #include <fstream>
 #include <assert.h>
 #include <stack>
+#include <exception>
 #include "Date.h"
 #include "Task.h"
 #include "TaskLinkedList.h"
@@ -69,7 +70,7 @@ public:
 //-----EDIT TASK---------------------------------------------------------------------------------------------
 
 	//edit a task from the list at the index given
-	bool edit(std::string, std::string);
+	bool edit(std::string, std::string, bool, std::vector<std::string>&);
 
 //-----EDIT BLOCK--------------------------------------------------------------------------------------------
 
@@ -80,7 +81,7 @@ public:
 	bool editBlock(const std::string, std::vector<std::string> &);
 
 	//for adding in new blocks, const string contains action + location while vector string contains timings and dates
-	bool addBlock(const std::string, const std::string);
+	bool addBlock(const std::string, const std::string, bool, std::vector<std::string>&);
 	// first string is the action and location of original taskString, 2nd string is the original taskString
 
 	//delete all the blocks of the string given
