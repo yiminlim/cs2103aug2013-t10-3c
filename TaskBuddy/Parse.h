@@ -115,6 +115,9 @@ public:
 	//Checks if end time is after the start time
 	bool isValidEndTime(int, int);
 
+	//Checks if date has passed 
+	bool dateHasPassed(Date);
+
 	//Checks if the input year format is correct (yyyy)
 	bool isValidYearFormat(std::string);
 
