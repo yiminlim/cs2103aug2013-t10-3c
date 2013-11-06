@@ -4,6 +4,7 @@
 #include <sstream>
 #include <Windows.h>
 #include <tchar.h>
+#include <exception>
 #include "TaskLogic.h"
 
 class UserInterface{

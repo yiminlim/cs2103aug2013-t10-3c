@@ -81,59 +81,88 @@ void UserInterface::commandUI(){
 	std::string command;
 	std::vector<std::string> display;
 	std::vector<std::string> doneList;
-
+	
 	do{
-		std::cout << MESSAGE_COMMAND;
-		std::cin >> command;
-		space = getchar();						//Is it possible for space to obtain a char other than space?
+		try{
+			std::cout << MESSAGE_COMMAND;
+			std::cin >> command;
+			space = getchar();						//Is it possible for space to obtain a char other than space?
 
-		if (command == COMMAND_ADD){		
-			if (tbLogic.add(readTask(command, KEYWORD_EMPTY_STRING), isClash)){
-				tbLogic.save();
-				displaySuccessfulMessage(command);				
-			}
-			else{
-				displayFailMessage(command);
-			}
-			display.clear();
-		}
-		else if (command == COMMAND_SEARCH){
-			display.clear();
-			if (tbLogic.generalSearch(readTask(command, KEYWORD_EMPTY_STRING), display)){
-				displayInformationInVector(display);
-			}
-			else{
-				displayFailMessage(command);
-			}
-		}
-		else if (command == COMMAND_DELETE){
-			std::stringstream ss(readTask(command, KEYWORD_EMPTY_STRING));
-			while (!ss.eof() && ss >> option){
-				if (tbLogic.del(display[option-1], false)){
+			if (command == COMMAND_ADD){		
+				if (tbLogic.add(readTask(command, KEYWORD_EMPTY_STRING), isClash)){
 					tbLogic.save();
-					displaySuccessfulMessage(command);			
+					displaySuccessfulMessage(command);				
+				}
+				else{
+					displayFailMessage(command);
+				}
+				display.clear();
+			}
+			else if (command == COMMAND_SEARCH){
+				display.clear();
+				if (tbLogic.generalSearch(readTask(command, KEYWORD_EMPTY_STRING), display)){
+					displayInformationInVector(display);
 				}
 				else{
 					displayFailMessage(command);
 				}
 			}
-			display.clear();
-		}
-		else if (command == COMMAND_EDIT){
-			std::cin >> option;
-			if (tbLogic.edit(display[option-1], readTask(COMMAND_EDIT, KEYWORD_EMPTY_STRING))){
-				tbLogic.save();
-				displaySuccessfulMessage(command);
+			else if (command == COMMAND_DELETE){
+				std::stringstream ss(readTask(command, KEYWORD_EMPTY_STRING));
+				while (!ss.eof() && ss >> option){
+					if (tbLogic.del(display[option-1], false)){
+						tbLogic.save();
+						displaySuccessfulMessage(command);			
+					}
+					else{
+						displayFailMessage(command);
+					}
+				}
+				display.clear();
 			}
-			else{
-				displayFailMessage(command);
+			else if (command == COMMAND_EDIT){
+				std::cin >> option;
+				if (tbLogic.edit(display[option-1], readTask(COMMAND_EDIT, KEYWORD_EMPTY_STRING))){
+					tbLogic.save();
+					displaySuccessfulMessage(command);
+				}
+				else{
+					displayFailMessage(command);
+				}
+				display.clear();
 			}
-			display.clear();
-		}
-		else if (command == COMMAND_MARKDONE){
-			std::stringstream ss(readTask(command, KEYWORD_EMPTY_STRING));
-			while (!ss.eof() && ss >> option){
-				if (tbLogic.markDone(display[option-1])){
+			else if (command == COMMAND_MARKDONE){
+				std::stringstream ss(readTask(command, KEYWORD_EMPTY_STRING));
+				while (!ss.eof() && ss >> option){
+					if (tbLogic.markDone(display[option-1])){
+						tbLogic.save();
+						tbLogic.saveDone();
+						displaySuccessfulMessage(command);
+					}
+					else{
+						displayFailMessage(command);
+					}
+				}
+				display.clear();
+			}
+			else if (command == COMMAND_DONELIST){
+				if (tbLogic.retrieveDoneList(doneList)){
+					displayInformationInVector(doneList);
+				}
+				else{
+					displayFailMessage(command);
+				}
+				doneList.clear();
+			}
+			else if (command == COMMAND_EDITBLOCK){
+				std::cin >> option;
+				system("CLS");
+				editBlockUI(display[option-1]);
+				display.clear();
+				displayWelcomeMessage();
+			}
+			else if (command == COMMAND_UNDO){
+				if (tbLogic.undo()){
 					tbLogic.save();
 					tbLogic.saveDone();
 					displaySuccessfulMessage(command);
@@ -141,47 +170,25 @@ void UserInterface::commandUI(){
 				else{
 					displayFailMessage(command);
 				}
+				display.clear();
 			}
-			display.clear();
-		}
-		else if (command == COMMAND_DONELIST){
-			if (tbLogic.retrieveDoneList(doneList)){
-				displayInformationInVector(doneList);
+			else if (command == COMMAND_CLEAR){
+				system("CLS");
+				display.clear();
 			}
-			else{
-				displayFailMessage(command);
-			}
-			doneList.clear();
-		}
-		else if (command == COMMAND_EDITBLOCK){
-			std::cin >> option;
-			system("CLS");
-			editBlockUI(display[option-1]);
-			display.clear();
-			displayWelcomeMessage();
-		}
-		else if (command == COMMAND_UNDO){
-			if (tbLogic.undo()){
+			else if (command == COMMAND_EXIT){
 				displaySuccessfulMessage(command);
-				tbLogic.saveDone();
+				contProgram = false;
 			}
 			else{
-				displayFailMessage(command);
+				throw std::runtime_error(MESSAGE_INVALID_COMMAND);
+				displayFailMessage(KEYWORD_EMPTY_STRING);
 			}
-			display.clear();
 		}
-		else if (command == COMMAND_CLEAR){
-			system("CLS");
-			display.clear();
+		catch(std::runtime_error &error){
+			std::cout << error.what() << std::endl;
 		}
-		else if (command == COMMAND_EXIT){
-			displaySuccessfulMessage(command);
-			contProgram = false;
-		}
-		else{
-			displayFailMessage(KEYWORD_EMPTY_STRING);
-		}
-		
+
 		if (command != COMMAND_CLEAR){
 			std::cout << std::endl;
 		}
