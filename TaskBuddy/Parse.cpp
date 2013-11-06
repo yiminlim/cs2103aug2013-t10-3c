@@ -137,7 +137,7 @@ void Parse::processTaskStringFromUI(std::string taskString, std::string & action
 		}
 	}
 
-	/*if (deadlineDate.empty()) {
+	if (deadlineDate.empty()) {
 		deadlineDate.push_back(Date());
 	}
 	if (deadlineTime.empty()) {
@@ -155,7 +155,7 @@ void Parse::processTaskStringFromUI(std::string taskString, std::string & action
 	if (endingTime.empty()) {
 		endingTime.push_back(EMPTY_TIME);
 	}
-	*/
+	
 	assert(startingDate.size() == startingTime.size());
 	assert(endingDate.size() == endingTime.size());
 	assert(startingDate.size() == endingDate.size());
@@ -169,8 +169,11 @@ void Parse::processTaskStringFromUI(std::string taskString, std::string & action
 		if (!block && (startingDate.size() > 1 || endingDate.size() > 1 || deadlineDate.size() > 1)) {
 			throw (std::runtime_error("Task should only indicate one start/end/deadline"));
 		}
-		if (!block && ((!startingDate.empty() && !deadlineDate.empty()) || (!endingDate.empty() && !deadlineDate.empty()))) {
-			throw (std::runtime_error("Task should indicate only either a start or deadline"));
+		if (!block && ((!isEmptyDate(startingDate[0]) && !isEmptyDate(deadlineDate[0])) || (!isEmptyDate(endingDate[0]) && !isEmptyDate(deadlineDate[0])))) {
+			throw (std::runtime_error("Task should indicate either a start date or deadline date"));
+		}
+		if (isEmptyDate(startingDate[0]) && isEmptyDate(deadlineDate[0])) {
+			throw (std::runtime_error("Task should indicate at least a start or a deadline"));
 		}
 		for (unsigned int i = 0; i < startingDate.size(); i++) {
 			if (!isEmptyDate(startingDate[i]) &&!isEmptyDate(endingDate[i]) && isEmptyTime(startingTime[i]) && !isEmptyTime(endingTime[i])) {
@@ -181,11 +184,11 @@ void Parse::processTaskStringFromUI(std::string taskString, std::string & action
 			}
 		}
 		for (unsigned int i = 0; i < startingDate.size(); i++) {
-			if (!isValidEndDate(startingDate[i], endingDate[i])) {
+			if (!isEmptyDate(startingDate[i]) && !isEmptyDate(endingDate[i]) && !isValidEndDate(startingDate[i], endingDate[i])) {
 				throw (std::runtime_error("End date occurs before start date"));
 			}
 			else if (isSameDate(startingDate[i], endingDate[i])) {
-				if (!isValidEndTime(startingTime[i], endingTime[i])) {
+				if (!isEmptyDate(startingDate[i]) && !isEmptyDate(endingDate[i]) && !isValidEndTime(startingTime[i], endingTime[i])) {
 					throw (std::runtime_error("End time occurs before start time"));
 				}
 			}
@@ -400,9 +403,9 @@ Date Parse::convertToDate(std::string dateString){
 		if (!isValidDate(date)) {
 			throw (std::runtime_error("Invalid date input: day/month/year out of range"));
 		}
-		else if (dateHasPassed(date)) {
+		/*else if (dateHasPassed(date)) {
 			throw (std::runtime_error("Invalid date input: date has already passed"));
-		}
+		}*/
 	}
 	catch (std::runtime_error &error) {
 		throw;
@@ -648,9 +651,9 @@ bool Parse::isValidEndTime(int startingTime, int endingTime) {
 	Pre-condition: Date is a valid date.
 	Post-condition: Returns true if date has already passed and false otherwise. 
 */
-bool Parse::dateHasPassed(Date date) {
+/*bool Parse::dateHasPassed(Date date, ) {
 	return !isValidEndDate(dateVector[0], date);
-}
+}*/
 
 /* 
 	Purpose: Checks if the input month format is correct (m, mm). 
