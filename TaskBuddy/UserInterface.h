@@ -17,7 +17,9 @@ private:
 	static const std::string COMMAND_SEARCH;
 	static const std::string COMMAND_EDIT;
 	static const std::string COMMAND_MARKDONE;
-	static const std::string COMMAND_DONELIST;
+	static const std::string COMMAND_DONE;
+	static const std::string COMMAND_OVERDUE;
+	static const std::string COMMAND_CLEAROVERDUE;
 	static const std::string COMMAND_EDITBLOCK;
 	static const std::string COMMAND_ADDBLOCK;	
 	static const std::string COMMAND_EDITALL;
@@ -36,7 +38,6 @@ private:
 	static const std::string KEYWORD_END;
 
 	static const std::string MESSAGE_TODAY_TASK;
-	static const std::string MESSAGE_NO_TASK_TODAY;
 	static const std::string MESSAGE_COMMAND;
 	static const std::string MESSAGE_ADD;
 	static const std::string MESSAGE_CLASH;
@@ -49,6 +50,12 @@ private:
 	static const std::string MESSAGE_EDITALL;
 	static const std::string MESSAGE_DELETEBLOCK;
 	static const std::string MESSAGE_FINALISE;
+	static const std::string MESSAGE_EXIT;
+
+	static const std::string ERROR_NO_TASK_TODAY;
+	static const std::string ERROR_INVALID_COMMAND;	
+	static const std::string ERROR_SEARCH_BEFORE;
+
 	static const std::string MESSAGE_INVALID_ADD;
 	static const std::string MESSAGE_INVALID_SEARCH;
 	static const std::string MESSAGE_INVALID_DELETE;
@@ -60,8 +67,6 @@ private:
 	static const std::string MESSAGE_INVALID_EDITALL;
 	static const std::string MESSAGE_INVALID_DELETEBLOCK;
 	static const std::string MESSAGE_INVALID_FINALISE;
-	static const std::string MESSAGE_INVALID_COMMAND;
-	static const std::string MESSAGE_EXIT;
 
 public:
 		
@@ -109,7 +114,7 @@ public:
 	//To display messages when commands are executed successfully
 	//Precondition: function successfully call
 	//Post-condition: success message with respect to command will be displayed
-	void displaySuccessfulMessage(const std::string);
+	void displayMessage(const std::string);
 
 	//To display messages when commands fail to executed successfully
 	//Precondition: function call fail
