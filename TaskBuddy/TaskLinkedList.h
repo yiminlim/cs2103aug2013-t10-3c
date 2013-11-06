@@ -83,5 +83,6 @@ public:
 	//Set the bool block component of the string as true
 	void setBlock(std::string);
 
+	//Return list of overdued items
 	void getOverdueList(Date, std::vector<std::string> &);
 };

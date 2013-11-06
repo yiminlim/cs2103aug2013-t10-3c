@@ -29,11 +29,15 @@ public:
 	//Returns number of tasks in linked list
 	int getSize();
 
+	//Insert task to the back of the linked list
 	void insert(Task &);
 
+	//Remove the item at the head of the linked list
 	void remove();
 
+	//Remove all the items in the linked list
 	void clear();
 	
+	//Retrieve all the items in the linked list
 	void updateStorageVector(std::vector<std::string> &);
 };

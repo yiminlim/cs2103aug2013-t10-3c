@@ -1,4 +1,5 @@
 #include "OverdueLinkedList.h"
+#include <assert.h>
 
 OverdueLinkedList::OverdueLinkedList(){
 	_head = NULL;
@@ -37,7 +38,10 @@ int OverdueLinkedList::getSize(){
 	return _size;
 }
 
+//Pre-condition: read in a task and insert it to the back of the linked list
+//Post-condition: insert the new task to the back of the linked list
 void OverdueLinkedList::insert(Task & curTask){
+	assert (curTask.getTask() != "");
 	_size = getSize() + 1;
 	int index = getSize();
 
@@ -50,6 +54,8 @@ void OverdueLinkedList::insert(Task & curTask){
 	prev->next = newTask;
 }
 
+//Pre-condition: call this function to remove the first item in the linked list
+//Post-condition: head of the linked list is removed
 void OverdueLinkedList::remove(){
 	ListNode *cur;
 	--_size;
@@ -61,13 +67,18 @@ void OverdueLinkedList::remove(){
 	cur = NULL;
 }
 
+//Pre-condition: call this function to clear the entire linked list
+//Post-condition: entire linked list is removed
 void OverdueLinkedList::clear(){
 	while (!isEmpty()){
 		remove();
 	}
 }
-	
+
+//Pre-condition: input an empty vector to retrieve alll the items in the linked list
+//Post-condition: returns a vector containing all the items in the linked list
 void OverdueLinkedList::updateStorageVector(std::vector<std::string> & tbOverdueVector){
+	assert (tbOverdueVector.empty());
 	ListNode *cur = _head;
 
 	while (cur != NULL){

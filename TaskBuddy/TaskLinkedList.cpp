@@ -267,7 +267,7 @@ void TaskLinkedList::checkIfRemainingBlockTask(std::string line){
 //Pre-condition: input a string containing the output format of the task to be deleted from the linked list and a line containing the action and location to cater in the fact that if there's only one task block remaining, it will be unblocked
 //Post-condition: return true if the task is found and deleted from the linked list, if task comes from a block, the last block will be unblocked.
 bool TaskLinkedList::remove(std::string task, std::string line){
-	assert(task != "" && line != "");
+	assert(task != "");
 	int *index = new int;
 	*index = 1;
 	bool condition = false;
@@ -534,7 +534,10 @@ void TaskLinkedList::setBlock(std::string task){
 	}
 }
 
+//Pre-condition: input a today date and an empty vector of overduelist to compare the dates and store overdue task in taskLinkedList into overduelinkedlist instead
+//Post-condition: overdue items from taskLinkedList are stored in the vector and returned
 void TaskLinkedList::getOverdueList(Date today, std::vector<std::string> & overdueList){
+	assert(overdueList.empty());
 	ListNode *cur = _head;
 
 	while(cur != NULL){
