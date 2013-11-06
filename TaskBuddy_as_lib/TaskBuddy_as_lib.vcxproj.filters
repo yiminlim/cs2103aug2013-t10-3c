@@ -42,6 +42,9 @@
     <ClCompile Include="..\TaskBuddy\UserInterface.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\TaskBuddy\DoneLinkedList.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\TaskBuddy\Date.h">
@@ -63,6 +66,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\TaskBuddy\UserInterface.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\TaskBuddy\DoneLinkedList.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
