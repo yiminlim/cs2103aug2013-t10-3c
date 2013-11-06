@@ -53,7 +53,4 @@ public:
 	void update(Date);
 
 	void updateStorageVector(std::vector<std::string> &);
-	
-	//Retrieves all task from DoneLinkedList
-	void retrieveAll(std::vector<std::string> &);
 };
