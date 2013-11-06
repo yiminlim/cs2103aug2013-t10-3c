@@ -90,7 +90,7 @@ bool TaskLinkedList::compareDateAndTime(Task & curTask, Task & listTask, bool & 
 		}
 		else if (*curTime < *listTime){
 			condition = true;
-			if (*endListTime == -1 || (*endListTime != -1 && *endCurTime != -1)){ //both from to
+			if ((*endListTime == -1 && *endCurTime != -1)|| (*endListTime != -1 && *endCurTime != -1)){ //both from to
 				if (*endCurTime > *listTime){
 					isClash = true; //cur is from to, list is from
 					clashTasks.push_back(listTask.getTask());
@@ -119,7 +119,7 @@ bool TaskLinkedList::compareDateAndTime(Task & curTask, Task & listTask, bool & 
 		}
 		else if (*curTime > *listTime){
 			condition = false; 
-			if (*endCurTime == -1 || (*endListTime != -1 && *endCurTime != -1)){ //both from to
+			if ((*endCurTime == -1 && *endListTime != -1)|| (*endListTime != -1 && *endCurTime != -1)){ //both from to
 				if (*endListTime > *curTime){
 					isClash = true; //cur is from, list is from to
 					clashTasks.push_back(listTask.getTask());
