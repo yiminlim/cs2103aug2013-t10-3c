@@ -5,7 +5,9 @@ const std::string UserInterface::COMMAND_DELETE = "delete";
 const std::string UserInterface::COMMAND_SEARCH = "search";
 const std::string UserInterface::COMMAND_EDIT = "edit";
 const std::string UserInterface::COMMAND_MARKDONE = "markdone";
-const std::string UserInterface::COMMAND_DONELIST = "donelist";
+const std::string UserInterface::COMMAND_DONE = "done";
+const std::string UserInterface::COMMAND_OVERDUE = "overdue";
+const std::string UserInterface::COMMAND_CLEAROVERDUE = "clearoverdue";
 const std::string UserInterface::COMMAND_EDITBLOCK = "editblock";
 const std::string UserInterface::COMMAND_ADDBLOCK = "addblock";
 const std::string UserInterface::COMMAND_EDITALL = "editall";
@@ -75,6 +77,7 @@ void UserInterface::initUI(){
 	tbLogic.initLogic();
 	displayWelcomeMessage();
 	displayTodayTask();
+	tbLogic.saveOverdue();
 	return;
 }
 	
@@ -87,6 +90,7 @@ void UserInterface::commandUI(){
 	std::string currentCommand, previousCommand = KEYWORD_EMPTY_STRING;
 	std::vector<std::string> display;
 	std::vector<std::string> doneList;
+	std::vector<std::string> overdueList;
 	std::vector<std::string> clashVector;
 	
 	do{
@@ -168,7 +172,7 @@ void UserInterface::commandUI(){
 				}
 				display.clear();
 			}
-			else if (currentCommand == COMMAND_DONELIST){
+			else if (currentCommand == COMMAND_DONE){
 				if (tbLogic.retrieveDoneList(doneList)){
 					displayInformationInVector(doneList);
 				}
@@ -176,6 +180,16 @@ void UserInterface::commandUI(){
 					displayFailMessage(currentCommand);
 				}
 				doneList.clear();
+			}
+			else if (currentCommand == COMMAND_OVERDUE){
+				if (tbLogic.retrieveOverdueList(overdueList)){
+					displayInformationInVector(overdueList);
+				}
+				overdueList.clear();
+			}
+			else if (currentCommand == COMMAND_CLEAROVERDUE){
+				tbLogic.clearOverdueList();
+				tbLogic.saveOverdue();
 			}
 			else if (currentCommand == COMMAND_EDITBLOCK){
 				std::cin >> option;
@@ -427,7 +441,7 @@ void UserInterface::displayFailMessage(const std::string command){
 	else if (command == COMMAND_MARKDONE){
 		std::cout << MESSAGE_INVALID_MARKDONE << std::endl;
 	}
-	else if (command == COMMAND_DONELIST){
+	else if (command == COMMAND_DONE){
 		std::cout << MESSAGE_INVALID_DONELIST << std::endl;
 	}
 	else if (command == COMMAND_UNDO){

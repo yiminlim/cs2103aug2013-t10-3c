@@ -17,7 +17,9 @@ private:
 	static const std::string COMMAND_SEARCH;
 	static const std::string COMMAND_EDIT;
 	static const std::string COMMAND_MARKDONE;
-	static const std::string COMMAND_DONELIST;
+	static const std::string COMMAND_DONE;
+	static const std::string COMMAND_OVERDUE;
+	static const std::string COMMAND_CLEAROVERDUE;
 	static const std::string COMMAND_EDITBLOCK;
 	static const std::string COMMAND_ADDBLOCK;	
 	static const std::string COMMAND_EDITALL;
