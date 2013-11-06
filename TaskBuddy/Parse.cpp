@@ -86,14 +86,19 @@ void Parse::processTaskStringFromUI(std::string taskString, std::string & action
 			if (taskDetails[i].find(DATE_SEPARATOR) != std::string::npos) {
 				startingDate.push_back(convertToDate(taskDetails[i]));
 				endingDate.push_back(Date());
+				startingTime.push_back(EMPTY_TIME);
+				endingTime.push_back(EMPTY_TIME);
 			} 
 			else if (isDayKeyword(taskDetails[i])) {
 				startingDate.push_back(convertToDate(changeDayToDate(taskDetails[i], dateVector)));
 				endingDate.push_back(Date()); 
+				startingTime.push_back(EMPTY_TIME);
+				endingTime.push_back(EMPTY_TIME);
 			}
 			else {
-				startingTime.push_back(convertToTime(taskDetails[i]));
-				endingTime.push_back(EMPTY_TIME);
+				if (!startingTime.empty()) {
+					startingTime[startingTime.size()-1] = convertToTime(taskDetails[i]);
+				}
 			}
 		}
 		else if (keyword == KEYWORD_ENDING) {
@@ -101,36 +106,36 @@ void Parse::processTaskStringFromUI(std::string taskString, std::string & action
 				if (!endingDate.empty()) {
 					endingDate[endingDate.size()-1] = convertToDate(taskDetails[i]);
 				}
-				else {
+				/*else {
 					endingDate.push_back(convertToDate(taskDetails[i]));
-				}
+				}*/
 			}
 			else if (isDayKeyword(taskDetails[i])) {
 				if(!endingDate.empty()) {
 					endingDate[endingDate.size()-1] = convertToDate(changeDayToDate(taskDetails[i], dateVector));
 				}
-				else {
+				/*else {
 					endingDate.push_back(convertToDate(changeDayToDate(taskDetails[i], dateVector)));
-				}
+				}*/
 			}
-			else {
-				if (!endingTime.empty()) {
+			else if (!endingTime.empty()) {
 					endingTime[endingTime.size()-1] = convertToTime(taskDetails[i]);
 				}
-				else {
+				/*else {
 					endingTime.push_back(convertToTime(taskDetails[i]));
-				}
-			}
+				}*/
 		}
 		else if (keyword == KEYWORD_DEADLINE) {
 			if (taskDetails[i].find(DATE_SEPARATOR) != std::string::npos) {
 				deadlineDate.push_back(convertToDate(taskDetails[i]));
+				deadlineTime.push_back(EMPTY_TIME);
 			}
 			else if (isDayKeyword(taskDetails[i])) {
 				deadlineDate.push_back(convertToDate(changeDayToDate(taskDetails[i], dateVector)));
+				deadlineTime.push_back(EMPTY_TIME);
 			}
-			else {
-				deadlineTime.push_back(convertToTime(taskDetails[i]));
+			else if (!deadlineTime.empty()) {
+				deadlineTime[deadlineTime.size()-1] = convertToTime(taskDetails[i]);
 			}
 		}
 	}
@@ -170,11 +175,11 @@ void Parse::processTaskStringFromUI(std::string taskString, std::string & action
 		if (!block && ((!startingDate.empty() && !deadlineDate.empty()) || (!endingDate.empty() && !deadlineDate.empty()))) {
 			throw (std::runtime_error("Task should indicate only either a start or deadline"));
 		}
-		for (int i = 0; i < startingTime.size(); i++) {
-			if (isEmptyTime(startingTime[i]) && !isEmptyTime(endingTime[i])) {
+		for (int i = 0; i < startingDate.size(); i++) {
+			if (!isEmptyDate(startingDate[i]) &&!isEmptyDate(endingDate[i]) && isEmptyTime(startingTime[i]) && !isEmptyTime(endingTime[i])) {
 				throw (std::runtime_error("No starting time to match ending time"));
 			}
-			if (!isEmptyTime(startingTime[i]) && isEmptyTime(endingTime[i])) {
+			if (!isEmptyDate(startingDate[i]) &&!isEmptyDate(endingDate[i]) && !isEmptyTime(startingTime[i]) && isEmptyTime(endingTime[i])) {
 				throw (std::runtime_error("No ending time to match starting time"));
 			}
 		}
@@ -350,7 +355,19 @@ Date Parse::convertToDate(std::string dateString){
 	std::string yearString = dateString.substr(posSecondDateSeparator+1);
 
 	try {
-		if (!yearString.empty() && !isValidYearFormat(yearString)) {
+		if (yearString.empty()) {
+			throw (std::runtime_error("Missing year input"));
+		}
+		else if (monthString.empty()) {
+			throw (std::runtime_error("Missing month input"));
+		}
+		else if (dayString.empty()) {
+			throw (std::runtime_error("Missing day input"));
+		}
+		else if (!yearString.empty() && !isValidYearFormat(yearString)) {
+			throw (std::runtime_error("Invalid year input format"));
+		}
+		else if (!yearString.empty() && !isValidYearFormat(yearString)) {
 			throw (std::runtime_error("Invalid year input format"));
 		}
 		else if (!monthString.empty() && !isValidMonthFormat(monthString)) {
@@ -571,11 +588,11 @@ bool Parse::isValidTime(int time) {
 	Purpose: Checks if hour value of time is valid. 
 	Pre-condition: Hour value is an integer.
 	Post-condition: Returns true if hour value of time is valid and false otherwise. 
-	Equivalence Partitions: < 1, 1-23, > 23 
-	Boundary values: 0, 1, 2, 22, 23, 24
+	Equivalence Partitions: < 0, 1-23, > 23 
+	Boundary values: -1, 0, 1, 22, 23, 24
 */
 bool Parse::isValidHour(int hour) {
-	return hour >= 1 && hour <= 23;
+	return hour >= 0 && hour <= 23;
 }
 
 /* 
@@ -583,10 +600,10 @@ bool Parse::isValidHour(int hour) {
 	Pre-condition: Minutes value is an integer.
 	Post-condition: Returns true if minutes value of time is valid and false otherwise. 
 	Equivalence Partitions: < 1, 1-59, > 59
-	Boundary values: 0, 1, 2, 58, 59, 60
+	Boundary values: -1, 0, 1, 58, 59, 60
 */
 bool Parse::isValidMins(int mins) {
-	return mins >= 1 && mins <= 59;
+	return mins >= 0 && mins <= 59;
 }
 
 /* 
