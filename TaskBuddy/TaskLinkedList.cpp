@@ -1,4 +1,5 @@
 #include "TaskLinkedList.h"
+#include <assert.h>
 
 TaskLinkedList::TaskLinkedList(){
 	_head = NULL;
@@ -38,8 +39,8 @@ int TaskLinkedList::getSize(){
 }
 
 //Pre-condition: input in a Task reference and two pointers indicating date and time 
-//				 the task have to have either a startingDate and startingTime or a deadlineDate and deadlineTime
 //				 for empty time, it is declared with a value -1
+//				 for empty Date, it is declared as 0
 //Post-condition: the pointer indicating date and time will be updated to store either the startingDate and startingTime or the deadlineDate and deadlineTime of the respective Task. 
 void TaskLinkedList::obtainDateAndTime(Task & task, Date *date, int *time, int *endTime){
 	if (task.getDeadlineTime() == -1){
@@ -60,7 +61,7 @@ void TaskLinkedList::obtainDateAndTime(Task & task, Date *date, int *time, int *
 }
 
 //Pre-condition: input the Task reference to be added and a specific Task reference from the linked list and sort them accordingly. Check along the way if there are any clashes
-//Post-condition: returns true if the Task reference to be added is of an earlier date and time than the specific Task reference from the linked list. Update isClash accordingly
+//Post-condition: returns true if the Task reference to be added is of an earlier date and time than the specific Task reference from the linked list. Update isClash accordingly and return a vector of task that clashes
 bool TaskLinkedList::compareDateAndTime(Task & curTask, Task & listTask, bool & isClash, std::vector<std::string>& clashTasks){
 		Date *curDate = new Date;
 		Date *listDate = new Date;
@@ -151,10 +152,13 @@ int TaskLinkedList::getInsertIndex(Task & curTask, bool & isClash, std::vector<s
 	return i;
 }
 
-//Pre-condition: input a Task reference to be added into the linked list, check if any task clashes and update isClash to be true if it does 
+//Pre-condition: input a Task reference to be added into the linked list, check if any task clashes and update isClash to be true if it does and return the vector of tasks that clash
 //				 isClash has to be false when it is passed over
+//				 clashTasks must be empty
 //Post-condition: return true if the task is added into the linked list in an sorted manner. isClash is updated accordingly
 bool TaskLinkedList::insert(Task & curTask, bool & isClash, std::vector<std::string>& clashTasks){
+	assert(clashTasks.empty());
+	assert(!isClash);
 	int newSize = getSize() + 1;
 	int index = getInsertIndex(curTask, isClash, clashTasks);
 
@@ -198,6 +202,7 @@ bool TaskLinkedList::getRemoveIndex(std::string task, int *index){
 //pre-condition: input a line and an empty vector to contain keywords
 //post-condition: rsplit the line into individual words and store them in the keywords vector
 void TaskLinkedList::splitIntoKeywords(std::string line, std::vector<std::string> & keywords){
+	assert(keywords.empty());
 	std::stringstream iss;
 	std::string keyword;
 	iss << line;
@@ -278,6 +283,7 @@ std::string TaskLinkedList::toLowerCase(std::string line){
 //				assume that the day and month are greater than 0. While year are at least 4 digits (the first digit is not 0)
 //post-condtion: return a string date form from individual int day, month, year
 std::string TaskLinkedList::getStringDate(int day, int month, int year){
+	assert(day>0 && month>0);
 	std::ostringstream output;
 	output << day << "/" << month << "/" << year; 
 	return output.str();
@@ -398,6 +404,7 @@ std::string TaskLinkedList::includeRangeOfDates(std::string tempTask){
 //				 will only take into consideration range in dates if the user inputs the date in the right format or uses words like today, tmr,.. (dd/mm/yyyy)
 //Post-condition: return true if at least 1 task is found to contain all of the keywords from the vector and updates the taskList vector accordingly
 bool TaskLinkedList::retrieve(const std::vector<std::string> keywords, std::vector<std::string> & taskList){
+	assert(taskList.empty());
 	ListNode *cur = _head;
 
 	while (cur != NULL){
@@ -474,6 +481,7 @@ bool TaskLinkedList::finaliseBlocking(const std::vector<std::string> tasks){
 //pre-condition: input an empty vector and copy all the output format of the tasks in the linked list into this vector
 //post-condition: the entire output format of the tasks in the linked list is copied over into the vector
 void TaskLinkedList::updateStorageVector(std::vector<std::string> & tbVector){
+	assert(tbVector.empty());
 	ListNode *cur = _head;
 
 	while (cur != NULL){
