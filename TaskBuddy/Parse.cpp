@@ -85,11 +85,11 @@ void Parse::processTaskStringFromUI(std::string taskString, std::string & action
 		else if (keyword == KEYWORD_STARTING) {
 			if (taskDetails[i].find(DATE_SEPARATOR) != std::string::npos) {
 				startingDate.push_back(convertToDate(taskDetails[i]));
-				endingDate.push_back(Date()); //check
+				endingDate.push_back(Date());
 			} 
 			else if (isDayKeyword(taskDetails[i])) {
 				startingDate.push_back(convertToDate(changeDayToDate(taskDetails[i], dateVector)));
-				endingDate.push_back(Date()); //check
+				endingDate.push_back(Date()); 
 			}
 			else {
 				startingTime.push_back(convertToTime(taskDetails[i]));
@@ -135,7 +135,7 @@ void Parse::processTaskStringFromUI(std::string taskString, std::string & action
 		}
 	}
 
-	if (deadlineDate.empty()) {
+	/*if (deadlineDate.empty()) {
 		deadlineDate.push_back(Date());
 	}
 	if (deadlineTime.empty()) {
@@ -152,6 +152,35 @@ void Parse::processTaskStringFromUI(std::string taskString, std::string & action
 	}
 	if (endingTime.empty()) {
 		endingTime.push_back(EMPTY_TIME);
+	}
+	*/
+	assert(startingDate.size() == startingTime.size());
+	assert(endingDate.size() == endingTime.size());
+	assert(startingDate.size() == endingDate.size());
+	assert(startingTime.size() == endingTime.size());
+	assert(deadlineDate.size() == deadlineTime.size());
+
+	try {
+		if (action == EMPTY_STRING) {
+			throw (std::runtime_error("Missing action input"));
+		}
+		if (!block && (startingDate.size() > 1 || endingDate.size() > 1 || deadlineDate.size() > 1)) {
+			throw (std::runtime_error("Task should only indicate one start/end/deadline"));
+		}
+		if (!block && ((!startingDate.empty() && !deadlineDate.empty()) || (!endingDate.empty() && !deadlineDate.empty()))) {
+			throw (std::runtime_error("Task should indicate only either a start or deadline"));
+		}
+		for (int i = 0; i < startingTime.size(); i++) {
+			if (isEmptyTime(startingTime[i]) && !isEmptyTime(endingTime[i])) {
+				throw (std::runtime_error("No starting time to match ending time"));
+			}
+			if (!isEmptyTime(startingTime[i]) && isEmptyTime(endingTime[i])) {
+				throw (std::runtime_error("No ending time to match starting time"));
+			}
+		}
+	}
+	catch (std::runtime_error &error) {
+		throw;
 	}
 		
 	return;
@@ -321,11 +350,17 @@ Date Parse::convertToDate(std::string dateString){
 	std::string yearString = dateString.substr(posSecondDateSeparator+1);
 
 	try {
-		if (!isValidYearFormat(yearString)) {
-			throw(std::runtime_error("maanahafj"));
+		if (!yearString.empty() && !isValidYearFormat(yearString)) {
+			throw (std::runtime_error("Invalid year input format"));
+		}
+		else if (!monthString.empty() && !isValidMonthFormat(monthString)) {
+			throw (std::runtime_error("Invalid month input format"));
+		}
+		else if (!dayString.empty() && !isValidDayFormat(dayString)) {
+			throw (std::runtime_error("Invalid day input format"));
 		}
 	}
-	catch(std::runtime_error &error) {
+	catch (std::runtime_error &error) {
 		throw;
 	}
 
@@ -337,6 +372,15 @@ Date Parse::convertToDate(std::string dateString){
 	monthInput >> date._month;
 	yearInput >> date._year;
 
+	try {
+		if (!isValidDate(date)) {
+			throw (std::runtime_error("Invalid date input"));
+		}
+	}
+	catch (std::runtime_error &error) {
+		throw;
+	}
+
 	return date;
 }
 
@@ -347,22 +391,30 @@ Date Parse::convertToDate(std::string dateString){
 	Equivalence Partitions: less than 4 digits, 4 digits, 5 digits 
 	Boundary values: 3 digits, 4 digits, 5 digits
 */
-//Implement check to make sure 4 digits?
 int Parse::convertToTime(std::string timeString){
 	int time;
 
 	try {
 		if (!isValidTimeFormat(timeString)) {
-			throw(std::runtime_error("Invalid time input"));
+			throw (std::runtime_error("Invalid time input format"));
 		}
 	}
-	catch(std::runtime_error &error) {
+	catch (std::runtime_error &error) {
 		throw;
 	}
 
 	std::istringstream timeInput(timeString);
 	
 	timeInput >> time;
+
+	try {
+		if (!isValidTime(time)) {
+			throw (std::runtime_error("Invalid time input"));
+		}
+	}
+	catch (std::runtime_error &error) {
+		throw;
+	}
 
 	return time;
 }
@@ -553,6 +605,28 @@ bool Parse::isValidEndDate(Date startingDate, Date endingDate) {
 */
 bool Parse::isValidEndTime(int startingTime, int endingTime) {
 	return startingTime < endingTime;
+}
+
+/* 
+	Purpose: Checks if the input month format is correct (m, mm). 
+	Pre-condition: String is not empty.
+	Post-condition: Returns true if month string has 1/2 characters and false otherwise. 
+	Equivalence Partitions: less than 1 character, 1-2 characters, more than 2 characters
+	Boundary values:  empty string, 1 character, 2 characters, 3 characters
+*/
+bool Parse::isValidMonthFormat(std::string monthString) {
+	return monthString.size() == 1 || monthString.size() == 2;
+}
+
+/* 
+	Purpose: Checks if the input day format is correct (d, dd). 
+	Pre-condition: String is not empty.
+	Post-condition: Returns true if day string has 1/2 characters and false otherwise. 
+	Equivalence Partitions: less than 1 character, 1-2 characters, more than 2 characters
+	Boundary values: empty string, 1 character, 2 characters, 3 characters
+*/
+bool Parse::isValidDayFormat(std::string dayString) {
+	return dayString.size() == 1 || dayString.size() == 2;
 }
 
 /* 

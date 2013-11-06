@@ -115,6 +115,12 @@ public:
 	//Checks if the input year format is correct (yyyy)
 	bool isValidYearFormat(std::string);
 
-	//Checks if the input time format is correct (yyyy)
+	//Checks if the input month format is correct (m, mm)
+	bool isValidMonthFormat(std::string);
+	
+	//Checks if the input day format is correct (d,dd)
+	bool isValidDayFormat(std::string);
+
+	//Checks if the input time format is correct 
 	bool isValidTimeFormat(std::string);
 };
