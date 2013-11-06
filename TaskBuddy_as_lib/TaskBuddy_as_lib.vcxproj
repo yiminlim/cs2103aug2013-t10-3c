@@ -78,6 +78,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\TaskBuddy\Date.cpp" />
+    <ClCompile Include="..\TaskBuddy\DoneLinkedList.cpp" />
     <ClCompile Include="..\TaskBuddy\Parse.cpp" />
     <ClCompile Include="..\TaskBuddy\Storage.cpp" />
     <ClCompile Include="..\TaskBuddy\Task.cpp" />
@@ -88,6 +89,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\TaskBuddy\Date.h" />
+    <ClInclude Include="..\TaskBuddy\DoneLinkedList.h" />
     <ClInclude Include="..\TaskBuddy\Parse.h" />
     <ClInclude Include="..\TaskBuddy\Storage.h" />
     <ClInclude Include="..\TaskBuddy\Task.h" />
