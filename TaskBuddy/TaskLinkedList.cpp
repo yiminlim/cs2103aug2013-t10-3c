@@ -100,7 +100,22 @@ bool TaskLinkedList::compareDateAndTime(Task & curTask, Task & listTask, bool & 
 		else if (*curTime == *listTime){
 			isClash = true; //both froms
 			clashTasks.push_back(listTask.getTask());
-			condition = false;
+			if (*endCurTime == -1 && *endListTime == -1){
+				condition = true;
+			} 
+			else if (*endCurTime != -1 && *endListTime != -1){
+				if (*endListTime < *endCurTime){
+					condition = false;
+				}else{
+					condition = true;
+				}
+			}
+			else if(*endCurTime != -1 && *endListTime == -1){
+				condition = false;
+			}
+			else if(*endCurTime == -1 && *endListTime != -1){
+				condition = true;
+			}
 		}
 		else if (*curTime > *listTime){
 			condition = false; 
