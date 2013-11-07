@@ -96,6 +96,10 @@ void TaskLogic::initOverdue(){
 	tbOverdueStorage.initStorage(FILENAME_TB_OVERDUE_STORAGE);
 	std::vector<std::string> tbOverdueVector;
 	tbOverdueStorage.getExistingTasks(tbOverdueVector);
+	for(unsigned int i=0; i< tbOverdueVector.size(); i++){
+		addOverdueTask(tbOverdueVector[i]);
+	}
+	tbOverdueVector.clear();
 
 	tbLinkedList.getOverdueList(today, tbOverdueVector);
 	for(unsigned int i=0; i< tbOverdueVector.size(); i++){
@@ -501,7 +505,7 @@ std::vector<Task> TaskLogic::createTask(std::string taskString, int method){
 
 	//MUST DO A CHECK TO ENSURE THAT StartingDate Vector and Endng Date Vector must be the same size!
 	
-	if(startingDateVector.size()==1 && !startingDateVector[0].isValidDate() && endingDateVector.size()==1 && !endingDateVector[0].isValidDate()){
+	if(startingDateVector.size()==1 && !startingDateVector[0].isValidDate() && deadlineDateVector.size()==1 && !deadlineDateVector[0].isValidDate()){
 		Date deadlineDate, startingDate, endingDate;
 		int deadlineTime = -1, startingTime = -1, endingTime = -1;
 		Task taskObject(action,location,startingDate,startingTime,endingDate,endingTime,deadlineDate,deadlineTime,isBlock);

@@ -214,7 +214,7 @@ bool TaskLinkedList::insert(Task & curTask, bool & isClash, std::vector<std::str
 bool TaskLinkedList::getRemoveIndex(std::string task, int *index){
 	ListNode *cur = _head;
 
-	while (cur->item.getTask() != task){
+	while (cur->item.getTask() != task && cur!= NULL){
 		cur = cur->next;
 		(*index)++;
 	}
@@ -534,10 +534,9 @@ void TaskLinkedList::setBlock(std::string task){
 	}
 }
 
-//Pre-condition: input a today date and an empty vector of overduelist to compare the dates and store overdue task in taskLinkedList into overduelinkedlist instead
+//Pre-condition: input a today date and a vector of overduelist to compare the dates and store overdue task in taskLinkedList into overduelinkedlist instead
 //Post-condition: overdue items from taskLinkedList are stored in the vector and returned
 void TaskLinkedList::getOverdueList(Date today, std::vector<std::string> & overdueList){
-	assert(overdueList.empty());
 	ListNode *cur = _head;
 
 	while(cur != NULL){
