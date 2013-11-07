@@ -172,9 +172,9 @@ void Parse::processTaskStringFromUI(std::string taskString, std::string & action
 		if (!block && ((!isEmptyDate(startingDate[0]) && !isEmptyDate(deadlineDate[0])) || (!isEmptyDate(endingDate[0]) && !isEmptyDate(deadlineDate[0])))) {
 			throw (std::runtime_error("Task should indicate either a start date or deadline date"));
 		}
-		if (isEmptyDate(startingDate[0]) && isEmptyDate(deadlineDate[0])) {
+		/*if (isEmptyDate(startingDate[0]) && isEmptyDate(deadlineDate[0])) {
 			throw (std::runtime_error("Task should indicate at least a start or a deadline"));
-		}
+		}*/
 		for (unsigned int i = 0; i < startingDate.size(); i++) {
 			if (!isEmptyDate(startingDate[i]) &&!isEmptyDate(endingDate[i]) && isEmptyTime(startingTime[i]) && !isEmptyTime(endingTime[i])) {
 				throw (std::runtime_error("No starting time to match ending time"));
