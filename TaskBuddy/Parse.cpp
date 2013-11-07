@@ -163,9 +163,9 @@ void Parse::processTaskStringFromUI(std::string taskString, std::string & action
 	assert(deadlineDate.size() == deadlineTime.size());
 
 	try {
-		if (action == EMPTY_STRING) {
+		/*if (action == EMPTY_STRING) {
 			throw (std::runtime_error("Missing action input"));
-		}
+		}*/ //Edit is likely to not take in action 
 		if (!block && (startingDate.size() > 1 || endingDate.size() > 1 || deadlineDate.size() > 1)) {
 			throw (std::runtime_error("Task should only indicate one start/end/deadline"));
 		}
@@ -174,7 +174,7 @@ void Parse::processTaskStringFromUI(std::string taskString, std::string & action
 		}
 		/*if (isEmptyDate(startingDate[0]) && isEmptyDate(deadlineDate[0])) {
 			throw (std::runtime_error("Task should indicate at least a start or a deadline"));
-		}*/
+		}*/ //Edit may not take in start or deadline date if its not going to be changed
 		for (unsigned int i = 0; i < startingDate.size(); i++) {
 			if (!isEmptyDate(startingDate[i]) &&!isEmptyDate(endingDate[i]) && isEmptyTime(startingTime[i]) && !isEmptyTime(endingTime[i])) {
 				throw (std::runtime_error("No starting time to match ending time"));
