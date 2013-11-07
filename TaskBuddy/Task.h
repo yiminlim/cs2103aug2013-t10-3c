@@ -78,6 +78,9 @@ public:
 	//Formats the time output string from integer type value
 	std::string formatTimeOutputString(int);
 
+	//Formats the date output string from date type value
+	std::string formatDateOutputString(Date);
+
 //-----CHECK METHODS---------------------------------------------------------------------------
 	
 	//Checks if task is deadline type
