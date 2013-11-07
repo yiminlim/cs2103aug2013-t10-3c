@@ -14,7 +14,7 @@ const std::string UserInterface::COMMAND_EDITALL = "editall";
 const std::string UserInterface::COMMAND_DELETEBLOCK = "deleteblock";
 const std::string UserInterface::COMMAND_FINALISE = "finalise";
 const std::string UserInterface::COMMAND_FINALIZE = "finalize";
-const std::string UserInterface::COMMAND_UNDO = "undo";9
+const std::string UserInterface::COMMAND_UNDO = "undo";
 const std::string UserInterface::COMMAND_CLEAR = "clear";
 const std::string UserInterface::COMMAND_EXIT = "exit";
 

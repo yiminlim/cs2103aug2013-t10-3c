@@ -90,14 +90,14 @@ bool TaskLinkedList::compareDateAndTime(Task & curTask, Task & listTask, bool & 
 		}
 		else if (*curTime < *listTime){
 			condition = true;
-			if ((*endListTime == -1 && *endCurTime != -1)|| (*endListTime != -1 && *endCurTime != -1)){ //both from to
+			if ((*endListTime == -1 && *endCurTime != -1 && curDate->_day != 0 && listDate->_day != 0)|| (*endListTime != -1 && *endCurTime != -1 && curDate->_day != 0 && listDate->_day != 0)){ //both from to
 				if (*endCurTime > *listTime){
 					isClash = true; //cur is from to, list is from
 					clashTasks.push_back(listTask.getTask());
 				}
 			}
 		}
-		else if (*curTime == *listTime){
+		else if (*curTime == *listTime && *curTime != -1){
 			isClash = true; //both froms
 			clashTasks.push_back(listTask.getTask());
 			if (*endCurTime == -1 && *endListTime == -1){
@@ -119,7 +119,7 @@ bool TaskLinkedList::compareDateAndTime(Task & curTask, Task & listTask, bool & 
 		}
 		else if (*curTime > *listTime){
 			condition = false; 
-			if ((*endCurTime == -1 && *endListTime != -1)|| (*endListTime != -1 && *endCurTime != -1)){ //both from to
+			if ((*endCurTime == -1 && *endListTime != -1 && curDate->_day != 0 && listDate->_day != 0)|| (*endListTime != -1 && *endCurTime != -1 && curDate->_day != 0 && listDate->_day != 0)){ //both from to
 				if (*endListTime > *curTime){
 					isClash = true; //cur is from, list is from to
 					clashTasks.push_back(listTask.getTask());
@@ -543,19 +543,25 @@ void TaskLinkedList::getOverdueList(Date today, std::vector<std::string> & overd
 	while(cur != NULL){
 		if (cur->item.getDeadlineDate()._day == 0){
 			if(cur->item.getStartingDate()._year < today._year){
-				overdueList.push_back(cur->item.getTask());
+				if (cur->item.getStartingDate()._year!=0){
+					overdueList.push_back(cur->item.getTask());
+				}
 			}
 			else if(cur->item.getStartingDate()._year > today._year){
 				return;
 			}
 			else if(cur->item.getStartingDate()._month < today._month){
-				overdueList.push_back(cur->item.getTask());
+				if (cur->item.getStartingDate()._month!=0){
+					overdueList.push_back(cur->item.getTask());
+				}
 			}
 			else if(cur->item.getStartingDate()._month > today._month){
 				return;
 			}
 			else if(cur->item.getStartingDate()._day < today._day){
-				overdueList.push_back(cur->item.getTask());
+				if (cur->item.getStartingDate()._day!=0){
+					overdueList.push_back(cur->item.getTask());
+				}
 			}
 			else if(cur->item.getStartingDate()._day >= today._day){
 				return;
@@ -564,19 +570,25 @@ void TaskLinkedList::getOverdueList(Date today, std::vector<std::string> & overd
 
 		else if(cur->item.getStartingDate()._day == 0){
 			if(cur->item.getDeadlineDate()._year < today._year){
-				overdueList.push_back(cur->item.getTask());
+				if (cur->item.getDeadlineDate()._year!=0){
+					overdueList.push_back(cur->item.getTask());
+				}
 			}
 			else if(cur->item.getDeadlineDate()._year > today._year){
 				return;
 			}
 			else if(cur->item.getDeadlineDate()._month < today._month){
-				overdueList.push_back(cur->item.getTask());
+				if (cur->item.getDeadlineDate()._month!=0){
+					overdueList.push_back(cur->item.getTask());
+				}
 			}
 			else if(cur->item.getDeadlineDate()._month > today._month){
 				return;
 			}
 			else if(cur->item.getDeadlineDate()._day < today._day){
-				overdueList.push_back(cur->item.getTask());
+				if (cur->item.getDeadlineDate()._day!=0){
+					overdueList.push_back(cur->item.getTask());
+				}
 			}
 			else if(cur->item.getDeadlineDate()._day >= today._day){
 				return;
