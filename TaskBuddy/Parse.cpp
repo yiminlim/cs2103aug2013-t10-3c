@@ -625,7 +625,16 @@ bool Parse::isValidMins(int mins) {
 	Post-condition: Returns true if starting date value is not before ending date and false otherwise. 
 */
 bool Parse::isValidEndDate(Date startingDate, Date endingDate) {
-	return startingDate._year <= endingDate._year && startingDate._month <= endingDate._month && startingDate._day <= endingDate._day;
+	if (startingDate._year > endingDate._year) {
+		return false;
+	}
+	else if ((startingDate._year == endingDate._year) && (startingDate._month > endingDate._month)) {
+		return  false; 
+	}
+	else if ((startingDate._month == endingDate._month) && (startingDate._day > endingDate._day)) {
+		return false;
+	}
+	return true;
 }
 
 /* 
