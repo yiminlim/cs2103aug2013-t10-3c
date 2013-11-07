@@ -157,7 +157,7 @@ std::string Task::formatTask() {
 	if (isDeadlineType()) {
 		output << "by ";
 		if (!isEmptyDate(_deadlineDate)) {
-			output << _deadlineDate._day << "/" << _deadlineDate._month << "/" << _deadlineDate._year;
+			output << formatDateOutputString(_deadlineDate);
 		}
 		if (!isEmptyTime(_deadlineTime)) {
 			output << " " << formatTimeOutputString(_deadlineTime) << " hrs";
@@ -173,7 +173,7 @@ std::string Task::formatTask() {
 	else {
 		output << "   ";	// for alignment with deadline tasks during display
 		if (!isEmptyDate(_startingDate)) {
-			output << _startingDate._day << "/" << _startingDate._month << "/" << _startingDate._year;
+			output << formatDateOutputString(_startingDate);
 		}
 		if (!isEmptyTime(_startingTime)) {
 			output << " " << formatTimeOutputString(_startingTime) << " hrs";
@@ -181,7 +181,7 @@ std::string Task::formatTask() {
 		if (!isEmptyDate(_endingDate) || !isEmptyTime(_endingTime)) {
 			output << " -";
 			if (!isEmptyDate(_endingDate)) {
-				output << " " << _endingDate._day << "/" << _endingDate._month << "/" << _endingDate._year;
+				output << " " << formatDateOutputString(_endingDate);
 			}
 			if (!isEmptyTime(_endingTime)) {
 				output << " " << formatTimeOutputString(_endingTime) << " hrs";
@@ -219,6 +219,29 @@ std::string Task::formatTimeOutputString(int time){
 	timeString << time;
 
 	return timeString.str();
+}
+
+/* 
+	Purpose: Formats date output string based on dd/mm/yyyy. 
+	Pre-condition: Date is valid and not empty (i.e. 0/0/0)
+	Post-condition: Returns time output string (should be in dd/mm/yyyy format).
+*/
+
+std::string Task::formatDateOutputString(Date date) {
+	std::ostringstream dateString;
+	if (date._day < 10) {
+		dateString << "0";
+	}
+	dateString << date._day;
+	dateString << "/";
+	if (date._month < 10) {
+		dateString << "0";
+	}
+	dateString << date._month;
+	dateString << "/";
+	dateString << date._year;
+
+	return dateString.str();
 }
 
 //-----CHECK METHODS---------------------------------------------------------------------------
