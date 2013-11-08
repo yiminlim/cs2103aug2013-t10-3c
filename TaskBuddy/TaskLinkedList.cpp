@@ -311,7 +311,17 @@ std::string TaskLinkedList::toLowerCase(std::string line){
 std::string TaskLinkedList::getStringDate(int day, int month, int year){
 	assert(day>0 && month>0);
 	std::ostringstream output;
-	output << day << "/" << month << "/" << year; 
+	if(day<10){
+		output << "0" << day << "/";
+	} else{
+		output << day << "/";
+	}
+	if(month<10){
+		output << "0" << month << "/" << year;
+	} else{
+		output << month << "/" << year;
+	}
+
 	return output.str();
 }
 
