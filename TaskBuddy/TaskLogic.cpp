@@ -146,8 +146,13 @@ bool TaskLogic::add(const std::string taskString, bool& isClash, std::vector<std
 	std::vector<Task> taskObjectVector; 
     try{
 		taskObjectVector = createTask(taskString, 1);   //generating task from user input.
+		for (unsigned int i = 0; i < taskObjectVector.size(); i++) {
+			if (taskObjectVector[i].getAction() == "") {
+				throw (std::runtime_error("Missing action input"));
+			}
+		}
 	}
-	catch(std::runtime_error &error){
+	catch(...){
 		throw;
 	}
 	bool checkAdded = true;
@@ -476,7 +481,7 @@ void TaskLogic::stringParse(const std::string taskString, const int method, std:
 			taskParse.processTaskStringFromFile(taskString,action,location,startingDateVector,startingTimeVector,endingDateVector,endingTimeVector,deadlineDateVector,deadlineTimeVector,isBlock,dateVector);
 		}
 	}
-	catch(std::runtime_error &error){
+	catch(...){
 		throw;
 	}
 	return;
@@ -492,7 +497,7 @@ std::vector<Task> TaskLogic::createTask(std::string taskString, int method){
 	try{
 		stringParse(taskString,method,action,location,startingDateVector,startingTimeVector,endingDateVector,endingTimeVector,deadlineDateVector,deadlineTimeVector,isBlock);   
 	}
-	catch(std::runtime_error &error){
+	catch(...){
 		throw;
 	}
 	if(startingDateVector.size() > 1 || endingDateVector.size() > 1 || deadlineDateVector.size() > 1)
