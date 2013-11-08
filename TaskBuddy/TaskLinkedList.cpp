@@ -317,10 +317,11 @@ std::string TaskLinkedList::getStringDate(int day, int month, int year){
 		output << day << "/";
 	}
 	if(month<10){
-		output << "0" << day << "/" << year;
+		output << "0" << month << "/" << year;
 	} else{
-		output << day << "/" << year;
+		output << month << "/" << year;
 	}
+
 	return output.str();
 }
 
