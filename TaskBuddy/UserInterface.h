@@ -56,13 +56,15 @@ private:
 	static const std::string ERROR_INVALID_COMMAND;	
 	static const std::string ERROR_SEARCH_BEFORE;
 	static const std::string ERROR_OUT_OF_VECTOR_RANGE;
+	static const std::string ERROR_UNDO_INITIALISE;
 
 	static const std::string MESSAGE_INVALID_ADD;
 	static const std::string MESSAGE_INVALID_SEARCH;
 	static const std::string MESSAGE_INVALID_DELETE;
 	static const std::string MESSAGE_INVALID_EDIT;
 	static const std::string MESSAGE_INVALID_MARKDONE;
-	static const std::string MESSAGE_INVALID_DONELIST;
+	static const std::string MESSAGE_INVALID_DONE;
+	static const std::string MESSAGE_INVALID_OVERDUE;
 	static const std::string MESSAGE_INVALID_UNDO;
 	static const std::string MESSAGE_INVALID_ADDBLOCK;
 	static const std::string MESSAGE_INVALID_EDITALL;
