@@ -44,13 +44,15 @@ const std::string UserInterface::ERROR_NO_TASK_TODAY = "No task due today!";
 const std::string UserInterface::ERROR_INVALID_COMMAND = "Invalid command";
 const std::string UserInterface::ERROR_SEARCH_BEFORE = "Please search for the task before attempting to delete/ edit/ markdone/ editall";
 const std::string UserInterface::ERROR_OUT_OF_VECTOR_RANGE = "Please input a number within the range of the search";
+const std::string UserInterface::ERROR_UNDO_INITIALISE = "No existing commands to undo";
 
 const std::string UserInterface::MESSAGE_INVALID_ADD = "Task cannot be added";
 const std::string UserInterface::MESSAGE_INVALID_SEARCH = "No task is found";
 const std::string UserInterface::MESSAGE_INVALID_DELETE = "Task cannot be deleted";
 const std::string UserInterface::MESSAGE_INVALID_EDIT = "Task cannot be edited";
 const std::string UserInterface::MESSAGE_INVALID_MARKDONE = "Task cannot be marked done";
-const std::string UserInterface::MESSAGE_INVALID_DONELIST = "No tasks that are marked done is found";
+const std::string UserInterface::MESSAGE_INVALID_DONE = "No tasks that are marked done is found";
+const std::string UserInterface::MESSAGE_INVALID_OVERDUE = "No tasks that are overdue is found";
 const std::string UserInterface::MESSAGE_INVALID_UNDO = "Previous command cannot be undone";
 const std::string UserInterface::MESSAGE_INVALID_ADDBLOCK = "Blocking of dates has failed";
 const std::string UserInterface::MESSAGE_INVALID_EDITALL = "Editing of tasks in all blocked slots has failed";
@@ -76,9 +78,9 @@ void UserInterface::initUI(){
 	SetConsoleTitle(programTitle);
 
 	tbLogic.initLogic();
-	displayWelcomeMessage();
-	displayTodayTask();
 	tbLogic.saveOverdue();
+	displayWelcomeMessage();
+	displayTodayTask();	
 	return;
 }
 	
@@ -103,8 +105,12 @@ void UserInterface::commandUI(){
 
 			if ((currentCommand == COMMAND_DELETE || currentCommand == COMMAND_EDIT || currentCommand == COMMAND_MARKDONE || currentCommand == COMMAND_EDITBLOCK) &&
 				(previousCommand != COMMAND_SEARCH)){
-					std::cin >> option;
+					std::cin.clear();
+					std::cin.ignore(INT_MAX, '\n');
 					throw std::runtime_error(ERROR_SEARCH_BEFORE);
+			}
+			else if ((currentCommand == COMMAND_UNDO) && (previousCommand == KEYWORD_EMPTY_STRING)){
+				throw std::runtime_error(ERROR_UNDO_INITIALISE);
 			}
 
 			if (currentCommand == COMMAND_ADD){		
@@ -196,7 +202,11 @@ void UserInterface::commandUI(){
 				if (tbLogic.retrieveOverdueList(overdueList)){
 					displayInformationInVector(overdueList);
 				}
+				else{
+					displayFailMessage(currentCommand);
+				}
 				overdueList.clear();
+				
 			}
 			else if (currentCommand == COMMAND_CLEAROVERDUE){
 				tbLogic.clearOverdueList();
@@ -458,7 +468,10 @@ void UserInterface::displayFailMessage(const std::string command){
 		std::cout << MESSAGE_INVALID_MARKDONE << std::endl;
 	}
 	else if (command == COMMAND_DONE){
-		std::cout << MESSAGE_INVALID_DONELIST << std::endl;
+		std::cout << MESSAGE_INVALID_DONE << std::endl;
+	}
+	else if (command == COMMAND_OVERDUE){
+		std::cout << MESSAGE_INVALID_OVERDUE << std::endl;
 	}
 	else if (command == COMMAND_UNDO){
 		std::cout << MESSAGE_INVALID_UNDO << std::endl;
