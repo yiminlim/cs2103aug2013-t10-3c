@@ -118,6 +118,8 @@ public:
 
 	std::string getActionLocation(std::string);
 
+	int getUndoStackSize();
+
 //-----MARK DONE------------------------------------------------------------------------------------------------
 	bool markDone(std::string taskString); 
 

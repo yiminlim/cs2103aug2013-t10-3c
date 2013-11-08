@@ -109,7 +109,7 @@ void UserInterface::commandUI(){
 					std::cin.ignore(INT_MAX, '\n');
 					throw std::runtime_error(ERROR_SEARCH_BEFORE);
 			}
-			else if ((currentCommand == COMMAND_UNDO) && (previousCommand == KEYWORD_EMPTY_STRING)){
+			else if ((currentCommand == COMMAND_UNDO) && (tbLogic.getUndoStackSize() == 0)){
 				throw std::runtime_error(ERROR_UNDO_INITIALISE);
 			}
 

@@ -580,6 +580,10 @@ std::string TaskLogic::getActionLocation(std::string taskString){
 	return taskActionLocation;
 }
 
+int TaskLogic::getUndoStackSize(){
+	return (commandStackHistory.size() || taskStackHistory.size());
+}
+
 //-----MARK DONE----------------------------------------------------------------------------------------------------------
 bool TaskLogic::markDone(std::string taskString){
 	if(!del(taskString,false)) 
