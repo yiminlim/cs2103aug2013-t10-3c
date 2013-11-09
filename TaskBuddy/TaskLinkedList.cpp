@@ -42,13 +42,16 @@ int TaskLinkedList::getSize(){
 //				 for empty time, it is declared with a value -1
 //				 for empty Date, it is declared as 0
 //Post-condition: the pointer indicating date and time will be updated to store either the startingDate and startingTime or the deadlineDate and deadlineTime of the respective Task. 
-void TaskLinkedList::obtainDateAndTime(Task & task, Date *date, int *time, int *endTime){
+void TaskLinkedList::obtainDateAndTime(Task & task, Date *date, int *time, Date *endDate, int *endTime){
 	if (task.getDeadlineDate()._day == 0){
 		date->_day = task.getStartingDate()._day;
 		date->_month = task.getStartingDate()._month;
 		date->_year = task.getStartingDate()._year;
 		*time = task.getStartingTime();
 		*endTime = task.getEndingTime();
+		endDate->_day = task.getEndingDate()._day;
+		endDate->_month = task.getEndingDate()._month;
+		endDate->_year = task.getEndingDate()._year;
 	}
 	else{
 		date->_day = task.getDeadlineDate()._day;
@@ -65,10 +68,12 @@ void TaskLinkedList::obtainDateAndTime(Task & task, Date *date, int *time, int *
 bool TaskLinkedList::compareDateAndTime(Task & curTask, Task & listTask, bool & isClash, std::vector<std::string>& clashTasks){
 		Date *curDate = new Date;
 		Date *listDate = new Date;
+		Date *endListDate = new Date;
+		Date *endCurDate = new Date;
 		int *curTime = new int, *listTime = new int, *endCurTime = new int, *endListTime = new int;
 		bool condition = false;
-		obtainDateAndTime(curTask, curDate, curTime, endCurTime);
-		obtainDateAndTime(listTask, listDate, listTime, endListTime);
+		obtainDateAndTime(curTask, curDate, curTime, endCurDate, endCurTime);
+		obtainDateAndTime(listTask, listDate, listTime, endListDate, endListTime);
 
 		if (curDate->_year < listDate->_year){
 			condition = true;
@@ -100,21 +105,23 @@ bool TaskLinkedList::compareDateAndTime(Task & curTask, Task & listTask, bool & 
 		else if (*curTime == *listTime && *curTime != -1){
 			isClash = true; //both froms
 			clashTasks.push_back(listTask.getTask());
-			if (*endCurTime == -1 && *endListTime == -1){
+
+			if (endCurDate-> _year < endListDate->_year){
 				condition = true;
-			} 
-			else if (*endCurTime != -1 && *endListTime != -1){
-				if (*endListTime < *endCurTime){
-					condition = false;
-				}else{
-					condition = true;
-				}
-			}
-			else if(*endCurTime != -1 && *endListTime == -1){
+			}else if(endCurDate->_year > endListDate->_year){
 				condition = false;
-			}
-			else if(*endCurTime == -1 && *endListTime != -1){
+			}else if(endCurDate->_month < endListDate->_month){
 				condition = true;
+			}else if(endCurDate->_month > endListDate->_month){
+				condition = false;
+			}else if(endCurDate->_day < endListDate->_day){
+				condition = true;
+			}else if(endCurDate->_day > endListDate->_day){
+				condition = false;
+			}else if(*endCurTime < *endListTime){
+				condition = true;
+			}else{
+				condition = false;
 			}
 		}
 		else if (*curTime > *listTime){
@@ -182,7 +189,6 @@ int TaskLinkedList::getInsertIndex(Task & curTask, bool & isClash, std::vector<s
 //Post-condition: return true if the task is added into the linked list in an sorted manner. isClash is updated accordingly
 bool TaskLinkedList::insert(Task & curTask, bool & isClash, std::vector<std::string>& clashTasks){
 	assert(curTask.getTask() != "");
-	assert(clashTasks.empty());
 	assert(!isClash);
 	int newSize = getSize() + 1;
 	int index = getInsertIndex(curTask, isClash, clashTasks);
