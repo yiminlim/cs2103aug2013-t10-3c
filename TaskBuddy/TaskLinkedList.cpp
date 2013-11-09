@@ -147,6 +147,10 @@ bool TaskLinkedList::compareDateAndTime(Task & curTask, Task & listTask, bool & 
 		endCurTime = NULL;
 		delete endListTime;
 		endListTime = NULL;
+		delete endCurDate;
+		endCurDate = NULL;
+		delete endListDate;
+		endListDate = NULL;
 
 		return condition;		
 }
