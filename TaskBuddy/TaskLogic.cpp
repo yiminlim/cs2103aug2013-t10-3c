@@ -390,7 +390,8 @@ bool TaskLogic::edit(std::string taskString, std::string editString, bool isBloc
 */
 bool TaskLogic::getBlock(std::string& taskString, std::string& taskActionLocation, std::vector<std::string>& blockTaskVector){	
 	taskActionLocation = getActionLocation(taskString);
-	generalSearch(taskActionLocation, blockTaskVector);
+	std::vector<std::string> dummyVector;
+	generalSearch(taskActionLocation, blockTaskVector,dummyVector);
 	
 	if(blockTaskVector.size() > 0)
 		return true;
