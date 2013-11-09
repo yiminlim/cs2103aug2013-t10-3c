@@ -38,16 +38,19 @@ int TaskLinkedList::getSize(){
 	return _size;
 }
 
+//Pre-condition: input a Date input and an empty Date date and copy the input into the date
+//Post-condition: the date now contains the same values as the input
 void TaskLinkedList::obtainDateSeparately(Date *inputDate, Date *date){
 	date->_day = inputDate->_day;
 	date->_month = inputDate->_month;
 	date->_year = inputDate->_year;
 }
 
-//Pre-condition: input in a Task reference and two pointers indicating date and time 
+//Pre-condition: input in a Task reference and fours pointers indicating date and time and ending date and time 
 //				 for empty time, it is declared with a value -1
 //				 for empty Date, it is declared as 0
 //Post-condition: the pointer indicating date and time will be updated to store either the startingDate and startingTime or the deadlineDate and deadlineTime of the respective Task. 
+//				  the pointer indicating endDate and endTime will be updated to store the endingDate and endingDate if it has one. Else, store them as 0 and -1 
 void TaskLinkedList::obtainDateAndTime(Task & task, Date *date, int *time, Date *endDate, int *endTime){
 	if (task.getDeadlineDate()._day == 0){
 		obtainDateSeparately(&task.getStartingDate(), date);
@@ -63,6 +66,8 @@ void TaskLinkedList::obtainDateAndTime(Task & task, Date *date, int *time, Date 
 	return;
 }
 
+//Pre-condition: Input 2 dates and a bool check to compare the 2 dates. If both dates are the same, return check as true
+//Post-condition: Returns true if the curDate is earlier than the listDate. If there is no difference, the bool check is updated as true and it returns false
 bool TaskLinkedList::compareDates(Date *curDate, Date *listDate, bool *check){
 		if (curDate->_year < listDate->_year){
 			return true;
@@ -150,8 +155,8 @@ bool TaskLinkedList::compareDateAndTime(Task & curTask, Task & listTask, bool & 
 		return condition;		
 }
 
-//Pre-condition: input a Task reference to check for the index which it should be inserted into the linked list, in a sorted manner
-//Post-condition: return the index where the Task is supposed to be added at
+//Pre-condition: input a Task reference to check for the index which it should be inserted into the linked list, in a sorted manner. Also, check for clashes throughout the linked list.
+//Post-condition: return the index where the Task is supposed to be added at. Update isClash accordingly and return a vector of task that clashes
 int TaskLinkedList::getInsertIndex(Task & curTask, bool & isClash, std::vector<std::string>& clashTasks){
 	ListNode *cur = _head;
 	int i = 1;
@@ -188,7 +193,7 @@ int TaskLinkedList::getInsertIndex(Task & curTask, bool & isClash, std::vector<s
 //Pre-condition: input a Task reference to be added into the linked list, check if any task clashes and update isClash to be true if it does and return the vector of tasks that clash
 //				 isClash has to be false when it is passed over
 //				 clashTasks must be empty
-//Post-condition: return true if the task is added into the linked list in an sorted manner. isClash is updated accordingly
+//Post-condition: return true if the task is added into the linked list in a sorted manner. isClash and clashTasks are updated accordingly.
 bool TaskLinkedList::insert(Task & curTask, bool & isClash, std::vector<std::string>& clashTasks){
 	assert(curTask.getTask() != "");
 	assert(!isClash);
@@ -233,7 +238,7 @@ bool TaskLinkedList::getRemoveIndex(std::string task, int *index){
 }
 
 //pre-condition: input a line and an empty vector to contain keywords
-//post-condition: rsplit the line into individual words and store them in the keywords vector
+//post-condition: split the line into individual words and store them in the keywords vector
 void TaskLinkedList::splitIntoKeywords(std::string line, std::vector<std::string> & keywords){
 	assert(keywords.empty());
 	std::stringstream iss;
@@ -247,7 +252,7 @@ void TaskLinkedList::splitIntoKeywords(std::string line, std::vector<std::string
 
 //pre-condition: input a string containing a line of action and location and check if there is only one block off task having this action and location left. If yes, the last block off task will be unblocked
 //			     the last task must contain the word "blockoff" in the output format
-//post-condition: checks if there is only one task left in that specific block and unblock it if it is true
+//post-condition: if there is only one task left in a specific block, unblock the task accordingly
 void TaskLinkedList::checkIfRemainingBlockTask(std::string line){
 	std::vector<std::string> keywords;
 	std::vector<std::string> taskList;
@@ -312,8 +317,8 @@ std::string TaskLinkedList::toLowerCase(std::string line){
 }
 
 //pre-condition:input day, month and year in int and convert them into a string in this format dd/mm/yy
-//				assume that the day and month are greater than 0. While year are at least 4 digits (the first digit is not 0)
-//post-condtion: return a string date form from individual int day, month, year
+//			    day and month have to be greater than 0. While year is at least 4 digits (the first digit is not 0)
+//post-condtion: returns a string date form from individual int day, month, year
 std::string TaskLinkedList::getStringDate(int day, int month, int year){
 	assert(day>0 && month>0);
 	std::ostringstream output;
@@ -407,7 +412,9 @@ void TaskLinkedList::getIntDate(std::string date, int *day, int *month, int *yea
 	ss3 >> *year;
 }
 
-//only check for range of dates entered in proper date format dd/mm/yyyy (note that the first digit day and month entered cannot have 0) 
+//pre-condition: input a task in the output format and include the range of dates to the back of this string if it is a period type of task (range of dates or time).
+//				 only check for range of dates entered in proper date format dd/mm/yyyy (note that the first digit day and month must have 0 if they are single digits) 
+//post-condition: return a task in the output format and an extension of dates if it is a period type of task.
 std::string TaskLinkedList::includeRangeOfDates(std::string tempTask){
 	if((tempTask).find("-") != std::string::npos){
 		std::vector<std::string> words;
@@ -442,7 +449,7 @@ std::string TaskLinkedList::includeRangeOfDates(std::string tempTask){
 }
 	
 //Pre-condition: input a vector of individual keywords and an empty vector of taskList to store the task that are found from the linked list which contains all of the keywords 
-//				 check for the range in dates for from to as well
+//				 check for the range in dates for period type of task as well
 //				 will only take into consideration range in dates if the user inputs the date in the right format or uses words like today, tmr,.. (dd/mm/yyyy)
 //Post-condition: return true if at least 1 task is found to contain all of the keywords from the vector and updates the taskList vector accordingly
 bool TaskLinkedList::retrieve(const std::vector<std::string> keywords, std::vector<std::string> & taskList){
@@ -503,6 +510,8 @@ void TaskLinkedList::setBlock(std::string task){
 	}
 }
 
+//pre-condition: input 2 dates and compare them to check which is earlier. For dates that are passed today's date, the task in the output format is pushed into the overdueList vector
+//post-condition: If the date is found to be over today's date, the overdueList vector is updated accordingly. 
 void TaskLinkedList::compareWithToday(Date today, Date date, std::string task, std::vector<std::string> & overdueList){
 	if(date._year < today._year){
 		if (date._year!=0){
