@@ -16,6 +16,8 @@ private:
 	//Returns a ListNode pointer that will traverse to the position given by the index.
 	ListNode* traverseTo(int index);
 	
+	static const std::string KEYWORD_EMPTY_STRING;
+
 public:
 	//Empty constructor
 	DoneLinkedList();

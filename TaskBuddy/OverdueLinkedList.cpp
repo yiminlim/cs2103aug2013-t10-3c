@@ -1,6 +1,8 @@
 #include "OverdueLinkedList.h"
 #include <assert.h>
 
+const std::string OverdueLinkedList::KEYWORD_EMPTY_STRING = "";
+
 OverdueLinkedList::OverdueLinkedList(){
 	_head = NULL;
 	_size = 0;
@@ -15,9 +17,7 @@ OverdueLinkedList::~OverdueLinkedList(){
 OverdueLinkedList::ListNode* OverdueLinkedList::traverseTo(int index){
 	if ( (index < 1) || (index > getSize()) ){
 		return NULL;
-	}
-
-	else{
+	}else{
 		ListNode *cur = _head;
 		for (int skip = 1; skip < index; skip++){
 			cur = cur->next;
@@ -29,7 +29,7 @@ OverdueLinkedList::ListNode* OverdueLinkedList::traverseTo(int index){
 //Pre-condition: Check if linked list is empty.
 //Post-condition: Return true if the linked list is empty.
 bool OverdueLinkedList::isEmpty(){
-	return _size==0;
+	return _size == 0;
 }
 	
 //Pre-condition: Check for the size of the linked list.
@@ -59,8 +59,7 @@ void OverdueLinkedList::obtainDateAndTime(Task & task, Date *date, int *time, Da
 			obtainDateSeparately(&task.getEndingDate(), endDate);
 			*endTime = task.getEndingTime();
 		}
-	}
-	else{
+	}else{
 		obtainDateSeparately(&task.getDeadlineDate(), date);
 		*time = task.getDeadlineTime();
 		*endTime = -1;
@@ -83,10 +82,10 @@ bool OverdueLinkedList::compareDates(Date *curDate, Date *listDate, bool *check)
 			return true;
 		} else if (curDate->_day > listDate->_day){
 			return false;
+		}else{
+			*check = true;
+			return false;
 		}
-
-		*check = true;
-		return false;
 }
 
 //Pre-condition: Input the Task reference to be added and a specific Task reference from the linked list and sort them accordingly.
@@ -112,8 +111,7 @@ bool OverdueLinkedList::compareDateAndTime(Task & curTask, Task & listTask){
 					condition = false;
 				}
 			}
-		}
-		else{
+		}else{
 			condition = false;
 		}
 
@@ -150,8 +148,7 @@ int OverdueLinkedList::getInsertIndex(Task & curTask){
 	while (cur != NULL){
 		if (compareDateAndTime(curTask, cur->item)){
 			return i;
-		} 
-		else{
+		}else{
 			cur = cur->next;
 			i++;
 		}
@@ -163,7 +160,7 @@ int OverdueLinkedList::getInsertIndex(Task & curTask){
 //Pre-condition: Input a Task reference to be added into the linked list. 
 //Post-condition: Return true if the task is added into the linked list in an sorted manner.
 bool OverdueLinkedList::insert(Task & curTask){
-	assert (curTask.getTask() != "");
+	assert (curTask.getTask() != KEYWORD_EMPTY_STRING);
 	int newSize = getSize() + 1;
 	int index = getInsertIndex(curTask);
 
@@ -179,8 +176,7 @@ bool OverdueLinkedList::insert(Task & curTask){
 		if (index == 1){
 			newTask->next = _head;
 			_head = newTask;
-		} 
-		else{
+		}else{
 			ListNode *prev = traverseTo(index-1);
 			newTask->next = prev->next;
 			prev->next = newTask;
