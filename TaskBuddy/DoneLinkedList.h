@@ -38,7 +38,7 @@ public:
 	//Compare the 2 dates and return true is one of the date is earlier than the other one. If they are the same, updated the bool value passed into the function.
 	bool compareDates(Date*, Date*, bool*);
 
-	//Return true if the one task is of an earlier date and time than the other task and check for clashes in the meantime.
+	//Return true if the one task is of an earlier date and time than the other task.
 	bool compareDateAndTime(Task &, Task &);
 
 	//Return the index at which a Task is to be added.
