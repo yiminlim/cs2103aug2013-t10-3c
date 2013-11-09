@@ -191,19 +191,13 @@ bool DoneLinkedList::insert(Task & curTask){
 
 void DoneLinkedList::obtainDateAndTimeForRemoving(Task & task, Date *date, int *time){
 	if(task.getDeadlineDate()._day != 0){
-		date->_day = task.getDeadlineDate()._day;
-		date->_month = task.getDeadlineDate()._month;
-		date->_year = task.getDeadlineDate()._year;
+		obtainDateSeparately(&task.getDeadlineDate(), date);
 		*time = task.getDeadlineTime();
 	} else if(task.getStartingDate()._day != 0 && task.getEndingDate()._day==0){
-		date->_day = task.getStartingDate()._day;
-		date->_month = task.getStartingDate()._month;
-		date->_year = task.getStartingDate()._year;
+		obtainDateSeparately(&task.getStartingDate(), date);
 		*time = task.getStartingTime();
 	} else if(task.getStartingDate()._day != 0 && task.getEndingDate()._day!=0){
-		date->_day = task.getEndingDate()._day;
-		date->_month = task.getEndingDate()._month;
-		date->_year = task.getEndingDate()._year;
+		obtainDateSeparately(&task.getEndingDate(), date);
 		*time = task.getEndingTime();
 	}
 	return;
@@ -230,7 +224,6 @@ std::vector<int> DoneLinkedList::getIndex(Date today){
 		}else if(today._day > date->_day){
 			index.push_back(i);
 		}else if(today._day < date->_day){
-		}else{
 		}
 		cur = cur->next;
 		i++;
