@@ -249,7 +249,7 @@ bool TaskLogic::del(const std::string taskString, bool isUndoDel){
 	Equivalence Partition: Empty string, Invalid string, Valid string
 	Boundary: Empty string, Any valid string, Any invalid string
 */
-void TaskLogic::generalSearch(std::string userInput, std::vector<std::string>& vectorOutput){
+void TaskLogic::generalSearch(std::string userInput, std::vector<std::string>& vectorOutput, std::vector<std::string>& dates){
 	std::vector<std::string> keywordVector;
 	std::string dayKeyword;
 	std::stringstream iss;
@@ -272,7 +272,7 @@ void TaskLogic::generalSearch(std::string userInput, std::vector<std::string>& v
 			throw std::runtime_error("No task with \"" + userInput + "\" found");
 	}
 	
-	vectorOutput = processSearchOutputVector(vectorOutput);
+	vectorOutput = processSearchOutputVector(vectorOutput, dates);
 	assert(!vectorOutput.empty());
 }
 
@@ -299,15 +299,19 @@ std::vector<Date> TaskLogic::getSearchOutputDateVector(std::vector<std::string> 
 	return outputDateVector;
 }
 
-std::vector<std::string> TaskLogic::processSearchOutputVector(std::vector<std::string> outputVector){
+std::vector<std::string> TaskLogic::processSearchOutputVector(std::vector<std::string> outputVector, std::vector<std::string>& dates){
 	assert(!outputVector.empty());
+	int j = 0;
 	std::vector<std::string> newOutputVector;
 	std::vector<Date> outputDateVector = getSearchOutputDateVector(outputVector);
 	
 	newOutputVector.push_back(outputVector[0]);
+	dates.push_back(convertToDateString(outputDateVector[j++]));
 	for(unsigned int i=1; i<outputVector.size(); i++){
-		if(!checkSameDate(outputDateVector[i-1], outputDateVector[i]))
+		if(!checkSameDate(outputDateVector[i-1], outputDateVector[i])){
 			newOutputVector.push_back("");
+			dates.push_back(convertToDateString(outputDateVector[j++]));
+		}
 		newOutputVector.push_back(outputVector[i]);
 	}
 
@@ -635,6 +639,15 @@ bool TaskLogic::isSingleDigit(int num){
 		return false;
 	else
 		return true;
+}
+
+std::string TaskLogic::convertToDateString(Date date){
+	std::ostringstream oss;
+	if(date.isValidDate())
+		oss << date._day << "/" << date._month << "/" << date._year;
+	else
+		oss << "Floating Task";
+	return oss.str();
 }
 
 std::string TaskLogic::getActionLocation(std::string taskString){
