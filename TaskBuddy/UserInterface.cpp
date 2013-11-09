@@ -128,12 +128,8 @@ void UserInterface::commandUI(){
 			}
 			else if (currentCommand == COMMAND_SEARCH){
 				searchTaskList.clear();
-				if (tbLogic.generalSearch(readTask(currentCommand, KEYWORD_EMPTY_STRING), searchTaskList)){
-					displayInformationInVector(searchTaskList);
-				}
-				else{
-					displayFailMessage(currentCommand);
-				}
+				tbLogic.generalSearch(readTask(currentCommand, KEYWORD_EMPTY_STRING), searchTaskList);
+				displayInformationInVector(searchTaskList);
 			}
 			else if (currentCommand == COMMAND_DELETE){
 				std::stringstream ss(readTask(currentCommand, KEYWORD_EMPTY_STRING));
@@ -402,17 +398,14 @@ void UserInterface::displayWelcomeMessage(){
 void UserInterface::displayTodayTask(){
 	std::vector<std::string> todayTask;
 	try{
-		if (tbLogic.generalSearch(KEYWORD_TODAY, todayTask)){
-			std::cout << MESSAGE_TODAY_TASK << std::endl;
-			for (unsigned int i = 0; i < todayTask.size(); i++){
-				if (i < 9){ 
-					std::cout << KEYWORD_SPACE;
-				}
-				std::cout << i+1 << KEYWORD_BULLETING << todayTask[i] << std::endl;
+		tbLogic.generalSearch(KEYWORD_TODAY, todayTask);
+		std::cout << MESSAGE_TODAY_TASK << std::endl;
+		for (unsigned int i = 0; i < todayTask.size(); i++){
+			if (i < 9){ 
+				std::cout << KEYWORD_SPACE;
 			}
-		}
-		else{
-			throw std::runtime_error(ERROR_NO_TASK_TODAY);
+			std::cout << i+1 << KEYWORD_BULLETING << todayTask[i] << std::endl;
+	
 		}
 	}
 	catch (std::runtime_error &error){

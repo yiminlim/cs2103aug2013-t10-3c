@@ -156,11 +156,12 @@ void TaskLogic::add(const std::string taskString, bool& isClash, std::vector<std
 	assert(clashTasks.empty());
 
     try{
-		taskObjectVector = createTask(taskString, UI_FORMAT); 
+		taskObjectVector = createTask(taskString, UI_FORMAT);
 		for (unsigned int i = 0; i < taskObjectVector.size(); i++) {
-			if (taskObjectVector[i].getAction() == "") {
+			if(taskObjectVector[i].getAction() == "") {
 				throw (std::runtime_error("Missing action input"));
 			}
+			checkValidTask(taskObjectVector[i]);
 		}
 	}
 	catch(...){
@@ -248,19 +249,69 @@ bool TaskLogic::del(const std::string taskString, bool isUndoDel){
 	Equivalence Partition: Empty string, Invalid string, Valid string
 	Boundary: Empty string, Any valid string, Any invalid string
 */
-bool TaskLogic::generalSearch(std::string userInput, std::vector<std::string>& vectorOutput){
+void TaskLogic::generalSearch(std::string userInput, std::vector<std::string>& vectorOutput){
 	std::vector<std::string> keywordVector;
+	std::string dayKeyword;
 	std::stringstream iss;
 	std::string keyword;
 	iss << userInput;
 	
 	while (iss >> keyword){
 		if(isDay(keyword)){
-			keyword = taskParse.changeDayToDate(keyword, dateVector);
+			dayKeyword = keyword;
+			keyword = taskParse.changeDayToDate(keyword, dateVector);			
 		}
 		keywordVector.push_back(keyword);
 	}
-	return tbLinkedList.retrieve(keywordVector, vectorOutput);
+	tbLinkedList.retrieve(keywordVector, vectorOutput);
+	
+	if(vectorOutput.empty()){
+		if(!dayKeyword.empty())
+			throw std::runtime_error("No task for " + dayKeyword + "!");
+		else
+			throw std::runtime_error("No task with \"" + userInput + "\" found");
+	}
+	
+	vectorOutput = processSearchOutputVector(vectorOutput);
+	assert(!vectorOutput.empty());
+}
+
+std::vector<Date> TaskLogic::getSearchOutputDateVector(std::vector<std::string> outputVector){
+	assert(!outputVector.empty());
+	std::vector<Date> outputDateVector;
+
+	for(unsigned int i = 0; i < outputVector.size() ; i++){
+		std::string task = "", action = "", location ="";
+		std::vector<Date> startingDateVector, endingDateVector, deadlineDateVector; 
+		std::vector<int> startingTimeVector, endingTimeVector, deadlineTimeVector; //check if we really want to set it as -1
+		Date floatingDate;
+		bool isBlock = false;
+		
+		stringParse(outputVector[i],PROCESSED_FORMAT,action,location,startingDateVector,startingTimeVector,endingDateVector,endingTimeVector,deadlineDateVector,deadlineTimeVector,isBlock);   
+		if(startingDateVector[0].isValidDate())
+			outputDateVector.push_back(startingDateVector[0]);
+		else if(deadlineDateVector[0].isValidDate())
+			outputDateVector.push_back(deadlineDateVector[0]);
+		else														//assume floating task
+			outputDateVector.push_back(floatingDate);
+	}
+	assert(outputVector.size() == outputDateVector.size());
+	return outputDateVector;
+}
+
+std::vector<std::string> TaskLogic::processSearchOutputVector(std::vector<std::string> outputVector){
+	assert(!outputVector.empty());
+	std::vector<std::string> newOutputVector;
+	std::vector<Date> outputDateVector = getSearchOutputDateVector(outputVector);
+	
+	newOutputVector.push_back(outputVector[0]);
+	for(unsigned int i=1; i<outputVector.size(); i++){
+		if(!checkSameDate(outputDateVector[i-1], outputDateVector[i]))
+			newOutputVector.push_back("");
+		newOutputVector.push_back(outputVector[i]);
+	}
+
+	return newOutputVector;
 }
 
 //-----EDIT TASK-----------------------------------------------------------------------------------------------------
@@ -601,6 +652,25 @@ std::string TaskLogic::getActionLocation(std::string taskString){
 
 bool TaskLogic::checkUndoStackEmpty(){
 	return (commandStackHistory.empty() || taskStackHistory.empty());
+}
+
+void TaskLogic::checkValidTask(Task task){
+	if(task.isDeadlineType()){
+		if(!taskParse.isValidEndDate(taskParse.convertToDate(dateVector[0]), task.getDeadlineDate()))
+			throw (std::runtime_error("Invalid date input: date has already passed"));
+	}
+	else{
+		if(!taskParse.isValidEndDate(taskParse.convertToDate(dateVector[0]), task.getStartingDate()))
+			throw (std::runtime_error("Invalid date input: date has already passed"));
+	}
+
+}
+	
+bool TaskLogic::checkSameDate(Date earlierDate, Date laterDate){
+	assert(earlierDate.isValidDate() || taskParse.isEmptyDate(earlierDate));
+	assert(laterDate.isValidDate() || taskParse.isEmptyDate(laterDate));
+	
+	return(earlierDate._year == laterDate._year) && (earlierDate._month == laterDate._month) && (earlierDate._day == laterDate._day);
 }
 
 //-----MARK DONE----------------------------------------------------------------------------------------------------------
