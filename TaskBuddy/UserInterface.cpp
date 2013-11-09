@@ -43,21 +43,17 @@ const std::string UserInterface::MESSAGE_UNDO = "Previous command is undone";
 const std::string UserInterface::MESSAGE_CLEAROVERDUE = "Overdue list is cleared";
 const std::string UserInterface::MESSAGE_EXIT = "Thank you for using Task Buddy!";
 
-const std::string UserInterface::ERROR_NO_TASK_TODAY = "No task due today!";
 const std::string UserInterface::ERROR_INVALID_COMMAND = "Invalid command";
 const std::string UserInterface::ERROR_SEARCH_BEFORE = "Please search for the task before attempting to delete/ edit/ markdone/ editall";
 const std::string UserInterface::ERROR_OUT_OF_VECTOR_RANGE = "Please input a number within the range of the search";
 const std::string UserInterface::ERROR_UNDO_INITIALISE = "No existing commands to undo";
 
-const std::string UserInterface::MESSAGE_INVALID_ADD = "Task cannot be added";
-const std::string UserInterface::MESSAGE_INVALID_SEARCH = "No task is found";
 const std::string UserInterface::MESSAGE_INVALID_DELETE = "Task cannot be deleted";
 const std::string UserInterface::MESSAGE_INVALID_EDIT = "Task cannot be edited";
 const std::string UserInterface::MESSAGE_INVALID_MARKDONE = "Task cannot be marked done";
 const std::string UserInterface::MESSAGE_INVALID_DONE = "No tasks that are marked done is found";
 const std::string UserInterface::MESSAGE_INVALID_OVERDUE = "No tasks that are overdue is found";
 const std::string UserInterface::MESSAGE_INVALID_UNDO = "Previous command cannot be undone";
-const std::string UserInterface::MESSAGE_INVALID_ADDBLOCK = "Blocking of dates has failed";
 const std::string UserInterface::MESSAGE_INVALID_EDITALL = "Editing of tasks in all blocked slots has failed";
 const std::string UserInterface::MESSAGE_INVALID_DELETEBLOCK = "Deleting of requested blocked slots has failed";
 const std::string UserInterface::MESSAGE_INVALID_FINALISE = "Finalising of the time and date of the task has failed"; 
@@ -98,6 +94,7 @@ void UserInterface::commandUI(){
 	std::string command;
 	std::vector<std::string> searchTaskVector;
 	std::vector<std::string> searchOtherTaskVector;
+	std::vector<std::string> searchDateVector;
 	std::vector<std::string> clashVector;
 	
 	do{
@@ -120,28 +117,20 @@ void UserInterface::commandUI(){
 			}
 
 			if (command == COMMAND_ADD){		
-				if (tbLogic.add(readTask(command, KEYWORD_EMPTY_STRING), isClash, clashVector)){
-					displayMessage(command);
-					if (isClash){
-						std::cout << MESSAGE_CLASH << std::endl;
-						displayInformationInVector(clashVector);
-					}
-					tbLogic.save();
+				tbLogic.add(readTask(command, KEYWORD_EMPTY_STRING), isClash, clashVector);
+				displayMessage(command);
+				if (isClash){
+					std::cout << MESSAGE_CLASH << std::endl;
+					displayInformationInVector(clashVector);
 				}
-				else{
-					displayFailMessage(command);
-				}
+				tbLogic.save();
 				searchTaskVector.clear();
 				clashVector.clear();
 			}
 			else if (command == COMMAND_SEARCH){
 				searchTaskVector.clear();
-				if (tbLogic.generalSearch(readTask(command, KEYWORD_EMPTY_STRING), searchTaskVector)){
-					displayInformationInVector(searchTaskVector);
-				}
-				else{
-					displayFailMessage(command);
-				}
+				tbLogic.generalSearch(readTask(command, KEYWORD_EMPTY_STRING), searchTaskVector, searchDateVector);
+				displayInformationInVector(searchTaskVector);
 			}
 			else if (command == COMMAND_DELETE){
 				std::stringstream ss(readTask(command, KEYWORD_EMPTY_STRING));
@@ -280,8 +269,10 @@ void UserInterface::commandUI(){
 				contProgram = false;
 			}
 			else{
-				std::cin.clear();
-				std::cin.ignore(INT_MAX, '\n');
+				if (space == ' '){
+					std::cin.clear();
+					std::cin.ignore(INT_MAX, '\n');
+				}
 				throw std::runtime_error(ERROR_INVALID_COMMAND);
 			}
 		}
@@ -345,19 +336,15 @@ void UserInterface::editBlockUI(const std::string stringToEditBlock){
 
 			if (command == COMMAND_ADD){
 				command = COMMAND_ADDBLOCK;
-				if (tbLogic.addBlock(readTask(command, taskActionLocation), originalTaskString, isClash, clashVector)){
-					tbLogic.save();
-					displayMessage(command);
-					if (isClash){
-						std::cout << MESSAGE_CLASH << std::endl;
-						displayInformationInVector(clashVector);
-					}					
-					clashVector.clear();
-					contEditBlock = false;
-				}
-				else{
-					displayFailMessage(command);
-				}
+				tbLogic.addBlock(readTask(command, taskActionLocation), originalTaskString, isClash, clashVector);
+				tbLogic.save();
+				displayMessage(command);
+				if (isClash){
+					std::cout << MESSAGE_CLASH << std::endl;
+					displayInformationInVector(clashVector);
+				}			
+				clashVector.clear();
+				contEditBlock = false;
 			}
 			else if (command == COMMAND_EDITALL){
 				if (tbLogic.editBlock(readTask(command, KEYWORD_EMPTY_STRING), blockTaskVector)){
@@ -442,19 +429,16 @@ void UserInterface::displayWelcomeMessage(){
 //To display the tasks to be done for that day
 void UserInterface::displayTodayTask(){
 	std::vector<std::string> todayTask;
+	std::vector<std::string> searchDateVector;
 	try{
-		if (tbLogic.generalSearch(KEYWORD_TODAY, todayTask)){
-			std::cout << MESSAGE_TODAY_TASK << std::endl;
-			for (unsigned int i = 0; i < todayTask.size(); i++){
-				if (i < 9){ 
-					std::cout << KEYWORD_SPACE;
-				}
-				std::cout << i+1 << KEYWORD_BULLETING << todayTask[i] << std::endl;
+		tbLogic.generalSearch(KEYWORD_TODAY, todayTask, searchDateVector);
+		std::cout << MESSAGE_TODAY_TASK << std::endl;
+		for (unsigned int i = 0; i < todayTask.size(); i++){
+			if (i < 9){ 
+				std::cout << KEYWORD_SPACE;
 			}
-		}
-		else{
-			throw std::runtime_error(ERROR_NO_TASK_TODAY);
-		}
+			std::cout << i+1 << KEYWORD_BULLETING << todayTask[i] << std::endl;
+		}		
 	}
 	catch (std::runtime_error &error){
 		std::cout << error.what() << std::endl;
@@ -512,13 +496,7 @@ void UserInterface::displayMessage(const std::string command){
 
 //To display messages when commands fail to execute successfully
 void UserInterface::displayFailMessage(const std::string command){
-	if (command == COMMAND_ADD){
-		std::cout << MESSAGE_INVALID_ADD << std::endl;
-	}
-	else if (command == COMMAND_SEARCH){
-		std::cout << MESSAGE_INVALID_SEARCH << std::endl;
-	}
-	else if (command == COMMAND_DELETE){
+	if (command == COMMAND_DELETE){
 		std::cout << MESSAGE_INVALID_DELETE << std::endl;
 	}
 	else if (command == COMMAND_EDIT){
@@ -536,9 +514,6 @@ void UserInterface::displayFailMessage(const std::string command){
 	else if (command == COMMAND_UNDO){
 		std::cout << MESSAGE_INVALID_UNDO << std::endl;
 	}
-	else if (command == COMMAND_ADDBLOCK){
-		std::cout << MESSAGE_INVALID_ADDBLOCK << std::endl;
-	}
 	else if (command == COMMAND_EDITALL){
 		std::cout << MESSAGE_INVALID_EDITALL << std::endl;
 	}
@@ -552,46 +527,309 @@ void UserInterface::displayFailMessage(const std::string command){
 
 //To display the help message for commandUI
 void UserInterface::displayHelpCommandUI(){
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
 	std::cout << "@-----------------------------------------------------------------------------------------------------------@" << std::endl
-       		  << "|To add(timed tasks): add \"action\" at \"location\" from dd/mm/yyyy hhmm to dd/mm/yyyy hhmm                      |" << std::endl
-			  << "|Example: add swimming at school from 20/11/2013 0900 to 20/11/2013 1000                                     " <<std::endl
+	          << "|";
+	
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_BLUE);
+	std::cout << "Add(timed tasks)";
+	
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+	std::cout << ": ";
+	
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+	std::cout << "add";
+	
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+	std::cout << " \"action\" ";
+
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+	std::cout << "at"; 
+	
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+	std::cout << " \"location\" ";
+	
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+	std::cout << "from"; 
+	
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+	std::cout << " dd/mm/yyyy hhmm ";
+	
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+	std::cout << "to"; 
+	
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+	std::cout << " dd/mm/yyyy hhmm                       ";
+
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+	std::cout << "|" << std::endl << "|";
+
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+	std::cout << "Example: add swimming at school from 20/11/2013 0900 to 20/11/2013 1000                                    ";
+	
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+	std::cout << "|" <<std::endl
 			  << "|                                                                                                           |" << std::endl
-			  << "|To add(deadline tasks): add \"action\" at \"location\" by dd/mm/yyyy hhmm                                      |" << std::endl
-			  << "|Example: add do homework at home by 20/11/2013 2000                                                        |" << std::endl
+			  << "|";
+	
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_BLUE);
+	std::cout << "Add(deadline tasks)";
+	
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+	std::cout << ": ";
+
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+	std::cout << "add";
+
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+	std::cout << " \"action\" ";
+
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+	std::cout << "at";
+
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+	std::cout << " \"location\" "; 
+
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+	std::cout << "by";
+
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+	std::cout << " dd/mm/yyyy hhmm                                         ";
+
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+	std::cout << "|" << std::endl << "|";
+
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+	std::cout << "Example: add do homework at home by 20/11/2013 2000                                                        ";
+
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+	std::cout << "|" <<std::endl
 			  << "|                                                                                                           |" << std::endl
-			  << "|To add(floating tasks): add \"action\" at \"location\"                                                         |" << std::endl
-			  << "|Example: add play computer game at home                                                                    |" << std::endl
+			  << "|";
+	
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_BLUE);
+	std::cout << "Add(floating tasks)";
+	
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+	std::cout << ": ";
+
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+	std::cout << "add";
+	
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+	std::cout << " \"action\" "; 
+
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+	std::cout << "at";
+
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+	std::cout << " \"location\"                                                            ";
+
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+	std::cout << "|" << std::endl << "|";
+
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+	std::cout << "Example: add play computer game at home                                                                    ";
+	
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+	std::cout << "|" <<std::endl
 			  << "|                                                                                                           |" << std::endl
-			  << "|To add(block off time slots): add \"action\" at \"location\" blockoff [press ENTER]                            |" << std::endl
-			  << "|                            : from dd/mm/yyyy hhmm to dd/mm/yyyy hhmm [press ENTER]                        |" << std::endl
-			  << "|                            : by dd/mm/yyyy hhmm [press ENTER]                                             |" << std::endl
-			  << "|                            : end                                                                          |" << std::endl
-			  << "|Example: add swimming at school blockoff                                                                   |" << std::endl
-			  << "|       : from 20/11/2013 1100 to 20/11/2013 1200                                                           |" << std::endl
-			  << "|       : by 21/11/2013 1000                                                                                |" << std::endl
-			  << "|       : end                                                                                               |" << std::endl
+			  << "|";
+			
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_BLUE);
+	std::cout << "Add(block off time slots)"; 
+	
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+	std::cout << ": "; 
+	
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+	std::cout << "add"; 
+	
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+	std::cout << " \"action\" "; 
+	
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+	std::cout << "at"; 
+	
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+	std::cout << " \"location\" "; 
+	
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+	std::cout << "blockoff"; 
+	
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+	std::cout << "[press ENTER]                                ";
+
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+	std::cout << "|" << std::endl << "|";
+
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+	std::cout << "                         : "; 
+	
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+	std::cout << "from"; 
+	
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+	std::cout << " dd/mm/yyyy hhmm "; 
+	
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+	std::cout << "to"; 
+	
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+	std::cout << " dd/mm/yyyy hhmm [press ENTER]                           ";
+		
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+	std::cout << "|" << std::endl << "|";
+
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+	std::cout << "                         : "; 
+	
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+	std::cout << "by"; 
+	
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+	std::cout << " dd/mm/yyyy hhmm [press ENTER]                                                ";
+
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+	std::cout << "|" << std::endl << "|";
+
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+	std::cout<< "                         : "; 
+	
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+	std::cout << "end                                                                             ";
+
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+	std::cout << "|" << std::endl << "|";
+
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+	std::cout << "Example: add swimming at school blockoff                                                                   ";
+
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+	std::cout << "|" << std::endl << "|";
+
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+	std::cout << "       : from 20/11/2013 1100 to 20/11/2013 1200                                                           ";
+
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+	std::cout << "|" << std::endl << "|";
+
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+	std::cout << "       : by 21/11/2013 1000                                                                                ";
+
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+	std::cout << "|" << std::endl << "|";
+
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+	std::cout << "       : end                                                                                               ";
+
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+	std::cout << "|" <<std::endl
 			  << "|                                                                                                           |" << std::endl
-			  << "|To search for task: search \"keyword\"                                                                       |" << std::endl
-			  << "|Example: search home                                                                                       |" << std::endl
+			  << "|";
+			  
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_BLUE);
+	std::cout << "Search"; 
+	
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+	std::cout << " for task: ";
+	
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+	std::cout << "search"; 
+	
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+	std::cout << " \"keyword\"                                                                          ";
+
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+	std::cout << "|" << std::endl << "|";
+			  
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+	std::cout << "Example: search home                                                                                       ";
+
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+	std::cout << "|" <<std::endl
 			  << "|                                                                                                           |" << std::endl
-			  << "|To delete a task: delete \"option\"                                                                          |" << std::endl
-			  << "|Example: delete 1                                                                                          |" << std::endl
+			  << "|";
+			  
+	SetConsoleTextAttribute(hConsole, FOREGROUND_GREEN | FOREGROUND_INTENSITY);
+	std::cout << "To delete a task: delete \"option\"                                                                          ";
+
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+	std::cout << "|" << std::endl << "|";
+
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+	std::cout << "Example: delete 1                                                                                          ";
+
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+	std::cout << "|" <<std::endl
 			  << "|                                                                                                           |" << std::endl
-			  << "|To edit a task: edit \"option\" \"changes in task\"                                                            |" << std::endl
-			  << "|Example: edit 1 running at school                                                                          |" << std::endl
+			  << "|";
+			  
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN);
+	std::cout << "To edit a task: edit \"option\" \"changes in task\"                                                            ";
+	
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+	std::cout << "|" << std::endl << "|";
+
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+	std::cout << "Example: edit 1 running at school                                                                          " << std::endl;
+
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+	std::cout << "|" <<std::endl
 			  << "|                                                                                                           |" << std::endl
-			  << "|To edit tasks with block off timings: editblock \"option\"                                                   |" <<std::endl
-			  << "|Example: editblock 1                                                                                       |" << std::endl
+			  << "|";
+			  
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
+	std::cout << "To edit tasks with block off timings: editblock \"option\"                                                   ";
+
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+	std::cout << "|" << std::endl << "|";
+
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+	std::cout << "Example: editblock 1                                                                                       ";
+
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+	std::cout << "|" <<std::endl
 			  << "|                                                                                                           |" << std::endl
-			  << "|To mark done a task: markdone \"option\"                                                                     |" << std::endl
-			  << "|Example: markdone 1                                                                                        |" << std::endl
+			  << "|";
+			  
+	SetConsoleTextAttribute(hConsole, FOREGROUND_BLUE | FOREGROUND_GREEN);
+	std::cout << "To mark done a task: markdone \"option\"                                                                     ";
+
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+	std::cout << "|" << std::endl << "|";
+	
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+	std::cout << "Example: markdone 1                                                                                        ";
+
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+	std::cout << "|" <<std::endl
 			  << "|                                                                                                           |" << std::endl
-			  << "|To see completed tasks: done                                                                               |" << std::endl
+			  << "|";
+			  
+	SetConsoleTextAttribute(hConsole, FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
+	std::cout << "To see completed tasks: done                                                                               ";
+
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+	std::cout << "|" <<std::endl
 			  << "|                                                                                                           |" << std::endl
-			  << "|To see overdue tasks: overdue                                                                              |" << std::endl
+			  << "|";
+			  
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_BLUE);
+	std::cout << "To see overdue tasks: overdue                                                                              ";
+
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+	std::cout << "|" <<std::endl
 			  << "|                                                                                                           |" << std::endl
-			  << "|To clear overdue tasks list: clearoverdue                                                                  |" << std::endl
+			  << "|";
+			  
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+	std::cout << "To clear overdue tasks list: clearoverdue                                                                  ";
+
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+	std::cout << "|" <<std::endl
 			  << "|                                                                                                           |" << std::endl
+			  << "|"
 			  << "|To undo previous command: undo                                                                             |" << std::endl
 			  << "|                                                                                                           |" << std::endl
 			  << "|To clear display screen: clear                                                                             |" << std::endl
