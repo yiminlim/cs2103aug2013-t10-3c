@@ -1,15 +1,16 @@
 #include "TaskLinkedList.h"
 #include <assert.h>
 
-const std::string OverdueLinkedList::KEYWORD_EMPTY_STRING = "";
-const std::string OverdueLinkedList::KEYWORD_BLOCKOFF = "blockoff";
-const std::string OverdueLinkedList::KEYWORD_NULL = "/0";
-const std::string OverdueLinkedList::KEYWORD_ZERO = "0";
-const std::string OverdueLinkedList::KEYWORD_SLASH = "/";
-const std::string OverdueLinkedList::KEYWORD_DASH = "-";
+const std::string TaskLinkedList::KEYWORD_EMPTY_STRING = "";
+const std::string TaskLinkedList::KEYWORD_BLOCKOFF = "blockoff";
+const std::string TaskLinkedList::KEYWORD_ZERO = "0";
+const std::string TaskLinkedList::KEYWORD_SLASH = "/";
+const std::string TaskLinkedList::KEYWORD_DASH = "-";
 
-const int OverdueLinkedList::KEYNUMBER_DAY = 31;
-const int OverdueLinkedList::KEYNUMBER_MONTH = 12;
+const char TaskLinkedList::KEYWORD_NULL = '\0';
+
+const int TaskLinkedList::KEYNUMBER_DAY = 31;
+const int TaskLinkedList::KEYNUMBER_MONTH = 12;
 
 TaskLinkedList::TaskLinkedList(){
 	_head = NULL;
