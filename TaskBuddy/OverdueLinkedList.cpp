@@ -105,6 +105,7 @@ bool OverdueLinkedList::compareDateAndTime(Task & curTask, Task & listTask){
 					condition = true;
 				}else{
 					condition = false;
+				}
 			}
 		}
 		else{
