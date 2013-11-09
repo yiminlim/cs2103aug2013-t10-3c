@@ -33,6 +33,8 @@ private:
 	static const std::string FILENAME_TB_STORAGE;
 	static const std::string FILENAME_TB_DONE_STORAGE;
 	static const std::string FILENAME_TB_OVERDUE_STORAGE;
+	static const std::string UI_FORMAT;
+	static const std::string PROCESSED_FORMAT;
 
 public:
 
@@ -57,7 +59,7 @@ public:
 
 //-----ADD TASK----------------------------------------------------------------------------------------------
 
-	bool add(const std::string, bool&, std::vector<std::string>&);
+	void add(const std::string, bool&, std::vector<std::string>&);
 
 	//add a new task to the list (search for correct index first)
 	bool addExistingTask(const std::string); //for initLogic use only
@@ -90,7 +92,7 @@ public:
 	bool editBlock(const std::string, std::vector<std::string> &);
 
 	//for adding in new blocks, const string contains action + location while vector string contains timings and dates
-	bool addBlock(const std::string, const std::string, bool, std::vector<std::string>&);
+	void addBlock(const std::string, const std::string, bool, std::vector<std::string>&);
 	// first string is the action and location of original taskString, 2nd string is the original taskString
 
 	//delete all the blocks of the string given
@@ -107,10 +109,10 @@ public:
 	
 //-----HELPER FUNCTIONS---------------------------------------------------------------------------------------
 	
-	void stringParse(const std::string, const int, std::string &, std::string &, std::vector<Date> &, std::vector<int> &, std::vector<Date> &, std::vector<int> &, std::vector<Date> &, std::vector<int> &, bool &);
+	void stringParse(const std::string, const std::string, std::string &, std::string &, std::vector<Date> &, std::vector<int> &, std::vector<Date> &, std::vector<int> &, std::vector<Date> &, std::vector<int> &, bool &);
 	//converts userInput String into various components from existing
 		
-	std::vector<Task> createTask(std::string, int);
+	std::vector<Task> createTask(std::string, std::string);
 
 	bool isDay(std::string &);
 
