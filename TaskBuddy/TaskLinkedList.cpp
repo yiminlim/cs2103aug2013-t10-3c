@@ -267,8 +267,6 @@ void TaskLinkedList::checkIfRemainingBlockTask(std::string line){
 	}
 
 	delete index;
-//	delete cur;
-//	cur = NULL;
 	index = NULL;
 }
 
