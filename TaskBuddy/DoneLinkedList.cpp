@@ -38,30 +38,50 @@ int DoneLinkedList::getSize(){
 	return _size;
 }
 
+void DoneLinkedList::obtainDateSeparately(Date *inputDate, Date *date){
+	date->_day = inputDate->_day;
+	date->_month = inputDate->_month;
+	date->_year = inputDate->_year;
+}
+
 //Pre-condition: input in a Task reference and two pointers indicating date and time 
 //				 for empty Date, it is declared with 0
 //				 for empty time, it is declared with a value -1
 //Post-condition: the pointer indicating date and time will be updated to store either the startingDate and startingTime or the deadlineDate and deadlineTime of the respective Task. 
 void DoneLinkedList::obtainDateAndTime(Task & task, Date *date, int *time, Date *endDate, int *endTime){
 	if (task.getDeadlineDate()._day == 0){
-		date->_day = task.getStartingDate()._day;
-		date->_month = task.getStartingDate()._month;
-		date->_year = task.getStartingDate()._year;
+		obtainDateSeparately(&task.getStartingDate(), date);
 		*time = task.getStartingTime();
 		if (task.getEndingDate()._day != 0){
-			endDate->_day = task.getEndingDate()._day;
-			endDate->_month = task.getEndingDate()._month;
-			endDate->_year = task.getEndingDate()._year;
+			obtainDateSeparately(&task.getEndingDate(), endDate);
 			*endTime = task.getEndingTime();
 		}
 	}
 	else{
-		date->_day = task.getDeadlineDate()._day;
-		date->_month = task.getDeadlineDate()._month;
-		date->_year = task.getDeadlineDate()._year;
+		obtainDateSeparately(&task.getDeadlineDate(), date);
 		*time = task.getDeadlineTime();
+		*endTime = -1;
 	}
 	return;
+}
+
+bool DoneLinkedList::compareDates(Date *curDate, Date *listDate, bool *check){
+		if (curDate->_year < listDate->_year){
+			return true;
+		} else if (curDate->_year > listDate->_year){
+			return false;
+		} else if (curDate->_month < listDate->_month){
+			return true;
+		} else if (curDate->_month > listDate->_month){
+			return false;
+		} else if (curDate->_day < listDate->_day){
+			return true;
+		} else if (curDate->_day > listDate->_day){
+			return false;
+		}
+
+		*check = true;
+		return false;
 }
 
 //Pre-condition: input the Task reference to be added and a specific Task reference from the linked list and sort them accordingly 
@@ -72,52 +92,29 @@ bool DoneLinkedList::compareDateAndTime(Task & curTask, Task & listTask){
 		Date *endListDate = new Date;
 		Date *endCurDate = new Date;
 		int *curTime = new int, *listTime = new int, *endCurTime = new int, *endListTime = new int;
-		bool condition = false;
+		bool condition = false, check = false;
 		obtainDateAndTime(curTask, curDate, curTime, endCurDate, endCurTime);
 		obtainDateAndTime(listTask, listDate, listTime, endListDate, endListTime);
 
-		if (curDate->_year < listDate->_year){
-			condition = true;
-		} 
-		else if (curDate->_year > listDate->_year){
-			condition = false;
-		} 
-		else if (curDate->_month < listDate->_month){
-			condition = true;
-		}
-		else if (curDate->_month > listDate->_month){
-			condition = false;
-		}
-		else if (curDate->_day < listDate->_day){
-			condition = true;
-		}
-		else if (curDate->_day > listDate->_day){
-			condition = false;
-		}
-		else if (*curTime < *listTime){
-			condition = true;
-		}
-		else if (*curTime = *listTime){
-			if (endCurDate-> _year < endListDate->_year){
+		condition = compareDates(curDate, listDate, &check);
+		if (check){
+			if (*curTime < *listTime){
 				condition = true;
-			}else if(endCurDate->_year > endListDate->_year){
-				condition = false;
-			}else if(endCurDate->_month < endListDate->_month){
-				condition = true;
-			}else if(endCurDate->_month > endListDate->_month){
-				condition = false;
-			}else if(endCurDate->_day < endListDate->_day){
-				condition = true;
-			}else if(endCurDate->_day > endListDate->_day){
-				condition = false;
-			}else if(*endCurTime < *endListTime){
-				condition = true;
-			}else{
+			}
+			else if (*curTime = *listTime){
+				check = false;
+				condition = compareDates(endCurDate, endListDate, &check);
+				if (check){
+					if(*endCurTime < *endListTime){
+						condition = true;
+					}else{
+						condition = false;
+					}
+				}
+			}
+			else{
 				condition = false;
 			}
-		}
-		else{
-			condition = false;
 		}
 
 		delete curDate;
@@ -194,19 +191,13 @@ bool DoneLinkedList::insert(Task & curTask){
 
 void DoneLinkedList::obtainDateAndTimeForRemoving(Task & task, Date *date, int *time){
 	if(task.getDeadlineDate()._day != 0){
-		date->_day = task.getDeadlineDate()._day;
-		date->_month = task.getDeadlineDate()._month;
-		date->_year = task.getDeadlineDate()._year;
+		obtainDateSeparately(&task.getDeadlineDate(), date);
 		*time = task.getDeadlineTime();
 	} else if(task.getStartingDate()._day != 0 && task.getEndingDate()._day==0){
-		date->_day = task.getStartingDate()._day;
-		date->_month = task.getStartingDate()._month;
-		date->_year = task.getStartingDate()._year;
+		obtainDateSeparately(&task.getStartingDate(), date);
 		*time = task.getStartingTime();
 	} else if(task.getStartingDate()._day != 0 && task.getEndingDate()._day!=0){
-		date->_day = task.getEndingDate()._day;
-		date->_month = task.getEndingDate()._month;
-		date->_year = task.getEndingDate()._year;
+		obtainDateSeparately(&task.getEndingDate(), date);
 		*time = task.getEndingTime();
 	}
 	return;
@@ -233,7 +224,6 @@ std::vector<int> DoneLinkedList::getIndex(Date today){
 		}else if(today._day > date->_day){
 			index.push_back(i);
 		}else if(today._day < date->_day){
-		}else{
 		}
 		cur = cur->next;
 		i++;
