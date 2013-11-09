@@ -18,11 +18,12 @@ private:
 
 	static const std::string KEYWORD_EMPTY_STRING;
 	static const std::string KEYWORD_BLOCKOFF;
-	static const std::string KEYWORD_NULL;
 	static const std::string KEYWORD_ZERO;
 	static const std::string KEYWORD_SLASH;
 	static const std::string KEYWORD_DASH;
-
+	
+	static const char KEYWORD_NULL;
+	
 	static const int KEYNUMBER_DAY;
 	static const int KEYNUMBER_MONTH;
 	

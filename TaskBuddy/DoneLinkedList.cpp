@@ -1,7 +1,7 @@
 #include "DoneLinkedList.h"
 #include <assert.h>
 
-const std::string OverdueLinkedList::KEYWORD_EMPTY_STRING = "";
+const std::string DoneLinkedList::KEYWORD_EMPTY_STRING = "";
 
 DoneLinkedList::DoneLinkedList(){
 	_head = NULL;
