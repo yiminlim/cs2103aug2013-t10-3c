@@ -40,6 +40,7 @@ const std::string UserInterface::MESSAGE_DELETEBLOCK = "Requested blocked slot h
 const std::string UserInterface::MESSAGE_FINALISE = "Time and date of the task has been finalised";
 const std::string UserInterface::MESSAGE_MARKDONE = "Task has been marked done";
 const std::string UserInterface::MESSAGE_UNDO = "Previous command is undone";
+const std::string UserInterface::MESSAGE_CLEAROVERDUE = "Overdue list is cleared";
 const std::string UserInterface::MESSAGE_EXIT = "Thank you for using Task Buddy!";
 
 const std::string UserInterface::ERROR_NO_TASK_TODAY = "No task due today!";
@@ -81,6 +82,7 @@ void UserInterface::initUI(){
 
 	tbLogic.initLogic();
 	tbLogic.saveOverdue();
+	tbLogic.save();
 	displayWelcomeMessage();
 	std::cout << std::endl;
 	displayTodayTask();	
@@ -93,31 +95,33 @@ void UserInterface::commandUI(){
 	char space;
 	bool contProgram = true;
 	bool isClash;
-	std::string currentCommand;
-	std::vector<std::string> searchTaskList;
-	std::vector<std::string> searchOtherTaskList;
+	std::string command;
+	std::vector<std::string> searchTaskVector;
+	std::vector<std::string> searchOtherTaskVector;
 	std::vector<std::string> clashVector;
 	
 	do{
 		try{
 			std::cout << MESSAGE_COMMAND;
-			std::cin >> currentCommand;
-			space = getchar();
+			std::cin >> command;
 			isClash = false;
+			space = getchar();
 
-			if ((currentCommand == COMMAND_DELETE || currentCommand == COMMAND_EDIT || currentCommand == COMMAND_MARKDONE || currentCommand == COMMAND_EDITBLOCK) &&
-				(searchTaskList.size() == 0)){
+			// throw exception if user did not search before delete/ edit/ mark done/ edit block
+			if ((command == COMMAND_DELETE || command == COMMAND_EDIT || command == COMMAND_MARKDONE || command == COMMAND_EDITBLOCK) &&
+				(searchTaskVector.size() == 0)){
 					std::cin.clear();
 					std::cin.ignore(INT_MAX, '\n');
 					throw std::runtime_error(ERROR_SEARCH_BEFORE);
 			}
-			else if ((currentCommand == COMMAND_UNDO) && (tbLogic.checkUndoStackEmpty())){
+			// throw exception if user try to undo when undo stack is empty
+			else if ((command == COMMAND_UNDO) && (tbLogic.checkUndoStackEmpty())){
 				throw std::runtime_error(ERROR_UNDO_INITIALISE);
 			}
 
-			if (currentCommand == COMMAND_ADD){		
-				if (tbLogic.add(readTask(currentCommand, KEYWORD_EMPTY_STRING), isClash, clashVector)){
-					displayMessage(currentCommand);
+			if (command == COMMAND_ADD){		
+				if (tbLogic.add(readTask(command, KEYWORD_EMPTY_STRING), isClash, clashVector)){
+					displayMessage(command);
 					if (isClash){
 						std::cout << MESSAGE_CLASH << std::endl;
 						displayInformationInVector(clashVector);
@@ -125,43 +129,43 @@ void UserInterface::commandUI(){
 					tbLogic.save();
 				}
 				else{
-					displayFailMessage(currentCommand);
+					displayFailMessage(command);
 				}
-				searchTaskList.clear();
+				searchTaskVector.clear();
 				clashVector.clear();
 			}
-			else if (currentCommand == COMMAND_SEARCH){
-				searchTaskList.clear();
-				if (tbLogic.generalSearch(readTask(currentCommand, KEYWORD_EMPTY_STRING), searchTaskList)){
-					displayInformationInVector(searchTaskList);
+			else if (command == COMMAND_SEARCH){
+				searchTaskVector.clear();
+				if (tbLogic.generalSearch(readTask(command, KEYWORD_EMPTY_STRING), searchTaskVector)){
+					displayInformationInVector(searchTaskVector);
 				}
 				else{
-					displayFailMessage(currentCommand);
+					displayFailMessage(command);
 				}
 			}
-			else if (currentCommand == COMMAND_DELETE){
-				std::stringstream ss(readTask(currentCommand, KEYWORD_EMPTY_STRING));
+			else if (command == COMMAND_DELETE){
+				std::stringstream ss(readTask(command, KEYWORD_EMPTY_STRING));
 				while (!ss.eof() && ss >> option){
-					if (option > searchTaskList.size()){
+					if (option > searchTaskVector.size()){
 						throw std::runtime_error(ERROR_OUT_OF_VECTOR_RANGE);
 					}
-					else if (tbLogic.del(searchTaskList[option-1], false)){
+					else if (tbLogic.del(searchTaskVector[option-1], false)){
 						tbLogic.save();
-						displayMessage(currentCommand);			
+						displayMessage(command);			
 					}
 					else{
-						displayFailMessage(currentCommand);
+						displayFailMessage(command);
 					}
 				}
-				searchTaskList.clear();
+				searchTaskVector.clear();
 			}
-			else if (currentCommand == COMMAND_EDIT){
+			else if (command == COMMAND_EDIT){
 				std::cin >> option;
-				if (option > searchTaskList.size()){
+				if (option > searchTaskVector.size()){
 					throw std::runtime_error(ERROR_OUT_OF_VECTOR_RANGE);
 				}
-				else if (tbLogic.edit(searchTaskList[option-1], readTask(COMMAND_EDIT, KEYWORD_EMPTY_STRING), isClash, clashVector)){
-					displayMessage(currentCommand);
+				else if (tbLogic.edit(searchTaskVector[option-1], readTask(COMMAND_EDIT, KEYWORD_EMPTY_STRING), isClash, clashVector)){
+					displayMessage(command);
 					if (isClash){
 						std::cout << MESSAGE_CLASH << std::endl;
 						displayInformationInVector(clashVector);
@@ -169,86 +173,115 @@ void UserInterface::commandUI(){
 					tbLogic.save();
 				}
 				else{
-					displayFailMessage(currentCommand);
+					displayFailMessage(command);
 				}
-				searchTaskList.clear();
+				searchTaskVector.clear();
 				clashVector.clear();
 			}
-			else if (currentCommand == COMMAND_EDITBLOCK){
+			else if (command == COMMAND_EDITBLOCK){
 				std::cin >> option;
-				
-				if (option > searchTaskList.size()){
+
+				if (option > searchTaskVector.size()){
 					throw std::runtime_error(ERROR_OUT_OF_VECTOR_RANGE);
 				}
 				
 				system("CLS");
-				editBlockUI(searchTaskList[option-1]);
-				searchTaskList.clear();
+				editBlockUI(searchTaskVector[option-1]);
+				searchTaskVector.clear();
 				displayWelcomeMessage();
 			}
-			else if (currentCommand == COMMAND_MARKDONE){
-				std::stringstream ss(readTask(currentCommand, KEYWORD_EMPTY_STRING));
+			else if (command == COMMAND_MARKDONE){
+				std::stringstream ss(readTask(command, KEYWORD_EMPTY_STRING));
 				while (!ss.eof() && ss >> option){
-					if (option > searchTaskList.size()){
+					if (option > searchTaskVector.size()){
 						throw std::runtime_error(ERROR_OUT_OF_VECTOR_RANGE);
 					}
-					else if (tbLogic.markDone(searchTaskList[option-1])){
+					else if (tbLogic.markDone(searchTaskVector[option-1])){
 						tbLogic.save();
 						tbLogic.saveDone();
-						displayMessage(currentCommand);
+						displayMessage(command);
 					}
 					else{
-						displayFailMessage(currentCommand);
+						displayFailMessage(command);
 					}
 				}
-				searchTaskList.clear();
+				searchTaskVector.clear();
 			}
-			else if (currentCommand == COMMAND_DONE){
-				if (tbLogic.retrieveDoneList(searchOtherTaskList)){
-					displayInformationInVector(searchOtherTaskList);
+			else if (command == COMMAND_DONE){
+				if (space == ' '){
+					std::cin.clear();
+					std::cin.ignore(INT_MAX, '\n');
+				}
+
+				if (tbLogic.retrieveDoneList(searchOtherTaskVector)){
+					displayInformationInVector(searchOtherTaskVector);
 				}
 				else{
-					displayFailMessage(currentCommand);
+					displayFailMessage(command);
 				}
-				searchOtherTaskList.clear();
+				searchOtherTaskVector.clear();
 			}
-			else if (currentCommand == COMMAND_OVERDUE){
-				if (tbLogic.retrieveOverdueList(searchOtherTaskList)){
-					displayInformationInVector(searchOtherTaskList);
+			else if (command == COMMAND_OVERDUE){
+				if (space == ' '){
+					std::cin.clear();
+					std::cin.ignore(INT_MAX, '\n');
+				}
+
+				if (tbLogic.retrieveOverdueList(searchOtherTaskVector)){
+					displayInformationInVector(searchOtherTaskVector);
 				}
 				else{
-					displayFailMessage(currentCommand);
+					displayFailMessage(command);
 				}
-				searchOtherTaskList.clear();				
+				searchOtherTaskVector.clear();
 			}
-			else if (currentCommand == COMMAND_CLEAROVERDUE){
+			else if (command == COMMAND_CLEAROVERDUE){
+				if (space == ' '){
+					std::cin.clear();
+					std::cin.ignore(INT_MAX, '\n');
+				}
 				tbLogic.clearOverdueList();
 				tbLogic.saveOverdue();
+				displayMessage(command);
 			}
-		
-			else if (currentCommand == COMMAND_UNDO){
+			else if (command == COMMAND_UNDO){
+				if (space == ' '){
+					std::cin.clear();
+					std::cin.ignore(INT_MAX, '\n');
+				}
+
 				if (tbLogic.undo()){
 					tbLogic.save();
 					tbLogic.saveDone();
-					displayMessage(currentCommand);
+					displayMessage(command);
 				}
 				else{
-					displayFailMessage(currentCommand);
+					displayFailMessage(command);
 				}
-				searchTaskList.clear();
+				searchTaskVector.clear();
 			}
-			else if (currentCommand == COMMAND_CLEAR){
+			else if (command == COMMAND_CLEAR){
 				system("CLS");
-				searchTaskList.clear();
+				searchTaskVector.clear();
 			}
-			else if (currentCommand == COMMAND_HELP){
+			else if (command == COMMAND_HELP){
+				if (space == ' '){
+					std::cin.clear();
+					std::cin.ignore(INT_MAX, '\n');
+				}
 				displayHelpCommandUI();
 			}
-			else if (currentCommand == COMMAND_EXIT){
-				displayMessage(currentCommand);
+			else if (command == COMMAND_EXIT){
+				if (space == ' '){
+					std::cin.clear();
+					std::cin.ignore(INT_MAX, '\n');
+				}
+				displayMessage(command);
 				contProgram = false;
 			}
 			else{
+				std::cin.clear();
+				std::cin.ignore(INT_MAX, '\n');
 				throw std::runtime_error(ERROR_INVALID_COMMAND);
 			}
 		}
@@ -256,7 +289,7 @@ void UserInterface::commandUI(){
 			std::cout << error.what() << std::endl;
 		}
 
-		if (currentCommand != COMMAND_CLEAR){
+		if (command != COMMAND_CLEAR){
 			std::cout << std::endl;
 		}
 
@@ -467,6 +500,9 @@ void UserInterface::displayMessage(const std::string command){
 	}
 	else if (command == COMMAND_FINALISE || command == COMMAND_FINALIZE){
 		std::cout << MESSAGE_FINALISE;
+	}
+	else if(command == COMMAND_CLEAROVERDUE){
+		std::cout << MESSAGE_CLEAROVERDUE;
 	}
 	else if (command == COMMAND_EXIT){
 		std::cout << MESSAGE_EXIT;
