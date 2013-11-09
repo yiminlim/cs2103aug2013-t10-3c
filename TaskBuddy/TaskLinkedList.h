@@ -75,17 +75,13 @@ public:
 	//Pass over a vector of keywords and an empty vector of string for me to return those strings with the words in it
 	bool retrieve(const std::vector<std::string>, std::vector<std::string> &);
 
-	//Remove blockings that are unwanted which are stored in the vector
-	//bool removeBlockings(const std::vector<std::string>);
-
-	//Return true if blockings are finalised
-	//bool finaliseBlocking(const std::vector<std::string>);
-
 	//Copy the entire list of output format of the tasks in the linked list into the empty vector that is passed over
 	void updateStorageVector(std::vector<std::string> &);
 
 	//Set the bool block component of the string as true
 	void setBlock(std::string);
+
+	void compareWithToday(Date, Date, std::string, std::vector<std::string> &);
 
 	//Return list of overdued items
 	void getOverdueList(Date, std::vector<std::string> &);
