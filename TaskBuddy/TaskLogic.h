@@ -118,7 +118,7 @@ public:
 
 	std::string getActionLocation(std::string);
 
-	int getUndoStackSize();
+	bool checkUndoStackEmpty();
 
 //-----MARK DONE------------------------------------------------------------------------------------------------
 	bool markDone(std::string taskString); 

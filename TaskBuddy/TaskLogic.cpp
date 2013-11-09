@@ -563,9 +563,12 @@ std::string TaskLogic::extractDate(std::string currentDateTime){
 		monthNum ++;     // can Parse take in single digit month?
 
 	std::ostringstream oss;
+	
 	oss << date << "/" << monthNum << "/" << year; 
 	return oss.str();
 }   
+
+//bool checkIfSingleDig
 
 std::string TaskLogic::getActionLocation(std::string taskString){
 	std::string action = "", location ="";
@@ -580,8 +583,8 @@ std::string TaskLogic::getActionLocation(std::string taskString){
 	return taskActionLocation;
 }
 
-int TaskLogic::getUndoStackSize(){
-	return (commandStackHistory.size() || taskStackHistory.size());
+bool TaskLogic::checkUndoStackEmpty(){
+	return (commandStackHistory.empty() || taskStackHistory.empty());
 }
 
 //-----MARK DONE----------------------------------------------------------------------------------------------------------
