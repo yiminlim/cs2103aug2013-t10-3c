@@ -16,18 +16,20 @@ private:
 	static const std::string COMMAND_DELETE;
 	static const std::string COMMAND_SEARCH;
 	static const std::string COMMAND_EDIT;
-	static const std::string COMMAND_MARKDONE;
-	static const std::string COMMAND_DONE;
-	static const std::string COMMAND_OVERDUE;
-	static const std::string COMMAND_CLEAROVERDUE;
 	static const std::string COMMAND_EDITBLOCK;
 	static const std::string COMMAND_ADDBLOCK;	
 	static const std::string COMMAND_EDITALL;
 	static const std::string COMMAND_DELETEBLOCK;
 	static const std::string COMMAND_FINALISE;
 	static const std::string COMMAND_FINALIZE;	
+	static const std::string COMMAND_RETURN;
+	static const std::string COMMAND_MARKDONE;
+	static const std::string COMMAND_DONE;
+	static const std::string COMMAND_OVERDUE;
+	static const std::string COMMAND_CLEAROVERDUE;	
 	static const std::string COMMAND_UNDO;
 	static const std::string COMMAND_CLEAR;
+	static const std::string COMMAND_HELP;
 	static const std::string COMMAND_EXIT;	
 
 	static const std::string KEYWORD_TODAY;
@@ -94,6 +96,11 @@ public:
 	//Boundary:	empty String, any other words
 	std::string readTask(const std::string, const std::string);
 
+	//To display the sub-menu for editing of block off dates
+	//Precondition: 
+	//Post-condition:
+	void editBlockUI(const std::string);
+
 	//To display welcome message
 	//Precondition: display only after program is initialised
 	//Post-condition: welcome message is displayed
@@ -103,11 +110,6 @@ public:
 	//Precondition: 
 	//Post-condition: 
 	void displayTodayTask();
-
-	//To display the sub-menu for editing of block off dates
-	//Precondition: 
-	//Post-condition:
-	void editBlockUI(const std::string);
 
 	//To display all information stored in a vector
 	//Precondition:
@@ -123,4 +125,10 @@ public:
 	//Precondition: function call fail
 	//Post-condition: fail message with be displayed
 	void displayFailMessage(const std::string);
+
+	//To display the help message for commandUI
+	void displayHelpCommandUI();
+
+	//To display the help message for editBlockUI
+	void displayHelpEditBlockUI();
 };
