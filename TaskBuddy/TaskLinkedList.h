@@ -29,8 +29,12 @@ public:
 	//Returns number of tasks in linked list
 	int getSize();
 
+	void obtainDateSeparately(Date*, Date*);
+
 	//determine if the task has a starting date and time or deadline date and time and pass back the one with the value
 	void obtainDateAndTime(Task &, Date*, int*, Date*, int*);
+
+	bool compareDates(Date*, Date*, bool*);
 
 	//Returns true if the curTask is of an earlier date and time than listTask
 	bool compareDateAndTime(Task &, Task &, bool &, std::vector<std::string>&);

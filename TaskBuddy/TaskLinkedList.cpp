@@ -38,29 +38,52 @@ int TaskLinkedList::getSize(){
 	return _size;
 }
 
+void TaskLinkedList::obtainDateSeparately(Date *inputDate, Date *date){
+	date->_day = inputDate->_day;
+	date->_month = inputDate->_month;
+	date->_year = inputDate->_year;
+}
+
 //Pre-condition: input in a Task reference and two pointers indicating date and time 
 //				 for empty time, it is declared with a value -1
 //				 for empty Date, it is declared as 0
 //Post-condition: the pointer indicating date and time will be updated to store either the startingDate and startingTime or the deadlineDate and deadlineTime of the respective Task. 
 void TaskLinkedList::obtainDateAndTime(Task & task, Date *date, int *time, Date *endDate, int *endTime){
 	if (task.getDeadlineDate()._day == 0){
-		date->_day = task.getStartingDate()._day;
-		date->_month = task.getStartingDate()._month;
-		date->_year = task.getStartingDate()._year;
+		obtainDateSeparately(&task.getStartingDate(), date);
 		*time = task.getStartingTime();
+		obtainDateSeparately(&task.getEndingDate(), endDate);
 		*endTime = task.getEndingTime();
-		endDate->_day = task.getEndingDate()._day;
-		endDate->_month = task.getEndingDate()._month;
-		endDate->_year = task.getEndingDate()._year;
 	}
 	else{
-		date->_day = task.getDeadlineDate()._day;
-		date->_month = task.getDeadlineDate()._month;
-		date->_year = task.getDeadlineDate()._year;
+		obtainDateSeparately(&task.getDeadlineDate(), date);
 		*time = task.getDeadlineTime();
 		*endTime = -1;
 	}
 	return;
+}
+
+bool TaskLinkedList::compareDates(Date *curDate, Date *listDate, bool *check){
+		if (curDate->_year < listDate->_year){
+			return true;
+		} 
+		else if (curDate->_year > listDate->_year){
+			return false;
+		} 
+		else if (curDate->_month < listDate->_month){
+			return true;
+		}
+		else if (curDate->_month > listDate->_month){
+			return false;
+		}
+		else if (curDate->_day < listDate->_day){
+			return true;
+		}
+		else if (curDate->_day > listDate->_day){
+			return false;
+		}
+		*check = true;
+		return false;
 }
 
 //Pre-condition: input the Task reference to be added and a specific Task reference from the linked list and sort them accordingly. Check along the way if there are any clashes
@@ -71,69 +94,45 @@ bool TaskLinkedList::compareDateAndTime(Task & curTask, Task & listTask, bool & 
 		Date *endListDate = new Date;
 		Date *endCurDate = new Date;
 		int *curTime = new int, *listTime = new int, *endCurTime = new int, *endListTime = new int;
-		bool condition = false;
+		bool condition = false, check = false;
 		obtainDateAndTime(curTask, curDate, curTime, endCurDate, endCurTime);
 		obtainDateAndTime(listTask, listDate, listTime, endListDate, endListTime);
 
-		if (curDate->_year < listDate->_year){
-			condition = true;
-		} 
-		else if (curDate->_year > listDate->_year){
-			condition = false;
-		} 
-		else if (curDate->_month < listDate->_month){
-			condition = true;
-		}
-		else if (curDate->_month > listDate->_month){
-			condition = false;
-		}
-		else if (curDate->_day < listDate->_day){
-			condition = true;
-		}
-		else if (curDate->_day > listDate->_day){
-			condition = false;
-		}
-		else if (*curTime < *listTime){
-			condition = true;
-			if ((*endListTime == -1 && *endCurTime != -1 && curDate->_day != 0 && listDate->_day != 0)|| (*endListTime != -1 && *endCurTime != -1 && curDate->_day != 0 && listDate->_day != 0)){ //both from to
-				if (*endCurTime > *listTime){
-					isClash = true; //cur is from to, list is from
-					clashTasks.push_back(listTask.getTask());
+		condition = compareDates(curDate, listDate, &check);
+		if (check){
+			if (*curTime < *listTime){
+				condition = true;
+				if ((*endListTime == -1 && *endCurTime != -1 && curDate->_day != 0 && listDate->_day != 0)|| (*endListTime != -1 && *endCurTime != -1 && curDate->_day != 0 && listDate->_day != 0)){ //both from to
+					if (*endCurTime > *listTime){
+						isClash = true; //cur is from to, list is from
+						clashTasks.push_back(listTask.getTask());
+					}
+				}
+			}
+			else if (*curTime == *listTime && *curTime != -1){
+				isClash = true; //both froms
+				clashTasks.push_back(listTask.getTask());
+				
+				check = false;
+				condition = compareDates(endCurDate, endListDate, &check);
+				if (check){
+					if(*endCurTime < *endListTime){
+						condition = true;
+					}else{
+						condition = false;
+					}
+				}
+			}
+			else if (*curTime > *listTime){
+				condition = false; 
+				if ((*endCurTime == -1 && *endListTime != -1 && curDate->_day != 0 && listDate->_day != 0)|| (*endListTime != -1 && *endCurTime != -1 && curDate->_day != 0 && listDate->_day != 0)){ //both from to
+					if (*endListTime > *curTime){
+						isClash = true; //cur is from, list is from to
+						clashTasks.push_back(listTask.getTask());
+					}	
 				}
 			}
 		}
-		else if (*curTime == *listTime && *curTime != -1){
-			isClash = true; //both froms
-			clashTasks.push_back(listTask.getTask());
-
-			if (endCurDate-> _year < endListDate->_year){
-				condition = true;
-			}else if(endCurDate->_year > endListDate->_year){
-				condition = false;
-			}else if(endCurDate->_month < endListDate->_month){
-				condition = true;
-			}else if(endCurDate->_month > endListDate->_month){
-				condition = false;
-			}else if(endCurDate->_day < endListDate->_day){
-				condition = true;
-			}else if(endCurDate->_day > endListDate->_day){
-				condition = false;
-			}else if(*endCurTime < *endListTime){
-				condition = true;
-			}else{
-				condition = false;
-			}
-		}
-		else if (*curTime > *listTime){
-			condition = false; 
-			if ((*endCurTime == -1 && *endListTime != -1 && curDate->_day != 0 && listDate->_day != 0)|| (*endListTime != -1 && *endCurTime != -1 && curDate->_day != 0 && listDate->_day != 0)){ //both from to
-				if (*endListTime > *curTime){
-					isClash = true; //cur is from, list is from to
-					clashTasks.push_back(listTask.getTask());
-				}
-			}
-		}
-
 
 		delete curDate;
 		curDate = NULL;
@@ -175,10 +174,13 @@ int TaskLinkedList::getInsertIndex(Task & curTask, bool & isClash, std::vector<s
 					cur = cur->next;
 				}
 				return i;
-			}else{
+			}
+			
+			else{
 				return i;
 			}
 		} 
+
 		else{
 			cur = cur->next;
 			i++;
