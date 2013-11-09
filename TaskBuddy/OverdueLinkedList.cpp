@@ -1,23 +1,23 @@
 #include "OverdueLinkedList.h"
 #include <assert.h>
 
+const std::string OverdueLinkedList::KEYWORD_EMPTY_STRING = "";
+
 OverdueLinkedList::OverdueLinkedList(){
 	_head = NULL;
 	_size = 0;
 }
 	
-//destructor for linked list
+//Destructor for linked list
 OverdueLinkedList::~OverdueLinkedList(){
 }
 
-//Pre-condition: input an index between the range of 1 and the size of the linked list (including)
-//Post-condition: returns a ListNode pointer that will traverse to the position given by the index
+//Pre-condition: Input an index between the range of 1 and the size of the linked list (including).
+//Post-condition: Return a ListNode pointer that will traverse to the position given by the index.
 OverdueLinkedList::ListNode* OverdueLinkedList::traverseTo(int index){
 	if ( (index < 1) || (index > getSize()) ){
 		return NULL;
-	}
-
-	else{
+	}else{
 		ListNode *cur = _head;
 		for (int skip = 1; skip < index; skip++){
 			cur = cur->next;
@@ -26,28 +26,31 @@ OverdueLinkedList::ListNode* OverdueLinkedList::traverseTo(int index){
 	}
 }
 
-//Pre-condition: check if linked list is empty
-//Post-condition: return true if the linked list is empty
+//Pre-condition: Check if linked list is empty.
+//Post-condition: Return true if the linked list is empty.
 bool OverdueLinkedList::isEmpty(){
-	return _size==0;
+	return _size == 0;
 }
 	
-//Pre-condition: check for the size of the linked list
-//Post-condition: return the number of tasks in the linked list
+//Pre-condition: Check for the size of the linked list.
+//Post-condition: Return the number of tasks in the linked list.
 int OverdueLinkedList::getSize(){
 	return _size;
 }
 
+//Pre-condition: Input a Date input and an empty Date date and copy the input into the date.
+//Post-condition: The date now contains the same values as the input.
 void OverdueLinkedList::obtainDateSeparately(Date *inputDate, Date *date){
 	date->_day = inputDate->_day;
 	date->_month = inputDate->_month;
 	date->_year = inputDate->_year;
 }
 
-//Pre-condition: input in a Task reference and two pointers indicating date and time 
-//				 for empty Date, it is declared with 0
-//				 for empty time, it is declared with a value -1
-//Post-condition: the pointer indicating date and time will be updated to store either the startingDate and startingTime or the deadlineDate and deadlineTime of the respective Task. 
+//Pre-condition: Input in a Task reference and fours pointers indicating date and time and ending date and time.
+//				 For empty time, it is declared with a value -1.
+//				 For empty Date, it is declared as 0.
+//Post-condition: The pointer indicating date and time will be updated to store either the startingDate and startingTime or the deadlineDate and deadlineTime of the respective Task. 
+//				  The pointer indicating endDate and endTime will be updated to store the endingDate and endingDate if it has one. Else, store them as 0 and -1.
 void OverdueLinkedList::obtainDateAndTime(Task & task, Date *date, int *time, Date *endDate, int *endTime){
 	if (task.getDeadlineDate()._day == 0){
 		obtainDateSeparately(&task.getStartingDate(), date);
@@ -56,8 +59,7 @@ void OverdueLinkedList::obtainDateAndTime(Task & task, Date *date, int *time, Da
 			obtainDateSeparately(&task.getEndingDate(), endDate);
 			*endTime = task.getEndingTime();
 		}
-	}
-	else{
+	}else{
 		obtainDateSeparately(&task.getDeadlineDate(), date);
 		*time = task.getDeadlineTime();
 		*endTime = -1;
@@ -65,6 +67,8 @@ void OverdueLinkedList::obtainDateAndTime(Task & task, Date *date, int *time, Da
 	return;
 }
 
+//Pre-condition: Input 2 dates and a bool check to compare the 2 dates. If both dates are the same, return check as true.
+//Post-condition: Return true if the curDate is earlier than the listDate. If there is no difference, the bool check is updated as true and it returns false.
 bool OverdueLinkedList::compareDates(Date *curDate, Date *listDate, bool *check){
 		if (curDate->_year < listDate->_year){
 			return true;
@@ -78,14 +82,14 @@ bool OverdueLinkedList::compareDates(Date *curDate, Date *listDate, bool *check)
 			return true;
 		} else if (curDate->_day > listDate->_day){
 			return false;
+		}else{
+			*check = true;
+			return false;
 		}
-
-		*check = true;
-		return false;
 }
 
-//Pre-condition: input the Task reference to be added and a specific Task reference from the linked list and sort them accordingly 
-//Post-condition: returns true if the Task reference to be added is of an earlier date and time than the specific Task reference from the linked list
+//Pre-condition: Input the Task reference to be added and a specific Task reference from the linked list and sort them accordingly.
+//Post-condition: Return true if the Task reference to be added is of an earlier date and time than the specific Task reference from the linked list.
 bool OverdueLinkedList::compareDateAndTime(Task & curTask, Task & listTask){
 		Date *curDate = new Date;
 		Date *listDate = new Date;
@@ -107,8 +111,7 @@ bool OverdueLinkedList::compareDateAndTime(Task & curTask, Task & listTask){
 					condition = false;
 				}
 			}
-		}
-		else{
+		}else{
 			condition = false;
 		}
 
@@ -132,8 +135,8 @@ bool OverdueLinkedList::compareDateAndTime(Task & curTask, Task & listTask){
 		return condition;		
 }
 
-//Pre-condition: input a Task reference to check for the index which it should be inserted into the linked list, in a sorted manner
-//Post-condition: return the index where the Task is supposed to be added at
+//Pre-condition: Input a Task reference to check for the index which it should be inserted into the linked list, in a sorted manner.
+//Post-condition: Return the index where the Task is supposed to be added at.
 int OverdueLinkedList::getInsertIndex(Task & curTask){
 	ListNode *cur = _head;
 	int i = 1;
@@ -145,8 +148,7 @@ int OverdueLinkedList::getInsertIndex(Task & curTask){
 	while (cur != NULL){
 		if (compareDateAndTime(curTask, cur->item)){
 			return i;
-		} 
-		else{
+		}else{
 			cur = cur->next;
 			i++;
 		}
@@ -155,10 +157,10 @@ int OverdueLinkedList::getInsertIndex(Task & curTask){
 	return i;
 }
 
-//Pre-condition: input a Task reference to be added into the linked list 
-//Post-condition: return true if the task is added into the linked list in an sorted manner
+//Pre-condition: Input a Task reference to be added into the linked list. 
+//Post-condition: Return true if the task is added into the linked list in an sorted manner.
 bool OverdueLinkedList::insert(Task & curTask){
-	assert (curTask.getTask() != "");
+	assert (curTask.getTask() != KEYWORD_EMPTY_STRING);
 	int newSize = getSize() + 1;
 	int index = getInsertIndex(curTask);
 
@@ -174,8 +176,7 @@ bool OverdueLinkedList::insert(Task & curTask){
 		if (index == 1){
 			newTask->next = _head;
 			_head = newTask;
-		} 
-		else{
+		}else{
 			ListNode *prev = traverseTo(index-1);
 			newTask->next = prev->next;
 			prev->next = newTask;
@@ -184,8 +185,8 @@ bool OverdueLinkedList::insert(Task & curTask){
 	return true;
 }
 
-//Pre-condition: call this function to remove the first item in the linked list
-//Post-condition: head of the linked list is removed
+//Pre-condition: Call this function to remove the first item in the linked list.
+//Post-condition: Head of the linked list is removed.
 void OverdueLinkedList::remove(){
 	ListNode *cur;
 	--_size;
@@ -197,16 +198,16 @@ void OverdueLinkedList::remove(){
 	cur = NULL;
 }
 
-//Pre-condition: call this function to clear the entire linked list
-//Post-condition: entire linked list is removed
+//Pre-condition: Call this function to clear the entire linked list.
+//Post-condition: Entire linked list is removed.
 void OverdueLinkedList::clear(){
 	while (!isEmpty()){
 		remove();
 	}
 }
 
-//Pre-condition: input an empty vector to retrieve alll the items in the linked list
-//Post-condition: returns a vector containing all the items in the linked list
+//Pre-condition: Input an empty vector to retrieve alll the items in the linked list.
+//Post-condition: Return a vector containing all the items in the linked list.
 void OverdueLinkedList::updateStorageVector(std::vector<std::string> & tbOverdueVector){
 	assert (tbOverdueVector.empty());
 	ListNode *cur = _head;

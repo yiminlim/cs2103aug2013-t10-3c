@@ -13,76 +13,90 @@ private:
 	ListNode* _head;
 	int _size;
 	
-	//Returns a ListNode pointer that will traverse to the position given by the index
+	//Return a ListNode pointer that will traverse to the position given by the index.
 	ListNode* traverseTo(int index);
+
+	static const std::string KEYWORD_EMPTY_STRING;
+	static const std::string KEYWORD_BLOCKOFF;
+	static const std::string KEYWORD_ZERO;
+	static const std::string KEYWORD_SLASH;
+	static const std::string KEYWORD_DASH;
+	
+	static const char KEYWORD_NULL;
+	
+	static const int KEYNUMBER_DAY;
+	static const int KEYNUMBER_MONTH;
 	
 public:
-	//empty constructor
+	//Empty constructor
 	TaskLinkedList();
 	
-	//destructor for linked list
+	//Destructor for linked list
 	~TaskLinkedList();
 	
-	//Returns true if the linked list is empty
+	//Return true if the linked list is empty.
 	bool isEmpty();
 	
-	//Returns number of tasks in linked list
+	//Return number of tasks in linked list.
 	int getSize();
 
+	//Copy the Date from one Date to another.
 	void obtainDateSeparately(Date*, Date*);
 
-	//determine if the task has a starting date and time or deadline date and time and pass back the one with the value
+	//Determine if the task has a starting date and time or deadline date and time and pass back the one with the value and update the ending date and time accordingly.
 	void obtainDateAndTime(Task &, Date*, int*, Date*, int*);
 
+	//Compare the 2 dates and return true is one of the date is earlier than the other one. If they are the same, updated the bool value passed into the function.
 	bool compareDates(Date*, Date*, bool*);
 
-	//Returns true if the curTask is of an earlier date and time than listTask
+	//Return true if the one task is of an earlier date and time than the other task and check for clashes in the meantime.
 	bool compareDateAndTime(Task &, Task &, bool &, std::vector<std::string>&);
 
-	//Returns the index at which a Task is to be added
+	//Return the index at which a Task is to be added.
 	int getInsertIndex(Task &, bool &, std::vector<std::string>&);
 	
-	//Returns true if task is added to linked list. Check if there are any clashes.
+	//Return true if task is added to linked list. Check if there are any clashes.
 	bool insert(Task &, bool &, std::vector<std::string>&);
 
-	//Returns the index of the task to be removed
+	//Return the index of the task to be removed.
 	bool getRemoveIndex(std::string, int*);
 
-	//Split a string into a vector of keywords
+	//Split a string into a vector of keywords.
 	void splitIntoKeywords(std::string, std::vector<std::string> &);
 	
-	//check if the task is a blocked item and if it is the last task left. IF true, unblock the task
+	//Check if the task is a blocked item and if it is the last task left. If true, unblock the task.
 	void checkIfRemainingBlockTask(std::string); 
 	
-	//Returns true if task is remove from linked list, at the same time, if the deleted item is a blocked item, check if there is only one task left in that specific block. If true, unblock the last task
+	//Return true if task is remove from linked list, at the same time, if the deleted item is a blocked item, check if there is only one task left in that specific block. If true, unblock the last task.
 	bool remove(std::string, std::string);
 
-	//Convert string into lowercase
+	//Convert string into lowercase.
 	std::string toLowerCase(std::string);
 
-	//convert int to string for date
+	//Convert int to string for date.
 	std::string getStringDate(int, int, int);
 
-	//compare the range of dates and add the range into the task output format
+	//Compare the range of dates and add the range into the task output format.
 	std::string compareAndIncludeRange(std::string, int*, int*, int*, int*, int*, int*);
 
-	//convert string to int for date
+	//Convert string to int for date.
 	void getIntDate(std::string, int*, int*, int*);
 
-	//"main functoin" to call the other functions to assist in including range in dates into temptask for searching
+	//"Main function" to call the other functions to assist in including range in dates into temptask for searching.
 	std::string includeRangeOfDates(std::string);
 
-	//Pass over a vector of keywords and an empty vector of string for me to return those strings with the words in it
+	//Pass over a vector of keywords and search for task which contains all keywords and return them in the empty vector of string that is passed over.
 	bool retrieve(const std::vector<std::string>, std::vector<std::string> &);
 
-	//Copy the entire list of output format of the tasks in the linked list into the empty vector that is passed over
+	//Copy the entire list of output format of the tasks in the linked list into the empty vector that is passed over.
 	void updateStorageVector(std::vector<std::string> &);
 
-	//Set the bool block component of the string as true
+	//Set the bool block component of the string as true.
 	void setBlock(std::string);
 
+	//Compare the date with today's date and push the task into the vector passed over if it is earlier than today's date.
 	void compareWithToday(Date, Date, std::string, std::vector<std::string> &);
 
-	//Return list of overdued items
+	//Return list of overdued items.
 	void getOverdueList(Date, std::vector<std::string> &);
 };
