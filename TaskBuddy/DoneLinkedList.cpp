@@ -42,12 +42,18 @@ int DoneLinkedList::getSize(){
 //				 for empty Date, it is declared with 0
 //				 for empty time, it is declared with a value -1
 //Post-condition: the pointer indicating date and time will be updated to store either the startingDate and startingTime or the deadlineDate and deadlineTime of the respective Task. 
-void DoneLinkedList::obtainDateAndTime(Task & task, Date *date, int *time){
-	if (task.getDeadlineTime() == -1){
+void DoneLinkedList::obtainDateAndTime(Task & task, Date *date, int *time, Date *endDate, int *endTime){
+	if (task.getDeadlineDate()._day == 0){
 		date->_day = task.getStartingDate()._day;
 		date->_month = task.getStartingDate()._month;
 		date->_year = task.getStartingDate()._year;
 		*time = task.getStartingTime();
+		if (task.getEndingDate()._day != 0){
+			endDate->_day = task.getEndingDate()._day;
+			endDate->_month = task.getEndingDate()._month;
+			endDate->_year = task.getEndingDate()._year;
+			*endTime = task.getEndingTime();
+		}
 	}
 	else{
 		date->_day = task.getDeadlineDate()._day;
@@ -63,10 +69,12 @@ void DoneLinkedList::obtainDateAndTime(Task & task, Date *date, int *time){
 bool DoneLinkedList::compareDateAndTime(Task & curTask, Task & listTask){
 		Date *curDate = new Date;
 		Date *listDate = new Date;
-		int *curTime = new int, *listTime = new int;
+		Date *endListDate = new Date;
+		Date *endCurDate = new Date;
+		int *curTime = new int, *listTime = new int, *endCurTime = new int, *endListTime = new int;
 		bool condition = false;
-		obtainDateAndTime(curTask, curDate, curTime);
-		obtainDateAndTime(listTask, listDate, listTime);
+		obtainDateAndTime(curTask, curDate, curTime, endCurDate, endCurTime);
+		obtainDateAndTime(listTask, listDate, listTime, endListDate, endListTime);
 
 		if (curDate->_year < listDate->_year){
 			condition = true;
@@ -89,10 +97,29 @@ bool DoneLinkedList::compareDateAndTime(Task & curTask, Task & listTask){
 		else if (*curTime < *listTime){
 			condition = true;
 		}
+		else if (*curTime = *listTime){
+			if (endCurDate-> _year < endListDate->_year){
+				condition = true;
+			}else if(endCurDate->_year > endListDate->_year){
+				condition = false;
+			}else if(endCurDate->_month < endListDate->_month){
+				condition = true;
+			}else if(endCurDate->_month > endListDate->_month){
+				condition = false;
+			}else if(endCurDate->_day < endListDate->_day){
+				condition = true;
+			}else if(endCurDate->_day > endListDate->_day){
+				condition = false;
+			}else if(*endCurTime < *endListTime){
+				condition = true;
+			}else{
+				condition = false;
+			}
+		}
 		else{
 			condition = false;
 		}
-			
+
 		delete curDate;
 		curDate = NULL;
 		delete listDate;
@@ -101,6 +128,14 @@ bool DoneLinkedList::compareDateAndTime(Task & curTask, Task & listTask){
 		curTime = NULL;
 		delete listTime;
 		listTime = NULL;
+		delete endCurDate;
+		endCurDate = NULL;
+		delete endListDate;
+		endListDate = NULL;
+		delete endCurTime;
+		endCurTime = NULL;
+		delete endListTime;
+		endListTime = NULL;
 
 		return condition;		
 }
@@ -157,6 +192,26 @@ bool DoneLinkedList::insert(Task & curTask){
 	return true;
 }
 
+void DoneLinkedList::obtainDateAndTimeForRemoving(Task & task, Date *date, int *time){
+	if(task.getDeadlineDate()._day != 0){
+		date->_day = task.getDeadlineDate()._day;
+		date->_month = task.getDeadlineDate()._month;
+		date->_year = task.getDeadlineDate()._year;
+		*time = task.getDeadlineTime();
+	} else if(task.getStartingDate()._day != 0 && task.getEndingDate()._day==0){
+		date->_day = task.getStartingDate()._day;
+		date->_month = task.getStartingDate()._month;
+		date->_year = task.getStartingDate()._year;
+		*time = task.getStartingTime();
+	} else if(task.getStartingDate()._day != 0 && task.getEndingDate()._day!=0){
+		date->_day = task.getEndingDate()._day;
+		date->_month = task.getEndingDate()._month;
+		date->_year = task.getEndingDate()._year;
+		*time = task.getEndingTime();
+	}
+	return;
+}
+
 //Pre-condition: input a date today and compare to get the index pointing to the first task that is not overdued
 //				 does not take into consideration to
 //Post-condition: return an index pointing to the first task that is not overdued
@@ -167,7 +222,7 @@ int DoneLinkedList::getIndex(Date today){
 	int *time = new int;
 	
 	while(cur != NULL){
-		obtainDateAndTime(cur->item, date, time);
+		obtainDateAndTimeForRemoving(cur->item, date, time);
 		if(today._year > date->_year){
 			index++;
 		}else if(today._year < date->_year){
