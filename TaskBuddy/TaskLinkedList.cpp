@@ -66,22 +66,18 @@ void TaskLinkedList::obtainDateAndTime(Task & task, Date *date, int *time, Date 
 bool TaskLinkedList::compareDates(Date *curDate, Date *listDate, bool *check){
 		if (curDate->_year < listDate->_year){
 			return true;
-		} 
-		else if (curDate->_year > listDate->_year){
+		} else if (curDate->_year > listDate->_year){
 			return false;
-		} 
-		else if (curDate->_month < listDate->_month){
+		} else if (curDate->_month < listDate->_month){
 			return true;
-		}
-		else if (curDate->_month > listDate->_month){
+		} else if (curDate->_month > listDate->_month){
 			return false;
-		}
-		else if (curDate->_day < listDate->_day){
+		} else if (curDate->_day < listDate->_day){
 			return true;
-		}
-		else if (curDate->_day > listDate->_day){
+		} else if (curDate->_day > listDate->_day){
 			return false;
 		}
+
 		*check = true;
 		return false;
 }
