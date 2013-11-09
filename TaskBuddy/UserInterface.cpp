@@ -4,18 +4,20 @@ const std::string UserInterface::COMMAND_ADD = "add";
 const std::string UserInterface::COMMAND_DELETE = "delete";
 const std::string UserInterface::COMMAND_SEARCH = "search";
 const std::string UserInterface::COMMAND_EDIT = "edit";
+const std::string UserInterface::COMMAND_EDITBLOCK = "editblock";
+const std::string UserInterface::COMMAND_EDITALL = "editall";
+const std::string UserInterface::COMMAND_ADDBLOCK = "addblock";
+const std::string UserInterface::COMMAND_DELETEBLOCK = "deleteblock";
+const std::string UserInterface::COMMAND_FINALISE = "finalise";
+const std::string UserInterface::COMMAND_FINALIZE = "finalize";
+const std::string UserInterface::COMMAND_RETURN = "return";
 const std::string UserInterface::COMMAND_MARKDONE = "markdone";
 const std::string UserInterface::COMMAND_DONE = "done";
 const std::string UserInterface::COMMAND_OVERDUE = "overdue";
 const std::string UserInterface::COMMAND_CLEAROVERDUE = "clearoverdue";
-const std::string UserInterface::COMMAND_EDITBLOCK = "editblock";
-const std::string UserInterface::COMMAND_ADDBLOCK = "addblock";
-const std::string UserInterface::COMMAND_EDITALL = "editall";
-const std::string UserInterface::COMMAND_DELETEBLOCK = "deleteblock";
-const std::string UserInterface::COMMAND_FINALISE = "finalise";
-const std::string UserInterface::COMMAND_FINALIZE = "finalize";
 const std::string UserInterface::COMMAND_UNDO = "undo";
 const std::string UserInterface::COMMAND_CLEAR = "clear";
+const std::string UserInterface::COMMAND_HELP = "help";
 const std::string UserInterface::COMMAND_EXIT = "exit";
 
 const std::string UserInterface::KEYWORD_TODAY = "today";
@@ -31,13 +33,13 @@ const std::string UserInterface::MESSAGE_ADD = "Task has been added";
 const std::string UserInterface::MESSAGE_CLASH = "Task added clashes with the following task: ";
 const std::string UserInterface::MESSAGE_DELETE = "Task has been deleted";
 const std::string UserInterface::MESSAGE_EDIT = "Task has been edited";
-const std::string UserInterface::MESSAGE_MARKDONE = "Task has been marked done";
-const std::string UserInterface::MESSAGE_UNDO = "Previous command is undone";
 const std::string UserInterface::MESSAGE_AVAILABLE_BLOCKS = "Available Blocks: ";
 const std::string UserInterface::MESSAGE_ADDBLOCK = "All blocking of dates are successful";
 const std::string UserInterface::MESSAGE_EDITALL = "Tasks' action and location in the all blocked slots have been edited";
 const std::string UserInterface::MESSAGE_DELETEBLOCK = "Requested blocked slot has been deleted";
 const std::string UserInterface::MESSAGE_FINALISE = "Time and date of the task has been finalised";
+const std::string UserInterface::MESSAGE_MARKDONE = "Task has been marked done";
+const std::string UserInterface::MESSAGE_UNDO = "Previous command is undone";
 const std::string UserInterface::MESSAGE_EXIT = "Thank you for using Task Buddy!";
 
 const std::string UserInterface::ERROR_NO_TASK_TODAY = "No task due today!";
@@ -80,6 +82,7 @@ void UserInterface::initUI(){
 	tbLogic.initLogic();
 	tbLogic.saveOverdue();
 	displayWelcomeMessage();
+	std::cout << std::endl;
 	displayTodayTask();	
 	return;
 }
@@ -90,10 +93,9 @@ void UserInterface::commandUI(){
 	char space;
 	bool contProgram = true;
 	bool isClash;
-	std::string currentCommand, previousCommand = KEYWORD_EMPTY_STRING;
-	std::vector<std::string> display;
-	std::vector<std::string> doneList;
-	std::vector<std::string> overdueList;
+	std::string currentCommand;
+	std::vector<std::string> searchTaskList;
+	std::vector<std::string> searchOtherTaskList;
 	std::vector<std::string> clashVector;
 	
 	do{
@@ -104,7 +106,7 @@ void UserInterface::commandUI(){
 			isClash = false;
 
 			if ((currentCommand == COMMAND_DELETE || currentCommand == COMMAND_EDIT || currentCommand == COMMAND_MARKDONE || currentCommand == COMMAND_EDITBLOCK) &&
-				(previousCommand != COMMAND_SEARCH)){
+				(searchTaskList.size() == 0)){
 					std::cin.clear();
 					std::cin.ignore(INT_MAX, '\n');
 					throw std::runtime_error(ERROR_SEARCH_BEFORE);
@@ -125,13 +127,13 @@ void UserInterface::commandUI(){
 				else{
 					displayFailMessage(currentCommand);
 				}
-				display.clear();
+				searchTaskList.clear();
 				clashVector.clear();
 			}
 			else if (currentCommand == COMMAND_SEARCH){
-				display.clear();
-				if (tbLogic.generalSearch(readTask(currentCommand, KEYWORD_EMPTY_STRING), display)){
-					displayInformationInVector(display);
+				searchTaskList.clear();
+				if (tbLogic.generalSearch(readTask(currentCommand, KEYWORD_EMPTY_STRING), searchTaskList)){
+					displayInformationInVector(searchTaskList);
 				}
 				else{
 					displayFailMessage(currentCommand);
@@ -140,10 +142,10 @@ void UserInterface::commandUI(){
 			else if (currentCommand == COMMAND_DELETE){
 				std::stringstream ss(readTask(currentCommand, KEYWORD_EMPTY_STRING));
 				while (!ss.eof() && ss >> option){
-					if (option > display.size()){
+					if (option > searchTaskList.size()){
 						throw std::runtime_error(ERROR_OUT_OF_VECTOR_RANGE);
 					}
-					else if (tbLogic.del(display[option-1], false)){
+					else if (tbLogic.del(searchTaskList[option-1], false)){
 						tbLogic.save();
 						displayMessage(currentCommand);			
 					}
@@ -151,14 +153,14 @@ void UserInterface::commandUI(){
 						displayFailMessage(currentCommand);
 					}
 				}
-				display.clear();
+				searchTaskList.clear();
 			}
 			else if (currentCommand == COMMAND_EDIT){
 				std::cin >> option;
-				if (option > display.size()){
+				if (option > searchTaskList.size()){
 					throw std::runtime_error(ERROR_OUT_OF_VECTOR_RANGE);
 				}
-				else if (tbLogic.edit(display[option-1], readTask(COMMAND_EDIT, KEYWORD_EMPTY_STRING), isClash, clashVector)){
+				else if (tbLogic.edit(searchTaskList[option-1], readTask(COMMAND_EDIT, KEYWORD_EMPTY_STRING), isClash, clashVector)){
 					displayMessage(currentCommand);
 					if (isClash){
 						std::cout << MESSAGE_CLASH << std::endl;
@@ -169,16 +171,28 @@ void UserInterface::commandUI(){
 				else{
 					displayFailMessage(currentCommand);
 				}
-				display.clear();
+				searchTaskList.clear();
 				clashVector.clear();
+			}
+			else if (currentCommand == COMMAND_EDITBLOCK){
+				std::cin >> option;
+				
+				if (option > searchTaskList.size()){
+					throw std::runtime_error(ERROR_OUT_OF_VECTOR_RANGE);
+				}
+				
+				system("CLS");
+				editBlockUI(searchTaskList[option-1]);
+				searchTaskList.clear();
+				displayWelcomeMessage();
 			}
 			else if (currentCommand == COMMAND_MARKDONE){
 				std::stringstream ss(readTask(currentCommand, KEYWORD_EMPTY_STRING));
 				while (!ss.eof() && ss >> option){
-					if (option > display.size()){
+					if (option > searchTaskList.size()){
 						throw std::runtime_error(ERROR_OUT_OF_VECTOR_RANGE);
 					}
-					else if (tbLogic.markDone(display[option-1])){
+					else if (tbLogic.markDone(searchTaskList[option-1])){
 						tbLogic.save();
 						tbLogic.saveDone();
 						displayMessage(currentCommand);
@@ -187,43 +201,31 @@ void UserInterface::commandUI(){
 						displayFailMessage(currentCommand);
 					}
 				}
-				display.clear();
+				searchTaskList.clear();
 			}
 			else if (currentCommand == COMMAND_DONE){
-				if (tbLogic.retrieveDoneList(doneList)){
-					displayInformationInVector(doneList);
+				if (tbLogic.retrieveDoneList(searchOtherTaskList)){
+					displayInformationInVector(searchOtherTaskList);
 				}
 				else{
 					displayFailMessage(currentCommand);
 				}
-				doneList.clear();
+				searchOtherTaskList.clear();
 			}
 			else if (currentCommand == COMMAND_OVERDUE){
-				if (tbLogic.retrieveOverdueList(overdueList)){
-					displayInformationInVector(overdueList);
+				if (tbLogic.retrieveOverdueList(searchOtherTaskList)){
+					displayInformationInVector(searchOtherTaskList);
 				}
 				else{
 					displayFailMessage(currentCommand);
 				}
-				overdueList.clear();
-				
+				searchOtherTaskList.clear();				
 			}
 			else if (currentCommand == COMMAND_CLEAROVERDUE){
 				tbLogic.clearOverdueList();
 				tbLogic.saveOverdue();
 			}
-			else if (currentCommand == COMMAND_EDITBLOCK){
-				std::cin >> option;
-				
-				if (option > display.size()){
-					throw std::runtime_error(ERROR_OUT_OF_VECTOR_RANGE);
-				}
-				
-				system("CLS");
-				editBlockUI(display[option-1]);
-				display.clear();
-				displayWelcomeMessage();
-			}
+		
 			else if (currentCommand == COMMAND_UNDO){
 				if (tbLogic.undo()){
 					tbLogic.save();
@@ -233,11 +235,14 @@ void UserInterface::commandUI(){
 				else{
 					displayFailMessage(currentCommand);
 				}
-				display.clear();
+				searchTaskList.clear();
 			}
 			else if (currentCommand == COMMAND_CLEAR){
 				system("CLS");
-				display.clear();
+				searchTaskList.clear();
+			}
+			else if (currentCommand == COMMAND_HELP){
+				displayHelpCommandUI();
 			}
 			else if (currentCommand == COMMAND_EXIT){
 				displayMessage(currentCommand);
@@ -250,8 +255,6 @@ void UserInterface::commandUI(){
 		catch (std::runtime_error &error){
 			std::cout << error.what() << std::endl;
 		}
-
-		previousCommand = currentCommand;
 
 		if (currentCommand != COMMAND_CLEAR){
 			std::cout << std::endl;
@@ -282,23 +285,125 @@ std::string UserInterface::readTask(const std::string command, const std::string
 	return task;
 }
 
+//To display sub-menu for editing of block off dates of a certain task
+void UserInterface::editBlockUI(const std::string stringToEditBlock){
+	char space;
+	unsigned int option;
+	bool isClash = false;
+	bool contEditBlock = true;
+	std::string command;
+	std::string taskString;
+	std::string taskActionLocation;
+	std::string originalTaskString = stringToEditBlock;
+	std::vector<std::string> blockTaskVector;
+	std::vector<std::string> clashVector;
+
+	if (tbLogic.getBlock(originalTaskString, taskActionLocation, blockTaskVector)){
+		std::cout << MESSAGE_AVAILABLE_BLOCKS << std::endl;
+		displayInformationInVector(blockTaskVector);
+		std::cout << std::endl;
+	}
+
+	do{
+		try{
+			std::cout << MESSAGE_COMMAND;
+			std::cin >> command;
+			space = getchar();
+
+			if (command == COMMAND_ADD){
+				command = COMMAND_ADDBLOCK;
+				if (tbLogic.addBlock(readTask(command, taskActionLocation), originalTaskString, isClash, clashVector)){
+					tbLogic.save();
+					displayMessage(command);
+					if (isClash){
+						std::cout << MESSAGE_CLASH << std::endl;
+						displayInformationInVector(clashVector);
+					}					
+					clashVector.clear();
+					contEditBlock = false;
+				}
+				else{
+					displayFailMessage(command);
+				}
+			}
+			else if (command == COMMAND_EDITALL){
+				if (tbLogic.editBlock(readTask(command, KEYWORD_EMPTY_STRING), blockTaskVector)){
+					tbLogic.save();
+					displayMessage(command);
+					contEditBlock = false;
+				}		
+				else{
+					displayFailMessage(command);
+				}
+			}
+			else if (command == COMMAND_DELETE){
+				command = COMMAND_DELETEBLOCK;
+				std::stringstream ss(readTask(command, KEYWORD_EMPTY_STRING));
+				while (!ss.eof() && ss >> option){
+					if (option > blockTaskVector.size()){
+						throw std::runtime_error(ERROR_OUT_OF_VECTOR_RANGE);
+					}
+					else if (tbLogic.del(blockTaskVector[option-1], false)){
+						tbLogic.save();
+						displayMessage(command);
+						contEditBlock = false;
+					}
+					else{
+						displayFailMessage(command);
+					}
+				}
+			}
+			else if (command == COMMAND_FINALISE || command == COMMAND_FINALIZE){
+				std::cin >> option;
+				if (option > blockTaskVector.size()){
+						throw std::runtime_error(ERROR_OUT_OF_VECTOR_RANGE);
+				}
+				else if (tbLogic.finaliseBlock(option, blockTaskVector)){
+					tbLogic.save();
+					displayMessage(command);
+					contEditBlock = false;
+				}
+				else{
+					displayFailMessage(command);
+				}
+			}
+			else if (command == COMMAND_HELP){
+				displayHelpEditBlockUI();
+			}
+			else if (command == COMMAND_RETURN){
+				contEditBlock = false;
+			}
+			else{
+				throw std::runtime_error(ERROR_INVALID_COMMAND);
+			}
+		}
+		catch (std::runtime_error &error){
+			std::cout << error.what() << std::endl;
+		}
+		std::cout << std::endl;
+	} while (contEditBlock);
+	
+	system("PAUSE");
+	system("CLS");
+}
+
 //To display welcome message after the program is initialised
 void UserInterface::displayWelcomeMessage(){
-	std::cout << "=============================================================================================================" << std::endl
-			  << "=                                                                                                           =" << std::endl
-		      << "=                            ==========       ==         =======    ==    ==                                =" << std::endl
-			  << "=                                ==         ==  ==       ==         ==  ==                                  =" << std::endl
-			  << "=                                ==        ========      =======    ====                                    =" << std::endl
-			  << "=                                ==       ==      ==          ==    ==  ==                                  =" << std::endl
-			  << "=                                ==      ==        ==    =======    ==    ==                                =" << std::endl
-			  << "=                                                                                                           =" << std::endl
-			  << "=                         ======     ==     ==     =====       =====      ==    ==                          =" << std::endl
-			  << "=                         ==   ==    ==     ==     ==   ==     ==   ==     ==  ==                           =" << std::endl
-			  << "=                         ======     ==     ==     ==    ==    ==    ==     ====                            =" << std::endl
-			  << "=                         ==   ==    ==     ==     ==   ==     ==   ==       ==                             =" << std::endl
-			  << "=                         ======       =====       =====       =====         ==                             =" << std::endl
-			  << "=                                                                                                           =" << std::endl
-			  << "=============================================================================================================" << std::endl;
+	std::cout << "@===========================================================================================================@" << std::endl
+			  << "(                                                                                                           )" << std::endl
+		      << " )                           **********       **         *******    **    **                               ( " << std::endl
+			  << "(                                **         **  **       **         **  **                                  )" << std::endl
+			  << " )                               **        ********      *******    ****                                   ( " << std::endl
+			  << "(                                **       **      **          **    **  **                                  )" << std::endl
+			  << " )                               **      **        **    *******    **    **                               ( " << std::endl
+			  << "(                                                                                                           )" << std::endl
+			  << " )                        ******     **     **     *****       *****      **    **                         ( " << std::endl
+			  << "(                         **   **    **     **     **   **     **   **     **  **                           )" << std::endl
+			  << " )                        ******     **     **     **    **    **    **     ****                           ( " << std::endl
+			  << "(                         **   **    **     **     **   **     **   **       **                             )" << std::endl
+			  << " )                        ******       *****       *****       *****         **                            ( " << std::endl
+			  << "(                                                                                                           )" << std::endl
+			  << "@===========================================================================================================@" << std::endl;
 }
 
 //To display the tasks to be done for that day
@@ -322,87 +427,6 @@ void UserInterface::displayTodayTask(){
 		std::cout << error.what() << std::endl;
 	}
 	std::cout << std::endl;
-}
-
-//To display sub-menu for editing of block off dates of a certain task
-void UserInterface::editBlockUI(const std::string stringToEditBlock){
-	char space;
-	int option;
-	bool isClash = false;
-	std::string command;
-	std::string taskString;
-	std::string taskActionLocation;
-	std::string originalTaskString = stringToEditBlock;
-	std::vector<std::string> blockTaskVector;
-	std::vector<std::string> clashVector;
-
-	if (tbLogic.getBlock(originalTaskString, taskActionLocation, blockTaskVector)){
-		std::cout << MESSAGE_AVAILABLE_BLOCKS << std::endl;
-		displayInformationInVector(blockTaskVector);
-		std::cout << std::endl;
-	}
-
-	std::cout << MESSAGE_COMMAND;
-	std::cin >> command;
-	space = getchar();
-	
-	try{
-		if (command == COMMAND_ADD){
-			command = COMMAND_ADDBLOCK;
-			if (tbLogic.addBlock(readTask(command, taskActionLocation), originalTaskString, isClash, clashVector)){
-				displayMessage(command);
-				if (isClash){
-					std::cout << MESSAGE_CLASH << std::endl;
-					displayInformationInVector(clashVector);
-				}
-				tbLogic.save();
-				clashVector.clear();
-			}
-			else{
-				displayFailMessage(command);
-			}
-		}
-		else if (command == COMMAND_EDITALL){
-			if (tbLogic.editBlock(readTask(command, KEYWORD_EMPTY_STRING), blockTaskVector)){
-				tbLogic.save();
-				displayMessage(command);
-			}		
-			else{
-				displayFailMessage(command);
-			}
-		}
-		else if (command == COMMAND_DELETE){
-			command = COMMAND_DELETEBLOCK;
-			std::stringstream ss(readTask(command, KEYWORD_EMPTY_STRING));
-			while (!ss.eof() && ss >> option){
-				if (tbLogic.del(blockTaskVector[option-1], false)){
-					tbLogic.save();
-					displayMessage(command);			
-				}
-				else{
-					displayFailMessage(command);
-				}
-			}
-		}
-		else if (command == COMMAND_FINALISE || command == COMMAND_FINALIZE){
-			std::cin >> option;
-			if (tbLogic.finaliseBlock(option, blockTaskVector)){
-				tbLogic.save();
-				displayMessage(command);
-			}
-			else{
-				displayFailMessage(command);
-			}
-		}
-		else{
-			throw std::runtime_error(ERROR_INVALID_COMMAND);
-		}
-	}
-	catch (std::runtime_error &error){
-		std::cout << error.what() << std::endl;
-	}
-	system("PAUSE");
-	system("CLS");
 }
 
 //To display all information in a vector
@@ -488,4 +512,79 @@ void UserInterface::displayFailMessage(const std::string command){
 	else if (command == COMMAND_FINALISE || command == COMMAND_FINALIZE){
 		std::cout << MESSAGE_INVALID_FINALISE << std::endl;
 	}
+}
+
+//To display the help message for commandUI
+void UserInterface::displayHelpCommandUI(){
+	std::cout << "@-----------------------------------------------------------------------------------------------------------@" << std::endl
+       		  << "|To add(timed tasks): add \"action\" at \"location\" from dd/mm/yyyy hhmm to dd/mm/yyyy hhmm                      |" << std::endl
+			  << "|Example: add swimming at school from 20/11/2013 0900 to 20/11/2013 1000                                     " <<std::endl
+			  << "|                                                                                                           |" << std::endl
+			  << "|To add(deadline tasks): add \"action\" at \"location\" by dd/mm/yyyy hhmm                                      |" << std::endl
+			  << "|Example: add do homework at home by 20/11/2013 2000                                                        |" << std::endl
+			  << "|                                                                                                           |" << std::endl
+			  << "|To add(floating tasks): add \"action\" at \"location\"                                                         |" << std::endl
+			  << "|Example: add play computer game at home                                                                    |" << std::endl
+			  << "|                                                                                                           |" << std::endl
+			  << "|To add(block off time slots): add \"action\" at \"location\" blockoff [press ENTER]                            |" << std::endl
+			  << "|                            : from dd/mm/yyyy hhmm to dd/mm/yyyy hhmm [press ENTER]                        |" << std::endl
+			  << "|                            : by dd/mm/yyyy hhmm [press ENTER]                                             |" << std::endl
+			  << "|                            : end                                                                          |" << std::endl
+			  << "|Example: add swimming at school blockoff                                                                   |" << std::endl
+			  << "|       : from 20/11/2013 1100 to 20/11/2013 1200                                                           |" << std::endl
+			  << "|       : by 21/11/2013 1000                                                                                |" << std::endl
+			  << "|       : end                                                                                               |" << std::endl
+			  << "|                                                                                                           |" << std::endl
+			  << "|To search for task: search \"keyword\"                                                                       |" << std::endl
+			  << "|Example: search home                                                                                       |" << std::endl
+			  << "|                                                                                                           |" << std::endl
+			  << "|To delete a task: delete \"option\"                                                                          |" << std::endl
+			  << "|Example: delete 1                                                                                          |" << std::endl
+			  << "|                                                                                                           |" << std::endl
+			  << "|To edit a task: edit \"option\" \"changes in task\"                                                            |" << std::endl
+			  << "|Example: edit 1 running at school                                                                          |" << std::endl
+			  << "|                                                                                                           |" << std::endl
+			  << "|To edit tasks with block off timings: editblock \"option\"                                                   |" <<std::endl
+			  << "|Example: editblock 1                                                                                       |" << std::endl
+			  << "|                                                                                                           |" << std::endl
+			  << "|To mark done a task: markdone \"option\"                                                                     |" << std::endl
+			  << "|Example: markdone 1                                                                                        |" << std::endl
+			  << "|                                                                                                           |" << std::endl
+			  << "|To see completed tasks: done                                                                               |" << std::endl
+			  << "|                                                                                                           |" << std::endl
+			  << "|To see overdue tasks: overdue                                                                              |" << std::endl
+			  << "|                                                                                                           |" << std::endl
+			  << "|To clear overdue tasks list: clearoverdue                                                                  |" << std::endl
+			  << "|                                                                                                           |" << std::endl
+			  << "|To undo previous command: undo                                                                             |" << std::endl
+			  << "|                                                                                                           |" << std::endl
+			  << "|To clear display screen: clear                                                                             |" << std::endl
+			  << "|                                                                                                           |" << std::endl
+			  << "|To exit program: exit                                                                                      |" << std::endl
+			  << "@-----------------------------------------------------------------------------------------------------------@" << std::endl;
+}
+
+//To display the help message for editBlockUI
+void UserInterface::displayHelpEditBlockUI(){
+	std::cout << "@-----------------------------------------------------------------------------------------------------------@" << std::endl
+			  << "|To add: add blockoff [press ENTER]                                                                         |" << std::endl
+			  << "|      : from dd/mm/yyyy hhmm to dd/mm/yyyy hhmm [press ENTER]                                              |" << std::endl
+			  << "|      : by dd/mm/yyyy hhmm                                                                                 |" << std::endl
+			  << "|      : end                                                                                                |" << std::endl
+		   	  << "|Example: add blockoff                                                                                      |" << std::endl
+			  << "|       : from 20/11/2013 1100 to 20/11/2013 1200                                                           |" << std::endl
+			  << "|       : by 21/11/2013 1000                                                                                |" << std::endl
+			  << "|       : end                                                                                               |" << std::endl
+			  << "|                                                                                                           |" << std::endl
+			  << "|To edit action and location of all block off: editall \"action\" at \"location\"                             |" << std::endl
+			  << "|Example: editall running at school                                                                         |" << std::endl
+			  << "|                                                                                                           |" << std::endl
+			  << "|To delete: delete \"option\"                                                                                 |" << std::endl
+			  << "|Example: delete 1                                                                                          |" << std::endl
+			  << "|                                                                                                           |" << std::endl
+			  << "|To finalise time slot for task: finalise \"option\"                                                          |" << std::endl
+			  << "|Example: finalise 1 (option 1 is the time slot that user wants)                                            |" << std::endl
+			  << "|                                                                                                           |" << std::endl
+			  << "|To return to main menu: return                                                                             |" << std::endl
+			  << "@-----------------------------------------------------------------------------------------------------------@" << std::endl;
 }
