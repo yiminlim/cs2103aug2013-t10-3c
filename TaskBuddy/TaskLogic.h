@@ -76,7 +76,11 @@ public:
 //-----SEARCH TASK-------------------------------------------------------------------------------------------
 
 	//return all tasks in the list that contains keyword and copy these tasks into vector parameter
-	bool generalSearch(std::string, std::vector<std::string> &);
+	void generalSearch(std::string, std::vector<std::string> &, std::vector<std::string> &);
+
+	std::vector<std::string> processSearchOutputVector(std::vector<std::string>, std::vector<std::string> & );
+
+	std::vector<Date> getSearchOutputDateVector(std::vector<std::string> );
 	
 //-----EDIT TASK---------------------------------------------------------------------------------------------
 
@@ -120,9 +124,15 @@ public:
 	
 	bool isSingleDigit(int);
 
+	std::string convertToDateString(Date);
+
 	std::string getActionLocation(std::string);
 
 	bool checkUndoStackEmpty();
+
+	void checkValidTask(Task);
+
+	bool checkSameDate(Date, Date);
 
 //-----MARK DONE------------------------------------------------------------------------------------------------
 	bool markDone(std::string taskString); 
