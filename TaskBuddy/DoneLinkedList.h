@@ -44,7 +44,7 @@ public:
 	void obtainDateAndTimeForRemoving(Task &, Date*, int*);
 
 	//Return the nidex of the first task that is not overdued
-	int getIndex(Date);
+	std::vector <int> getIndex(Date);
 
 	//remove the task pointed to by the index
 	void remove(int);

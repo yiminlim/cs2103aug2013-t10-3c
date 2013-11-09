@@ -215,30 +215,28 @@ void DoneLinkedList::obtainDateAndTimeForRemoving(Task & task, Date *date, int *
 //Pre-condition: input a date today and compare to get the index pointing to the first task that is not overdued
 //				 does not take into consideration to
 //Post-condition: return an index pointing to the first task that is not overdued
-int DoneLinkedList::getIndex(Date today){
+std::vector<int> DoneLinkedList::getIndex(Date today){
 	ListNode *cur = _head;
-	int index=1; 
+	std::vector <int> index; 
+	int i = 1;
 	Date *date = new Date;
 	int *time = new int;
 	
 	while(cur != NULL){
 		obtainDateAndTimeForRemoving(cur->item, date, time);
 		if(today._year > date->_year){
-			index++;
+			index.push_back(i);
 		}else if(today._year < date->_year){
-			return index;
 		}else if(today._month > date->_month){
-			index++;
+			index.push_back(i);
 		}else if(today._month < date->_month){
-			return index;
 		}else if(today._day > date->_day){
-			index++;
+			index.push_back(i);
 		}else if(today._day < date->_day){
-			return index;
 		}else{
-			return index;
 		}
 		cur = cur->next;
+		i++;
 	}
 
 	delete cur;
@@ -292,10 +290,10 @@ bool DoneLinkedList::removeTask(std::string task){
 //post-condition: linked list do not contain any overdued done items in terms of date wise (not timewise)
 void DoneLinkedList::update(Date today){
 	assert (today._day != 0 && today._month != 0 && today._year != 0);
-	int index = getIndex(today);
+	std::vector <int> index = getIndex(today);
 
-	for(int i=1; i<index; i++){
-		remove(1);
+	for(int i=index.size(); i>0; i--){
+		remove(index[i-1]);
 	}
 }
 
