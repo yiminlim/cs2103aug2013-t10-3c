@@ -557,7 +557,6 @@ void TaskLinkedList::getOverdueList(Date today, std::vector<std::string> & overd
 				}
 			}
 			else if(cur->item.getStartingDate()._year > today._year){
-				return;
 			}
 			else if(cur->item.getStartingDate()._month < today._month){
 				if (cur->item.getStartingDate()._month!=0){
@@ -565,7 +564,6 @@ void TaskLinkedList::getOverdueList(Date today, std::vector<std::string> & overd
 				}
 			}
 			else if(cur->item.getStartingDate()._month > today._month){
-				return;
 			}
 			else if(cur->item.getStartingDate()._day < today._day){
 				if (cur->item.getStartingDate()._day!=0){
@@ -573,7 +571,6 @@ void TaskLinkedList::getOverdueList(Date today, std::vector<std::string> & overd
 				}
 			}
 			else if(cur->item.getStartingDate()._day >= today._day){
-				return;
 			}
 		}
 
@@ -584,7 +581,6 @@ void TaskLinkedList::getOverdueList(Date today, std::vector<std::string> & overd
 				}
 			}
 			else if(cur->item.getEndingDate()._year > today._year){
-				return;
 			}
 			else if(cur->item.getEndingDate()._month < today._month){
 				if (cur->item.getEndingDate()._month!=0){
@@ -592,7 +588,6 @@ void TaskLinkedList::getOverdueList(Date today, std::vector<std::string> & overd
 				}
 			}
 			else if(cur->item.getEndingDate()._month > today._month){
-				return;
 			}
 			else if(cur->item.getEndingDate()._day < today._day){
 				if (cur->item.getEndingDate()._day!=0){
@@ -600,7 +595,6 @@ void TaskLinkedList::getOverdueList(Date today, std::vector<std::string> & overd
 				}
 			}
 			else if(cur->item.getEndingDate()._day >= today._day){
-				return;
 			}
 		}
 
@@ -611,7 +605,6 @@ void TaskLinkedList::getOverdueList(Date today, std::vector<std::string> & overd
 				}
 			}
 			else if(cur->item.getDeadlineDate()._year > today._year){
-				return;
 			}
 			else if(cur->item.getDeadlineDate()._month < today._month){
 				if (cur->item.getDeadlineDate()._month!=0){
@@ -619,7 +612,6 @@ void TaskLinkedList::getOverdueList(Date today, std::vector<std::string> & overd
 				}
 			}
 			else if(cur->item.getDeadlineDate()._month > today._month){
-				return;
 			}
 			else if(cur->item.getDeadlineDate()._day < today._day){
 				if (cur->item.getDeadlineDate()._day!=0){
@@ -627,7 +619,6 @@ void TaskLinkedList::getOverdueList(Date today, std::vector<std::string> & overd
 				}
 			}
 			else if(cur->item.getDeadlineDate()._day >= today._day){
-				return;
 			}
 		}
 
