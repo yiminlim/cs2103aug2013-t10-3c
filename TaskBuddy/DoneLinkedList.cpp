@@ -6,12 +6,12 @@ DoneLinkedList::DoneLinkedList(){
 	_size = 0;
 }
 	
-//destructor for linked list
+//Destructor for linked list
 DoneLinkedList::~DoneLinkedList(){
 }
 
-//Pre-condition: input an index between the range of 1 and the size of the linked list (including)
-//Post-condition: returns a ListNode pointer that will traverse to the position given by the index
+//Pre-condition: Input an index between the range of 1 and the size of the linked list (including).
+//Post-condition: Return a ListNode pointer that will traverse to the position given by the index.
 DoneLinkedList::ListNode* DoneLinkedList::traverseTo(int index){
 	if ( (index < 1) || (index > getSize()) ){
 		return NULL;
@@ -26,28 +26,31 @@ DoneLinkedList::ListNode* DoneLinkedList::traverseTo(int index){
 	}
 }
 	
-//Pre-condition: check if linked list is empty
-//Post-condition: return true if the linked list is empty
+//Pre-condition: Check if linked list is empty.
+//Post-condition: Return true if the linked list is empty.
 bool DoneLinkedList::isEmpty(){
 	return _size==0;
 }
 	
-//Pre-condition: check for the size of the linked list
-//Post-condition: return the number of tasks in the linked list
+//Pre-condition: Check for the size of the linked list.
+//Post-condition: Return the number of tasks in the linked list.
 int DoneLinkedList::getSize(){
 	return _size;
 }
 
+//Pre-condition: Input a Date input and an empty Date date and copy the input into the date.
+//Post-condition: The date now contains the same values as the input.
 void DoneLinkedList::obtainDateSeparately(Date *inputDate, Date *date){
 	date->_day = inputDate->_day;
 	date->_month = inputDate->_month;
 	date->_year = inputDate->_year;
 }
 
-//Pre-condition: input in a Task reference and two pointers indicating date and time 
-//				 for empty Date, it is declared with 0
-//				 for empty time, it is declared with a value -1
-//Post-condition: the pointer indicating date and time will be updated to store either the startingDate and startingTime or the deadlineDate and deadlineTime of the respective Task. 
+//Pre-condition: Input in a Task reference and fours pointers indicating date and time and ending date and time.
+//				 For empty time, it is declared with a value -1.
+//				 For empty Date, it is declared as 0.
+//Post-condition: The pointer indicating date and time will be updated to store either the startingDate and startingTime or the deadlineDate and deadlineTime of the respective Task. 
+//				  The pointer indicating endDate and endTime will be updated to store the endingDate and endingDate if it has one. Else, store them as 0 and -1.
 void DoneLinkedList::obtainDateAndTime(Task & task, Date *date, int *time, Date *endDate, int *endTime){
 	if (task.getDeadlineDate()._day == 0){
 		obtainDateSeparately(&task.getStartingDate(), date);
@@ -65,6 +68,8 @@ void DoneLinkedList::obtainDateAndTime(Task & task, Date *date, int *time, Date 
 	return;
 }
 
+//Pre-condition: Input 2 dates and a bool check to compare the 2 dates. If both dates are the same, return check as true.
+//Post-condition: Return true if the curDate is earlier than the listDate. If there is no difference, the bool check is updated as true and it returns false.
 bool DoneLinkedList::compareDates(Date *curDate, Date *listDate, bool *check){
 		if (curDate->_year < listDate->_year){
 			return true;
@@ -84,8 +89,8 @@ bool DoneLinkedList::compareDates(Date *curDate, Date *listDate, bool *check){
 		return false;
 }
 
-//Pre-condition: input the Task reference to be added and a specific Task reference from the linked list and sort them accordingly 
-//Post-condition: returns true if the Task reference to be added is of an earlier date and time than the specific Task reference from the linked list
+//Pre-condition: Input the Task reference to be added and a specific Task reference from the linked list and sort them accordingly.
+//Post-condition: Return true if the Task reference to be added is of an earlier date and time than the specific Task reference from the linked list.
 bool DoneLinkedList::compareDateAndTime(Task & curTask, Task & listTask){
 		Date *curDate = new Date;
 		Date *listDate = new Date;
@@ -137,8 +142,8 @@ bool DoneLinkedList::compareDateAndTime(Task & curTask, Task & listTask){
 		return condition;		
 }
 
-//Pre-condition: input a Task reference to check for the index which it should be inserted into the linked list, in a sorted manner
-//Post-condition: return the index where the Task is supposed to be added at
+//Pre-condition: Input a Task reference to check for the index which it should be inserted into the linked list, in a sorted manner.
+//Post-condition: Return the index where the Task is supposed to be added at.
 int DoneLinkedList::getInsertIndex(Task & curTask){
 	ListNode *cur = _head;
 	int i = 1;
@@ -160,8 +165,8 @@ int DoneLinkedList::getInsertIndex(Task & curTask){
 	return i;
 }
 
-//Pre-condition: input a Task reference to be added into the linked list 
-//Post-condition: return true if the task is added into the linked list in an sorted manner
+//Pre-condition: Input a Task reference to be added into the linked list.
+//Post-condition: Return true if the task is added into the linked list in an sorted manner.
 bool DoneLinkedList::insert(Task & curTask){
 	assert (curTask.getTask() != "");
 	int newSize = getSize() + 1;
@@ -189,6 +194,8 @@ bool DoneLinkedList::insert(Task & curTask){
 	return true;
 }
 
+//Pre-condition: Input a task and obtain the necessary date (starting, ending or deadline) and update accordingly.
+//Post-condition: The required date is obtained and updated accordingly.
 void DoneLinkedList::obtainDateAndTimeForRemoving(Task & task, Date *date, int *time){
 	if(task.getDeadlineDate()._day != 0){
 		obtainDateSeparately(&task.getDeadlineDate(), date);
@@ -203,9 +210,8 @@ void DoneLinkedList::obtainDateAndTimeForRemoving(Task & task, Date *date, int *
 	return;
 }
 
-//Pre-condition: input a date today and compare to get the index pointing to the first task that is not overdued
-//				 does not take into consideration to
-//Post-condition: return an index pointing to the first task that is not overdued
+//Pre-condition: Input a date today and compare with the dates in the linked list and for dates which are earlier than today, the index of the task is pushed into the vector.
+//Post-condition: Return a vector of index that contains tasks with dates that are earlier than today.
 std::vector<int> DoneLinkedList::getIndex(Date today){
 	ListNode *cur = _head;
 	std::vector <int> index; 
@@ -239,8 +245,8 @@ std::vector<int> DoneLinkedList::getIndex(Date today){
 	return index;
 }
 
-//pre-condition: input an index and remove the task from the linked list which the index points to
-//post-condition: task pointed by the index is deleted
+//Pre-condition: Input an index and remove the task from the linked list which the index points to.
+//Post-condition: Task pointed by the index is deleted.
 void DoneLinkedList::remove(int index){
 	assert (index > 0 && index < getSize()+1);
 	ListNode *cur;
@@ -259,6 +265,8 @@ void DoneLinkedList::remove(int index){
 	cur = NULL;
 }
 
+//Pre-condition: Input a Task reference to be deleted from the linked list. 
+//Post-condition: Return true if the task is deleted from the linked list.
 bool DoneLinkedList::removeTask(std::string task){
 	ListNode *cur = _head;
 	int index = 1;
@@ -276,8 +284,8 @@ bool DoneLinkedList::removeTask(std::string task){
 	return false;
 }
 
-//pre-condition: input a Date today that stores day, month and year individully as integers and update the linked list such that tasks before this date are all removed
-//post-condition: linked list do not contain any overdued done items in terms of date wise (not timewise)
+//Pre-condition: Input a Date today that stores day, month and year individully as integers and update the linked list such that tasks before this date are all removed.
+//Post-condition: Linked list do not contain any overdued done items in terms of date wise (not timewise).
 void DoneLinkedList::update(Date today){
 	assert (today._day != 0 && today._month != 0 && today._year != 0);
 	std::vector <int> index = getIndex(today);
@@ -287,8 +295,8 @@ void DoneLinkedList::update(Date today){
 	}
 }
 
-//pre-condition: input an empty vector and copy all the output format of the tasks in the linked list into this vector
-//post-condition: the entire output format of the tasks in the linked list is copied over into the vector
+//Pre-condition: Input an empty vector and copy all the output format of the tasks in the linked list into this vector.
+//Post-condition: The entire output format of the tasks in the linked list is copied over into the vector.
 void DoneLinkedList::updateStorageVector(std::vector<std::string> & tbDoneVector){
 	assert (tbDoneVector.empty());
 	ListNode *cur = _head;
