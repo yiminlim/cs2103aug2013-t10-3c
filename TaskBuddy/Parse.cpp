@@ -188,7 +188,7 @@ void Parse::processTaskStringFromUI(std::string taskString, std::string & action
 			}
 		}
 	}
-	catch (std::runtime_error &error) {
+	catch (...) {
 		throw;
 	}
 		
@@ -381,7 +381,7 @@ Date Parse::convertToDate(std::string dateString){
 			throw (std::runtime_error("Invalid day input format"));
 		}
 	}
-	catch (std::runtime_error &error) {
+	catch (...) {
 		throw;
 	}
 
@@ -401,7 +401,7 @@ Date Parse::convertToDate(std::string dateString){
 			throw (std::runtime_error("Invalid date input: date has already passed"));
 		}*/
 	}
-	catch (std::runtime_error &error) {
+	catch (...) {
 		throw;
 	}
 
@@ -423,7 +423,7 @@ int Parse::convertToTime(std::string timeString){
 			throw (std::runtime_error("Invalid time input format"));
 		}
 	}
-	catch (std::runtime_error &error) {
+	catch (...) {
 		throw;
 	}
 
@@ -436,7 +436,7 @@ int Parse::convertToTime(std::string timeString){
 			throw (std::runtime_error("Invalid time input"));
 		}
 	}
-	catch (std::runtime_error &error) {
+	catch (...) {
 		throw;
 	}
 
@@ -684,11 +684,11 @@ bool Parse::isValidDayFormat(std::string dayString) {
 	Purpose: Checks if the input year format is correct (yyyy). 
 	Pre-condition: String is not empty.
 	Post-condition: Returns true if year string has 4 characters and false otherwise. 
-	Equivalence Partitions: less than 4 characters, 4 characters, more than 4 characters
-	Boundary values: 3 characters, 4 characters, 5 characters
+	Equivalence Partitions: empty string, 1-4 characters, more than 4 characters
+	Boundary values: 0/1/2/3/4/5 characters 
 */
 bool Parse::isValidYearFormat(std::string yearString) {
-	return yearString.size() == 4;
+	return yearString.size() >= 1 && yearString.size() <= 4;
 }
 
 /* 

@@ -239,6 +239,15 @@ std::string Task::formatDateOutputString(Date date) {
 	}
 	dateString << date._month;
 	dateString << "/";
+	if (date._year < 1000) {
+		dateString << "0";
+	}
+	if (date._year < 100) {
+		dateString << "0";
+	}
+	if (date._year < 10) {
+		dateString << "0";
+	}
 	dateString << date._year;
 
 	return dateString.str();
