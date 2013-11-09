@@ -11,6 +11,8 @@ const std::string TaskLogic::COMMAND_MARKDONE = "markdone";
 const std::string TaskLogic::FILENAME_TB_STORAGE = "taskBuddyStorage.txt";
 const std::string TaskLogic::FILENAME_TB_DONE_STORAGE = "taskBuddyDoneStorage.txt";
 const std::string TaskLogic::FILENAME_TB_OVERDUE_STORAGE = "taskBuddyOverdueStorage.txt";
+const std::string TaskLogic::UI_FORMAT = "ui_format";
+const std::string TaskLogic::PROCESSED_FORMAT = "processed_format";
 
 TaskLogic::TaskLogic(){
 	
@@ -28,12 +30,13 @@ TaskLogic::~TaskLogic(){
 	Boundary: Empty Vector, Any Non-empty Vector
 */
 void TaskLogic::initLogic(){
+	std::vector<std::string> tbVector;
+	std::vector<std::string> tbDoneVector;
+	
 	initDate();
 	tbStorage.initStorage(FILENAME_TB_STORAGE);
 	tbDoneStorage.initStorage(FILENAME_TB_DONE_STORAGE);
 	
-	std::vector<std::string> tbVector;
-	std::vector<std::string> tbDoneVector;
 	tbStorage.getExistingTasks(tbVector);
 	tbDoneStorage.getExistingTasks(tbDoneVector);
 	
@@ -47,7 +50,7 @@ void TaskLogic::initLogic(){
 	Date today = taskParse.convertToDate(dateVector[0]);
 	tbDoneLinkedList.update(today);
 
-	initOverdue();
+	initOverdue();    //initialisation of Overdue must only be done after all tasks is added into tbLinkedList
 	return;
 }
 
@@ -55,24 +58,23 @@ void TaskLogic::initLogic(){
 	Purpose: Initialises all dates within the next week into dateVector
 */
 void TaskLogic::initDate(){
+   int i = 1;
    time_t current = time(0);
    std::string currentDateTime;
    std::string today;
    std::string dateArray[9];
-
-   currentDateTime = ctime(&current);
-
    std::istringstream iss(currentDateTime);
    std::string dayArray[8] = {" ","Mon","Tue","Wed","Thu","Fri","Sat","Sun"};
-   int i = 1;
+
+   currentDateTime = ctime(&current);
 
    iss >> today;
    while(today != dayArray[i])
 	  i++;
 
    dateArray[0] = extractDate(currentDateTime);
-  
-   // goes to next week's today
+   
+   // goes till next week's today
    for(int j = 1; j <= 7; j++){
 		current += 86400;
 		currentDateTime = ctime(&current);
@@ -80,21 +82,24 @@ void TaskLogic::initDate(){
 		if(i > 7)
 			i = 1;  // reset to Monday after Sunday
 		dateArray[i] = extractDate(currentDateTime);
-		if(j == 1)
+		if(j == 1)  //setting for tomorrow's date
 			dateArray[8] = dateArray[i];
    }
 
    for(i = 0; i <= 8 ; i++)
 	   dateVector.push_back(dateArray[i]);
-
+   
+   assert(!dateVector.empty());
+   assert(dateVector.size() == 9);
    return;
 }
 
+//The list must be drawn from the file first before drawing from linkedlist
 void TaskLogic::initOverdue(){
+	std::vector<std::string> tbOverdueVector;
 	Date today = taskParse.convertToDate(dateVector[0]);
 	
 	tbOverdueStorage.initStorage(FILENAME_TB_OVERDUE_STORAGE);
-	std::vector<std::string> tbOverdueVector;
 	tbOverdueStorage.getExistingTasks(tbOverdueVector);
 	for(unsigned int i=0; i< tbOverdueVector.size(); i++){
 		addOverdueTask(tbOverdueVector[i]);
@@ -106,6 +111,7 @@ void TaskLogic::initOverdue(){
 		del(tbOverdueVector[i], false);
 		addOverdueTask(tbOverdueVector[i]);
 	}
+	//initialisation of tbLinkedList must be done first.
 }
 
 /*
@@ -142,10 +148,15 @@ void TaskLogic::saveOverdue(){
 	Equivalence Partition: Empty string, Invalid string, Valid string
 	Boundary: Empty string, Any valid string, Any invalid string
 */
-bool TaskLogic::add(const std::string taskString, bool& isClash, std::vector<std::string>& clashTasks){
-	std::vector<Task> taskObjectVector; 
+void TaskLogic::add(const std::string taskString, bool& isClash, std::vector<std::string>& clashTasks){
+	std::vector<Task> taskObjectVector;
+	bool clash;
+
+	assert(!taskString.empty());
+	assert(clashTasks.empty());
+
     try{
-		taskObjectVector = createTask(taskString, 1);   //generating task from user input.
+		taskObjectVector = createTask(taskString, UI_FORMAT); 
 		for (unsigned int i = 0; i < taskObjectVector.size(); i++) {
 			if (taskObjectVector[i].getAction() == "") {
 				throw (std::runtime_error("Missing action input"));
@@ -155,19 +166,18 @@ bool TaskLogic::add(const std::string taskString, bool& isClash, std::vector<std
 	catch(...){
 		throw;
 	}
-	bool checkAdded = true;
-	bool clash;
+
+	assert(!taskObjectVector.empty());
 
 	for(unsigned int i = 0; i < taskObjectVector.size() ; i++){
 		clash = false;
-		if(tbLinkedList.insert(taskObjectVector[i], isClash, clashTasks))              //remove clash as parameter to let program compile first cause Sharmane haven't include
+		if(tbLinkedList.insert(taskObjectVector[i], clash, clashTasks))
 			update(COMMAND_ADD, taskObjectVector[0].getTask(), "");
 		else
-			checkAdded = false;
+			throw std::runtime_error("Task "+ taskObjectVector[i].getTask() + " cannot be added successfully");
 		if(clash)
 			isClash = true;
 	}
-	return checkAdded;
 }
 
 /*
@@ -181,7 +191,7 @@ bool TaskLogic::addExistingTask(const std::string taskString){
 	std::vector<Task> taskObjectVector;
 	std::vector<std::string> dummyVector;
 	bool isClash = false;
-    taskObjectVector = createTask(taskString, 2);     //generating task from file
+    taskObjectVector = createTask(taskString, PROCESSED_FORMAT);     //generating task from file
 	if(tbLinkedList.insert(taskObjectVector[0], isClash, dummyVector))  //there is no need to check if isClashed since these are pre-existing task.
 		return true;
 	else
@@ -191,7 +201,7 @@ bool TaskLogic::addExistingTask(const std::string taskString){
 bool TaskLogic::addExistingDoneTask(const std::string taskString){
 	std::vector<Task> taskObjectVector;
 	bool isClash = false;
-    taskObjectVector = createTask(taskString, 2);     //generating task from file
+    taskObjectVector = createTask(taskString, PROCESSED_FORMAT);     //generating task from file
 	if(tbDoneLinkedList.insert(taskObjectVector[0]))  //there is no need to check if isClashed since these are pre-existing task.
 		return true;
 	else
@@ -201,7 +211,7 @@ bool TaskLogic::addExistingDoneTask(const std::string taskString){
 void TaskLogic::addOverdueTask(const std::string taskString){
 	std::vector<Task> taskObjectVector;
 	bool isClash = false;
-    taskObjectVector = createTask(taskString, 2);     //generating task from file
+    taskObjectVector = createTask(taskString, PROCESSED_FORMAT);     //generating task from file
 	tbOverdueLinkedList.insert(taskObjectVector[0]);  //there is no need to check if isClashed since these are pre-existing task.
 }
 
@@ -270,8 +280,8 @@ bool TaskLogic::edit(std::string taskString, std::string editString, bool isBloc
 	bool newIsBlock = false;
 	bool isClash = false;  //PLEASE CHECK!!!
 
-	stringParse(taskString,2,currentAction,currentLocation,currentStartingDate,currentStartingTime,currentEndingDate,currentEndingTime,currentDeadlineDate,currentDeadlineTime, isBlock);
-	stringParse(editString,1,newAction,newLocation,newStartingDate,newStartingTime,newEndingDate,newEndingTime,newDeadlineDate,newDeadlineTime, newIsBlock);  
+	stringParse(taskString,PROCESSED_FORMAT,currentAction,currentLocation,currentStartingDate,currentStartingTime,currentEndingDate,currentEndingTime,currentDeadlineDate,currentDeadlineTime, isBlock);
+	stringParse(editString,UI_FORMAT,newAction,newLocation,newStartingDate,newStartingTime,newEndingDate,newEndingTime,newDeadlineDate,newDeadlineTime, newIsBlock);  
 
 	if (newAction == "" && currentAction != "") {
 		newAction = currentAction;
@@ -360,13 +370,11 @@ bool TaskLogic::editBlock(const std::string newTaskActionLocation, std::vector<s
 	Equivalence Partition: Empty strings, Invalid strings, Valid strings
 	Boundary: Empty strings, Any valid strings, Any invalid strings
 */
-bool TaskLogic::addBlock(const std::string taskString, const std::string originalTaskString, bool isClash, std::vector<std::string>& clashTasks){
+void TaskLogic::addBlock(const std::string taskString, const std::string originalTaskString, bool isClash, std::vector<std::string>& clashTasks){
+	assert(!taskString.empty());
 	tbLinkedList.setBlock(originalTaskString);   
 	
-	if(add(taskString, isClash, clashTasks))
-		return true;
-	else
-		return false;
+	add(taskString, isClash, clashTasks);
 }
 
 /*
@@ -472,12 +480,12 @@ bool TaskLogic::undo(){
 //-----HELPER FUNCTIONS---------------------------------------------------------------------------------------------
 
 //method 1 : User Input ; Method 2 : Pre-Existing Task in file
-void TaskLogic::stringParse(const std::string taskString, const int method, std::string &action, std::string &location, std::vector<Date> &startingDateVector, std::vector<int> &startingTimeVector, std::vector<Date> &endingDateVector, std::vector<int> &endingTimeVector, std::vector<Date> &deadlineDateVector, std::vector<int> &deadlineTimeVector, bool &isBlock){
+void TaskLogic::stringParse(const std::string taskString, const std::string format, std::string &action, std::string &location, std::vector<Date> &startingDateVector, std::vector<int> &startingTimeVector, std::vector<Date> &endingDateVector, std::vector<int> &endingTimeVector, std::vector<Date> &deadlineDateVector, std::vector<int> &deadlineTimeVector, bool &isBlock){
 	try{	
-		if(method == 1){
+		if(format == UI_FORMAT){
 			taskParse.processTaskStringFromUI(taskString,action,location,startingDateVector,startingTimeVector,endingDateVector,endingTimeVector,deadlineDateVector,deadlineTimeVector,isBlock,dateVector);
 		}
-		else if(method == 2){
+		else if(format == PROCESSED_FORMAT){
 			taskParse.processTaskStringFromFile(taskString,action,location,startingDateVector,startingTimeVector,endingDateVector,endingTimeVector,deadlineDateVector,deadlineTimeVector,isBlock,dateVector);
 		}
 	}
@@ -489,22 +497,19 @@ void TaskLogic::stringParse(const std::string taskString, const int method, std:
 }
 
 //method 1 : User Input ; Method 2 : Pre-Existing Task in file
-std::vector<Task> TaskLogic::createTask(std::string taskString, int method){
+std::vector<Task> TaskLogic::createTask(std::string taskString, std::string format){
 	std::string task = "", action = "", location ="";
 	std::vector<Date> startingDateVector, endingDateVector, deadlineDateVector; 
 	std::vector<int> startingTimeVector, endingTimeVector, deadlineTimeVector; //check if we really want to set it as -1
 	bool isBlock = false;
 	try{
-		stringParse(taskString,method,action,location,startingDateVector,startingTimeVector,endingDateVector,endingTimeVector,deadlineDateVector,deadlineTimeVector,isBlock);   
+		stringParse(taskString,format,action,location,startingDateVector,startingTimeVector,endingDateVector,endingTimeVector,deadlineDateVector,deadlineTimeVector,isBlock);   
 	}
 	catch(...){
 		throw;
 	}
 	if(startingDateVector.size() > 1 || endingDateVector.size() > 1 || deadlineDateVector.size() > 1)
 		isBlock = true;
-	
-	//PROBLEM!! HOW TO CREATE SO MANY TASK AT ONE GO? MUST BE IN ADD
-	//WHAT IF YOU HAVE DIFFERENT NUMBER OF STARTING AND ENDING? Must indicate in that same ending vector / starting vector
 
 	std::vector<Task> taskObjectVector;
 
@@ -604,7 +609,7 @@ bool TaskLogic::markDone(std::string taskString){
 		return false;
 	std::vector<Task> taskObjectVector;
 	
-	taskObjectVector = createTask(taskString, 2);
+	taskObjectVector = createTask(taskString, PROCESSED_FORMAT);
 
 
 	if(tbDoneLinkedList.insert(taskObjectVector[0])){

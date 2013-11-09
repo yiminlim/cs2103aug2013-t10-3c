@@ -116,17 +116,13 @@ void UserInterface::commandUI(){
 			}
 
 			if (currentCommand == COMMAND_ADD){		
-				if (tbLogic.add(readTask(currentCommand, KEYWORD_EMPTY_STRING), isClash, clashVector)){
-					displayMessage(currentCommand);
-					if (isClash){
-						std::cout << MESSAGE_CLASH << std::endl;
-						displayInformationInVector(clashVector);
-					}
-					tbLogic.save();
+				tbLogic.add(readTask(currentCommand, KEYWORD_EMPTY_STRING), isClash, clashVector);
+				displayMessage(currentCommand);
+				if (isClash){
+					std::cout << MESSAGE_CLASH << std::endl;
+					displayInformationInVector(clashVector);
 				}
-				else{
-					displayFailMessage(currentCommand);
-				}
+				tbLogic.save();
 				searchTaskList.clear();
 				clashVector.clear();
 			}
@@ -312,19 +308,15 @@ void UserInterface::editBlockUI(const std::string stringToEditBlock){
 
 			if (command == COMMAND_ADD){
 				command = COMMAND_ADDBLOCK;
-				if (tbLogic.addBlock(readTask(command, taskActionLocation), originalTaskString, isClash, clashVector)){
-					tbLogic.save();
-					displayMessage(command);
-					if (isClash){
-						std::cout << MESSAGE_CLASH << std::endl;
-						displayInformationInVector(clashVector);
-					}					
-					clashVector.clear();
-					contEditBlock = false;
-				}
-				else{
-					displayFailMessage(command);
-				}
+				tbLogic.addBlock(readTask(command, taskActionLocation), originalTaskString, isClash, clashVector);
+				tbLogic.save();
+				displayMessage(command);
+				if (isClash){
+					std::cout << MESSAGE_CLASH << std::endl;
+					displayInformationInVector(clashVector);
+				}					
+				clashVector.clear();
+				contEditBlock = false;
 			}
 			else if (command == COMMAND_EDITALL){
 				if (tbLogic.editBlock(readTask(command, KEYWORD_EMPTY_STRING), blockTaskVector)){
