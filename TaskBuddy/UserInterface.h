@@ -45,13 +45,14 @@ private:
 	static const std::string MESSAGE_CLASH;
 	static const std::string MESSAGE_DELETE;
 	static const std::string MESSAGE_EDIT;
-	static const std::string MESSAGE_MARKDONE;
-	static const std::string MESSAGE_UNDO;
 	static const std::string MESSAGE_AVAILABLE_BLOCKS;
 	static const std::string MESSAGE_ADDBLOCK;
 	static const std::string MESSAGE_EDITALL;
 	static const std::string MESSAGE_DELETEBLOCK;
 	static const std::string MESSAGE_FINALISE;
+	static const std::string MESSAGE_MARKDONE;
+	static const std::string MESSAGE_UNDO;
+	static const std::string MESSAGE_CLEAROVERDUE;
 	static const std::string MESSAGE_EXIT;
 
 	static const std::string ERROR_NO_TASK_TODAY;
