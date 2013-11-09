@@ -29,8 +29,21 @@ public:
 	//Returns number of tasks in linked list
 	int getSize();
 
-	//Insert task to the back of the linked list
-	void insert(Task &);
+	void obtainDateSeparately(Date*, Date*);
+
+	//determine if the task has a starting date and time or deadline date and time and pass back the one with the value
+	void obtainDateAndTime(Task &, Date*, int*, Date*, int*);
+
+	bool compareDates(Date*, Date*, bool*);
+
+	//Returns true if the curTask is of an earlier date and time than listTask
+	bool compareDateAndTime(Task &, Task &);
+
+	//Returns the index at which a Task is to be added
+	int getInsertIndex(Task &);
+	
+	//Returns true if task is added to linked list
+	bool insert(Task &);
 
 	//Remove the item at the head of the linked list
 	void remove();

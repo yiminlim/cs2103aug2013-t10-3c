@@ -56,7 +56,7 @@ void Parse::processTaskStringFromUI(std::string taskString, std::string & action
 	std::istringstream userInputTask(taskString);
 	std::string word;
 	std::vector<std::string> taskDetails;
-	bool checkPreviousIsDate = false;
+
 	while (userInputTask >> word) {
 		taskDetails.push_back(word);
 	}
@@ -88,23 +88,17 @@ void Parse::processTaskStringFromUI(std::string taskString, std::string & action
 				endingDate.push_back(Date());
 				startingTime.push_back(EMPTY_TIME);
 				endingTime.push_back(EMPTY_TIME);
-				checkPreviousIsDate = true;
 			} 
 			else if (isDayKeyword(taskDetails[i])) {
 				startingDate.push_back(convertToDate(changeDayToDate(taskDetails[i], dateVector)));
 				endingDate.push_back(Date()); 
 				startingTime.push_back(EMPTY_TIME);
 				endingTime.push_back(EMPTY_TIME);
-				checkPreviousIsDate = true;
 			}
 			else {
-				if (!checkPreviousIsDate) {
-					throw std::runtime_error("Missing starting date"); 
-				}
-				else if (!startingTime.empty()) {
+				if (!startingTime.empty()) {
 					startingTime[startingTime.size()-1] = convertToTime(taskDetails[i]);
 				}
-				checkPreviousIsDate = false; 
 			}
 		}
 		else if (keyword == KEYWORD_ENDING) {
@@ -113,48 +107,32 @@ void Parse::processTaskStringFromUI(std::string taskString, std::string & action
 					endingDate[endingDate.size()-1] = convertToDate(taskDetails[i]);
 				}
 				else {
-					throw std::runtime_error("Missing starting date");
+					endingDate.push_back(convertToDate(taskDetails[i]));
 				}
-				checkPreviousIsDate = true;
 			}
 			else if (isDayKeyword(taskDetails[i])) {
-				if (!endingDate.empty()) {
+				if(!endingDate.empty()) {
 					endingDate[endingDate.size()-1] = convertToDate(changeDayToDate(taskDetails[i], dateVector));
 				}
 				else {
-					throw std::runtime_error("Missing starting date");
+					endingDate.push_back(convertToDate(changeDayToDate(taskDetails[i], dateVector)));
 				}
-				checkPreviousIsDate = true;
 			}
-			else {
-				if (!checkPreviousIsDate) {
-					throw std::runtime_error("Missing ending date");
-				}
-				else if (!endingTime.empty()) {
+			else if (!endingTime.empty()) {
 					endingTime[endingTime.size()-1] = convertToTime(taskDetails[i]);
-				}
-				checkPreviousIsDate = false;
-			}
+			}	
 		}
 		else if (keyword == KEYWORD_DEADLINE) {
 			if (taskDetails[i].find(DATE_SEPARATOR) != std::string::npos) {
 				deadlineDate.push_back(convertToDate(taskDetails[i]));
 				deadlineTime.push_back(EMPTY_TIME);
-				checkPreviousIsDate = true;
 			}
 			else if (isDayKeyword(taskDetails[i])) {
 				deadlineDate.push_back(convertToDate(changeDayToDate(taskDetails[i], dateVector)));
 				deadlineTime.push_back(EMPTY_TIME);
-				checkPreviousIsDate = true;
 			}
-			else {
-				if (!checkPreviousIsDate) {
-					throw std::runtime_error("Missing deadline date");
-				}
-				else if (!deadlineTime.empty()) {
+			else if (!deadlineTime.empty()) {
 				deadlineTime[deadlineTime.size()-1] = convertToTime(taskDetails[i]);
-				}
-				checkPreviousIsDate = false;
 			}
 		}
 	}

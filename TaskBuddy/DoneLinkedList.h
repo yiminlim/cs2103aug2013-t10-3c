@@ -29,8 +29,12 @@ public:
 	//Returns number of tasks in linked list
 	int getSize();
 
+	void obtainDateSeparately(Date*, Date*);
+
 	//determine if the task has a starting date and time or deadline date and time and pass back the one with the value
-	void obtainDateAndTime(Task &, Date*, int*);
+	void obtainDateAndTime(Task &, Date*, int*, Date*, int*);
+
+	bool compareDates(Date*, Date*, bool*);
 
 	//Returns true if the curTask is of an earlier date and time than listTask
 	bool compareDateAndTime(Task &, Task &);
@@ -41,8 +45,10 @@ public:
 	//Returns true if task is added to linked list
 	bool insert(Task &);
 
+	void obtainDateAndTimeForRemoving(Task &, Date*, int*);
+
 	//Return the nidex of the first task that is not overdued
-	int getIndex(Date);
+	std::vector <int> getIndex(Date);
 
 	//remove the task pointed to by the index
 	void remove(int);
