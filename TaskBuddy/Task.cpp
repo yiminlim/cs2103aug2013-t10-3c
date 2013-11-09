@@ -11,8 +11,6 @@ Task::Task(){
 	Pre-conditions: All variables should have values. (strings should not be NULL)
 	Post-conditions: Given that all variable values are found to be valid and necessary variables are included, formatted task output string is generated and task object is constructed. 
 */
-//Use isValid/isEmpty methods to check & throw exceptions if necessary
-//Note: isEmpty will be accepted also because they are not included under isValid
 Task::Task(std::string action, std::string location, Date startingDate, int startingTime, Date endingDate, int endingTime, Date deadlineDate, int deadlineTime, bool block){
 	_action = action;
 	_location = location;
@@ -239,6 +237,15 @@ std::string Task::formatDateOutputString(Date date) {
 	}
 	dateString << date._month;
 	dateString << "/";
+	if (date._year < 1000) {
+		dateString << "0";
+	}
+	if (date._year < 100) {
+		dateString << "0";
+	}
+	if (date._year < 10) {
+		dateString << "0";
+	}
 	dateString << date._year;
 
 	return dateString.str();
