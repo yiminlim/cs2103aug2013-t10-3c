@@ -564,11 +564,22 @@ std::string TaskLogic::extractDate(std::string currentDateTime){
 
 	std::ostringstream oss;
 	
-	oss << date << "/" << monthNum << "/" << year; 
+	if(isSingleDigit(date))
+		oss << "0";
+	oss << date << "/";
+	if(isSingleDigit(monthNum))
+		oss << "0";
+	oss << monthNum << "/" << year; 
 	return oss.str();
 }   
 
-//bool checkIfSingleDig
+bool TaskLogic::isSingleDigit(int num){
+	assert(num > 0);
+	if(num/10)
+		return false;
+	else
+		return true;
+}
 
 std::string TaskLogic::getActionLocation(std::string taskString){
 	std::string action = "", location ="";

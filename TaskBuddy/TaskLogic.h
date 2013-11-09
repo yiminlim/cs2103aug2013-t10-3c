@@ -115,6 +115,8 @@ public:
 	bool isDay(std::string &);
 
 	std::string extractDate(std::string);
+	
+	bool isSingleDigit(int);
 
 	std::string getActionLocation(std::string);
 
