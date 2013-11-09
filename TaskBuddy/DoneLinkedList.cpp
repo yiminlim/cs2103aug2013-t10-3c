@@ -1,6 +1,8 @@
 #include "DoneLinkedList.h"
 #include <assert.h>
 
+const std::string OverdueLinkedList::KEYWORD_EMPTY_STRING = "";
+
 DoneLinkedList::DoneLinkedList(){
 	_head = NULL;
 	_size = 0;
@@ -15,9 +17,7 @@ DoneLinkedList::~DoneLinkedList(){
 DoneLinkedList::ListNode* DoneLinkedList::traverseTo(int index){
 	if ( (index < 1) || (index > getSize()) ){
 		return NULL;
-	}
-
-	else{
+	}else{
 		ListNode *cur = _head;
 		for (int skip = 1; skip < index; skip++){
 			cur = cur->next;
@@ -29,7 +29,7 @@ DoneLinkedList::ListNode* DoneLinkedList::traverseTo(int index){
 //Pre-condition: Check if linked list is empty.
 //Post-condition: Return true if the linked list is empty.
 bool DoneLinkedList::isEmpty(){
-	return _size==0;
+	return _size == 0;
 }
 	
 //Pre-condition: Check for the size of the linked list.
@@ -59,8 +59,7 @@ void DoneLinkedList::obtainDateAndTime(Task & task, Date *date, int *time, Date 
 			obtainDateSeparately(&task.getEndingDate(), endDate);
 			*endTime = task.getEndingTime();
 		}
-	}
-	else{
+	}else{
 		obtainDateSeparately(&task.getDeadlineDate(), date);
 		*time = task.getDeadlineTime();
 		*endTime = -1;
@@ -73,20 +72,20 @@ void DoneLinkedList::obtainDateAndTime(Task & task, Date *date, int *time, Date 
 bool DoneLinkedList::compareDates(Date *curDate, Date *listDate, bool *check){
 		if (curDate->_year < listDate->_year){
 			return true;
-		} else if (curDate->_year > listDate->_year){
+		}else if (curDate->_year > listDate->_year){
 			return false;
-		} else if (curDate->_month < listDate->_month){
+		}else if (curDate->_month < listDate->_month){
 			return true;
-		} else if (curDate->_month > listDate->_month){
+		}else if (curDate->_month > listDate->_month){
 			return false;
-		} else if (curDate->_day < listDate->_day){
+		}else if (curDate->_day < listDate->_day){
 			return true;
-		} else if (curDate->_day > listDate->_day){
+		}else if (curDate->_day > listDate->_day){
+			return false;
+		}else{
+			*check = true;
 			return false;
 		}
-
-		*check = true;
-		return false;
 }
 
 //Pre-condition: Input the Task reference to be added and a specific Task reference from the linked list and sort them accordingly.
@@ -105,19 +104,17 @@ bool DoneLinkedList::compareDateAndTime(Task & curTask, Task & listTask){
 		if (check){
 			if (*curTime < *listTime){
 				condition = true;
-			}
-			else if (*curTime = *listTime){
+			}else if (*curTime = *listTime){
 				check = false;
 				condition = compareDates(endCurDate, endListDate, &check);
 				if (check){
-					if(*endCurTime < *endListTime){
+					if (*endCurTime < *endListTime){
 						condition = true;
 					}else{
 						condition = false;
 					}
 				}
-			}
-			else{
+			}else{
 				condition = false;
 			}
 		}
@@ -155,8 +152,7 @@ int DoneLinkedList::getInsertIndex(Task & curTask){
 	while (cur != NULL){
 		if (compareDateAndTime(curTask, cur->item)){
 			return i;
-		} 
-		else{
+		}else{
 			cur = cur->next;
 			i++;
 		}
@@ -168,14 +164,13 @@ int DoneLinkedList::getInsertIndex(Task & curTask){
 //Pre-condition: Input a Task reference to be added into the linked list.
 //Post-condition: Return true if the task is added into the linked list in an sorted manner.
 bool DoneLinkedList::insert(Task & curTask){
-	assert (curTask.getTask() != "");
+	assert (curTask.getTask() != KEYWORD_EMPTY_STRING);
 	int newSize = getSize() + 1;
 	int index = getInsertIndex(curTask);
 
 	if ( (index < 1) || (index > newSize) ){
 		return false;
-	}
-	else{
+	}else{
 		ListNode *newTask = new ListNode;
 		newTask->item = curTask;
 		newTask->next = NULL;
@@ -184,8 +179,7 @@ bool DoneLinkedList::insert(Task & curTask){
 		if (index == 1){
 			newTask->next = _head;
 			_head = newTask;
-		} 
-		else{
+		}else{
 			ListNode *prev = traverseTo(index-1);
 			newTask->next = prev->next;
 			prev->next = newTask;
@@ -197,13 +191,13 @@ bool DoneLinkedList::insert(Task & curTask){
 //Pre-condition: Input a task and obtain the necessary date (starting, ending or deadline) and update accordingly.
 //Post-condition: The required date is obtained and updated accordingly.
 void DoneLinkedList::obtainDateAndTimeForRemoving(Task & task, Date *date, int *time){
-	if(task.getDeadlineDate()._day != 0){
+	if (task.getDeadlineDate()._day != 0){
 		obtainDateSeparately(&task.getDeadlineDate(), date);
 		*time = task.getDeadlineTime();
-	} else if(task.getStartingDate()._day != 0 && task.getEndingDate()._day==0){
+	}else if (task.getStartingDate()._day != 0 && task.getEndingDate()._day == 0){
 		obtainDateSeparately(&task.getStartingDate(), date);
 		*time = task.getStartingTime();
-	} else if(task.getStartingDate()._day != 0 && task.getEndingDate()._day!=0){
+	}else if (task.getStartingDate()._day != 0 && task.getEndingDate()._day != 0){
 		obtainDateSeparately(&task.getEndingDate(), date);
 		*time = task.getEndingTime();
 	}
@@ -221,15 +215,16 @@ std::vector<int> DoneLinkedList::getIndex(Date today){
 	
 	while(cur != NULL){
 		obtainDateAndTimeForRemoving(cur->item, date, time);
-		if(today._year > date->_year){
+		if (today._year > date->_year){
 			index.push_back(i);
-		}else if(today._year < date->_year){
-		}else if(today._month > date->_month){
-			index.push_back(i);
-		}else if(today._month < date->_month){
-		}else if(today._day > date->_day){
-			index.push_back(i);
-		}else if(today._day < date->_day){
+		}else if (today._year == date->_year){
+			if (today._month > date->_month){
+				index.push_back(i);
+			}else if (today._month == date->_month){
+				if (today._day > date->_day){
+					index.push_back(i);
+				}
+			}
 		}
 		cur = cur->next;
 		i++;
@@ -255,9 +250,8 @@ void DoneLinkedList::remove(int index){
 	if (index == 1){
 		cur = _head;
 		_head = _head->next;
-	}
-	else{
-		ListNode *prev = traverseTo(index-1);
+	}else{
+		ListNode *prev = traverseTo(index - 1);
 		cur = prev->next;
 		prev->next = cur->next;
 	}
@@ -275,8 +269,7 @@ bool DoneLinkedList::removeTask(std::string task){
 		if (task == cur->item.getTask()){
 			remove(index);
 			return true;
-		}
-		else{
+		}else{
 			cur = cur->next;
 			index++;
 		}
@@ -290,7 +283,7 @@ void DoneLinkedList::update(Date today){
 	assert (today._day != 0 && today._month != 0 && today._year != 0);
 	std::vector <int> index = getIndex(today);
 
-	for(int i=index.size(); i>0; i--){
+	for(int i = index.size(); i > 0; i--){
 		remove(index[i-1]);
 	}
 }

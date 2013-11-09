@@ -15,6 +15,16 @@ private:
 	
 	//Return a ListNode pointer that will traverse to the position given by the index.
 	ListNode* traverseTo(int index);
+
+	static const std::string KEYWORD_EMPTY_STRING;
+	static const std::string KEYWORD_BLOCKOFF;
+	static const std::string KEYWORD_NULL;
+	static const std::string KEYWORD_ZERO;
+	static const std::string KEYWORD_SLASH;
+	static const std::string KEYWORD_DASH;
+
+	static const int KEYNUMBER_DAY;
+	static const int KEYNUMBER_MONTH;
 	
 public:
 	//Empty constructor

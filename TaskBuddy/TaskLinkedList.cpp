@@ -1,6 +1,16 @@
 #include "TaskLinkedList.h"
 #include <assert.h>
 
+const std::string OverdueLinkedList::KEYWORD_EMPTY_STRING = "";
+const std::string OverdueLinkedList::KEYWORD_BLOCKOFF = "blockoff";
+const std::string OverdueLinkedList::KEYWORD_NULL = "/0";
+const std::string OverdueLinkedList::KEYWORD_ZERO = "0";
+const std::string OverdueLinkedList::KEYWORD_SLASH = "/";
+const std::string OverdueLinkedList::KEYWORD_DASH = "-";
+
+const int OverdueLinkedList::KEYNUMBER_DAY = 31;
+const int OverdueLinkedList::KEYNUMBER_MONTH = 12;
+
 TaskLinkedList::TaskLinkedList(){
 	_head = NULL;
 	_size = 0;
@@ -15,9 +25,7 @@ TaskLinkedList::~TaskLinkedList(){
 TaskLinkedList::ListNode* TaskLinkedList::traverseTo(int index){
 	if ( (index < 1) || (index > getSize()) ){
 		return NULL;
-	}
-
-	else{
+	}else{
 		ListNode *cur = _head;
 		for (int skip = 1; skip < index; skip++){
 			cur = cur->next;
@@ -29,7 +37,7 @@ TaskLinkedList::ListNode* TaskLinkedList::traverseTo(int index){
 //Pre-condition: Check if linked list is empty.
 //Post-condition: Return true if the linked list is empty.
 bool TaskLinkedList::isEmpty(){
-	return _size==0;
+	return _size == 0;
 }
 	
 //Pre-condition: Check for the size of the linked list.
@@ -57,12 +65,12 @@ void TaskLinkedList::obtainDateAndTime(Task & task, Date *date, int *time, Date 
 		*time = task.getStartingTime();
 		obtainDateSeparately(&task.getEndingDate(), endDate);
 		*endTime = task.getEndingTime();
-	}
-	else{
+	}else{
 		obtainDateSeparately(&task.getDeadlineDate(), date);
 		*time = task.getDeadlineTime();
 		*endTime = -1;
 	}
+
 	return;
 }
 
@@ -71,20 +79,20 @@ void TaskLinkedList::obtainDateAndTime(Task & task, Date *date, int *time, Date 
 bool TaskLinkedList::compareDates(Date *curDate, Date *listDate, bool *check){
 		if (curDate->_year < listDate->_year){
 			return true;
-		} else if (curDate->_year > listDate->_year){
+		}else if (curDate->_year > listDate->_year){
 			return false;
-		} else if (curDate->_month < listDate->_month){
+		}else if (curDate->_month < listDate->_month){
 			return true;
-		} else if (curDate->_month > listDate->_month){
+		}else if (curDate->_month > listDate->_month){
 			return false;
-		} else if (curDate->_day < listDate->_day){
+		}else if (curDate->_day < listDate->_day){
 			return true;
-		} else if (curDate->_day > listDate->_day){
+		}else if (curDate->_day > listDate->_day){
+			return false;
+		}else{
+			*check = true;
 			return false;
 		}
-
-		*check = true;
-		return false;
 }
 
 //Pre-condition: Input the Task reference to be added and a specific Task reference from the linked list and sort them accordingly. Check along the way if there are any clashes.
@@ -103,30 +111,28 @@ bool TaskLinkedList::compareDateAndTime(Task & curTask, Task & listTask, bool & 
 		if (check){
 			if (*curTime < *listTime){
 				condition = true;
-				if ((*endListTime == -1 && *endCurTime != -1 && curDate->_day != 0 && listDate->_day != 0)|| (*endListTime != -1 && *endCurTime != -1 && curDate->_day != 0 && listDate->_day != 0)){ //both from to
+				if ( (*endListTime == -1 && *endCurTime != -1 && curDate->_day != 0 && listDate->_day != 0) || (*endListTime != -1 && *endCurTime != -1 && curDate->_day != 0 && listDate->_day != 0) ){ //both from to
 					if (*endCurTime > *listTime){
 						isClash = true; //cur is from to, list is from
 						clashTasks.push_back(listTask.getTask());
 					}
 				}
-			}
-			else if (*curTime == *listTime && *curTime != -1){
+			}else if (*curTime == *listTime && *curTime != -1){
 				isClash = true; //both froms
 				clashTasks.push_back(listTask.getTask());
 				
 				check = false;
 				condition = compareDates(endCurDate, endListDate, &check);
 				if (check){
-					if(*endCurTime < *endListTime){
+					if (*endCurTime < *endListTime){
 						condition = true;
 					}else{
 						condition = false;
 					}
 				}
-			}
-			else if (*curTime > *listTime){
+			}else if (*curTime > *listTime){
 				condition = false; 
-				if ((*endCurTime == -1 && *endListTime != -1 && curDate->_day != 0 && listDate->_day != 0)|| (*endListTime != -1 && *endCurTime != -1 && curDate->_day != 0 && listDate->_day != 0)){ //both from to
+				if ( (*endCurTime == -1 && *endListTime != -1 && curDate->_day != 0 && listDate->_day != 0) || (*endListTime != -1 && *endCurTime != -1 && curDate->_day != 0 && listDate->_day != 0) ){ //both from to
 					if (*endListTime > *curTime){
 						isClash = true; //cur is from, list is from to
 						clashTasks.push_back(listTask.getTask());
@@ -175,14 +181,10 @@ int TaskLinkedList::getInsertIndex(Task & curTask, bool & isClash, std::vector<s
 					cur = cur->next;
 				}
 				return i;
-			}
-			
-			else{
+			}else{
 				return i;
 			}
-		} 
-
-		else{
+		}else{
 			cur = cur->next;
 			i++;
 		}
@@ -195,15 +197,14 @@ int TaskLinkedList::getInsertIndex(Task & curTask, bool & isClash, std::vector<s
 //				 clashTasks must be empty.
 //Post-condition: Return true if the task is added into the linked list in a sorted manner. isClash and clashTasks are updated accordingly.
 bool TaskLinkedList::insert(Task & curTask, bool & isClash, std::vector<std::string>& clashTasks){
-	assert(curTask.getTask() != "");
+	assert(curTask.getTask() != KEYWORD_EMPTY_STRING);
 	assert(!isClash);
 	int newSize = getSize() + 1;
 	int index = getInsertIndex(curTask, isClash, clashTasks);
 
 	if ( (index < 1) || (index > newSize) ){
 		return false;
-	}
-	else{
+	}else{
 		ListNode *newTask = new ListNode;
 		newTask->item = curTask;
 		newTask->next = NULL;
@@ -212,8 +213,7 @@ bool TaskLinkedList::insert(Task & curTask, bool & isClash, std::vector<std::str
 		if (index == 1){
 			newTask->next = _head;
 			_head = newTask;
-		} 
-		else{
+		}else{
 			ListNode *prev = traverseTo(index-1);
 			newTask->next = prev->next;
 			prev->next = newTask;
@@ -227,13 +227,15 @@ bool TaskLinkedList::insert(Task & curTask, bool & isClash, std::vector<std::str
 bool TaskLinkedList::getRemoveIndex(std::string task, int *index){
 	ListNode *cur = _head;
 
-	while (cur->item.getTask() != task && cur!= NULL){
+	while (cur->item.getTask() != task && cur != NULL){
 		cur = cur->next;
 		(*index)++;
 	}
+
 	if (cur != NULL){
 		return true; 
 	}
+
 	return false;
 }
 
@@ -260,11 +262,11 @@ void TaskLinkedList::checkIfRemainingBlockTask(std::string line){
 	*index = 1;
 	ListNode *cur = _head;
 	splitIntoKeywords(line, keywords);
-	keywords.push_back("blockoff");
+	keywords.push_back(KEYWORD_BLOCKOFF);
 
-	if(retrieve(keywords, taskList)){
-		if(taskList.size() == 1){
-			if(getRemoveIndex(taskList[0], index)){
+	if (retrieve(keywords, taskList)){
+		if (taskList.size() == 1){
+			if (getRemoveIndex(taskList[0], index)){
 				cur = traverseTo(*index);
 				cur->item.setBlock(false);
 			}
@@ -278,19 +280,18 @@ void TaskLinkedList::checkIfRemainingBlockTask(std::string line){
 //Pre-condition: Input a string containing the output format of the task to be deleted from the linked list and a line containing the action and location to cater in the fact that if there's only one task block remaining, it will be unblocked.
 //Post-condition: Return true if the task is found and deleted from the linked list, if task comes from a block, the last block will be unblocked.
 bool TaskLinkedList::remove(std::string task, std::string line){
-	assert(task != "");
+	assert(task != KEYWORD_EMPTY_STRING);
 	int *index = new int;
 	*index = 1;
 	bool condition = false;
-	if (getRemoveIndex(task,index)){
+	if (getRemoveIndex(task, index)){
 		ListNode *cur;
 		--_size;
 
 		if (*index == 1){
 			cur = _head;
 			_head = _head->next;
-		} 
-		else{
+		}else{
 			ListNode *prev = traverseTo(*index-1);
 			cur = prev->next;
 			prev->next = cur->next;
@@ -310,7 +311,7 @@ bool TaskLinkedList::remove(std::string task, std::string line){
 //Pre-condition: Input a string of words/word and convert it to lower case.
 //Post-condition: Return the same string but converted to lower case.
 std::string TaskLinkedList::toLowerCase(std::string line){
-	for (unsigned int i = 0; line[i] != '\0'; i++){
+	for (unsigned int i = 0; line[i] != KEYWORD_NULL; i++){
 		line[i] = tolower(line[i]);
 	}
 	return line;
@@ -320,17 +321,19 @@ std::string TaskLinkedList::toLowerCase(std::string line){
 //			    Day and month have to be greater than 0. While year is at least 4 digits (the first digit is not 0).
 //Post-condtion: Return a string date form from individual int day, month, year.
 std::string TaskLinkedList::getStringDate(int day, int month, int year){
-	assert(day>0 && month>0);
+	assert(day > 0 && month > 0);
 	std::ostringstream output;
-	if(day<10){
-		output << "0" << day << "/";
-	} else{
-		output << day << "/";
+	
+	if (day < 10){
+		output << KEYWORD_ZERO << day << KEYWORD_SLASH;
+	}else{
+		output << day << KEYWORD_SLASH;
 	}
-	if(month<10){
-		output << "0" << month << "/" << year;
-	} else{
-		output << month << "/" << year;
+
+	if (month < 10){
+		output << KEYWORD_ZERO << month << KEYWORD_SLASH << year;
+	}else{
+		output << month << KEYWORD_SLASH << year;
 	}
 
 	return output.str();
@@ -343,49 +346,45 @@ std::string TaskLinkedList::compareAndIncludeRange(std::string tempTask, int *st
 	int i, j, k;
 
 	if (*startYear != *endYear){
-		for(i=*startYear; i<*endYear; i++){
-			for(j=1; j<=12; j++){
-				if(i == *startYear && j==1){
-					j=*startMonth;
+		for (i = *startYear; i < *endYear; i++){
+			for (j = 1; j <= KEYNUMBER_MONTH; j++){
+				if (i == *startYear && j == 1){
+					j = *startMonth;
 				}
-				for(k=1; k<=31; k++){
-					if(j == *startMonth && k==1){
-						k=*startDay;
+				for (k = 1; k <= KEYNUMBER_DAY; k++){
+					if (j == *startMonth && k == 1){
+						k = *startDay;
 					}
 					tempTask = tempTask + getStringDate(k,j,i);
 				}
 			}
 		}
 		if (i == *endYear){
-			for (j=1; j<=*endMonth; j++){
-				for(k=1; k<=*endDay; k++){
+			for (j = 1; j <= *endMonth; j++){
+				for (k = 1; k <= *endDay; k++){
 					tempTask = tempTask + getStringDate(k,j,i);
 				}
 			}
 		}
-	}
-
-	else if (*startMonth != *endMonth){
+	}else if (*startMonth != *endMonth){
 		i = *startYear;
-		for(j=*startMonth; j<*endMonth; j++){
-			for(k=1; k<=31; k++){
-				if(j == *startMonth && k==1){
+		for (j = *startMonth; j < *endMonth; j++){
+			for (k = 1; k <= KEYNUMBER_DAY; k++){
+				if (j == *startMonth && k == 1){
 					k = *startDay;
 				}
 				tempTask = tempTask + getStringDate(k, j, i);
 			}
 		}
 		if (j == *endMonth){
-			for(k=1; k<=*endDay; k++){
+			for (k = 1; k <= *endDay; k++){
 				tempTask = tempTask + getStringDate(k,j,i);
 			}
 		}
-	}
-
-	else if (*startDay != *endDay){
+	}else if (*startDay != *endDay){
 		i = *startYear;
 		j = *startMonth;
-		for(k=*startDay; k<=*endDay; k++){
+		for (k = *startDay; k <= *endDay; k++){
 			tempTask = tempTask + getStringDate(k,j,i);
 		}
 	}
@@ -397,10 +396,10 @@ std::string TaskLinkedList::compareAndIncludeRange(std::string tempTask, int *st
 //				 String must be in the format dd/mm/yyyy.
 //Post-condition: Pointers are updated (day, month, year as int).
 void TaskLinkedList::getIntDate(std::string date, int *day, int *month, int *year){
-	size_t posFirstDateSeparator = date.find("/");
-	size_t posSecondDateSeparator = date.find("/", posFirstDateSeparator+1);
+	size_t posFirstDateSeparator = date.find(KEYWORD_SLASH);
+	size_t posSecondDateSeparator = date.find(KEYWORD_SLASH, posFirstDateSeparator+1);
 	
-	std::string sDay = date.substr(0,posFirstDateSeparator-0);
+	std::string sDay = date.substr(0, posFirstDateSeparator-0);
 	std::string sMonth = date.substr(posFirstDateSeparator+1, posSecondDateSeparator-posFirstDateSeparator-1);
 	std::string sYear = date.substr(posSecondDateSeparator+1);
 
@@ -416,7 +415,7 @@ void TaskLinkedList::getIntDate(std::string date, int *day, int *month, int *yea
 //				 Only check for range of dates entered in proper date format dd/mm/yyyy (note that the first digit day and month must have 0 if they are single digits).
 //Post-condition: Return a task in the output format and an extension of dates if it is a period type of task.
 std::string TaskLinkedList::includeRangeOfDates(std::string tempTask){
-	if((tempTask).find("-") != std::string::npos){
+	if ((tempTask).find(KEYWORD_DASH) != std::string::npos){
 		std::vector<std::string> words;
 		splitIntoKeywords(tempTask, words);
 		int i = 0;
@@ -474,8 +473,7 @@ bool TaskLinkedList::retrieve(const std::vector<std::string> keywords, std::vect
 
 	if (taskList.empty()){
 		return false;
-	} 
-	else{
+	}else{
 		return true;
 	}
 }
@@ -496,15 +494,14 @@ void TaskLinkedList::updateStorageVector(std::vector<std::string> & tbVector){
 //				 The task must be found in the linked list to successfully change the block to true.
 //Post-condition: The task passed in is set as true for it's bool block.
 void TaskLinkedList::setBlock(std::string task){
-	assert(task != "");
+	assert(task != KEYWORD_EMPTY_STRING);
 	ListNode *cur = _head;
 
-	while(cur != NULL){
+	while (cur != NULL){
 		if (cur->item.getTask() == task){ 
 			cur->item.setBlock(true);
 			return;
-		}
-		else{
+		}else{
 			cur = cur->next;
 		}
 	}
@@ -513,25 +510,23 @@ void TaskLinkedList::setBlock(std::string task){
 //Pre-condition: Input 2 dates and compare them to check which is earlier. For dates that are passed today's date, the task in the output format is pushed into the overdueList vector.
 //Post-condition: If the date is found to be over today's date, the overdueList vector is updated accordingly. 
 void TaskLinkedList::compareWithToday(Date today, Date date, std::string task, std::vector<std::string> & overdueList){
-	if(date._year < today._year){
-		if (date._year!=0){
+	if (date._year < today._year){
+		if (date._year != 0){
 			overdueList.push_back(task);
 		}
+	}else if(date._year == today._year){
+		if(date._month < today._month){
+			if (date._month != 0){
+				overdueList.push_back(task);
+			}
+		}else if(date._month == today._month){
+			if(date._day < today._day){
+				if (date._day != 0){
+					overdueList.push_back(task);
+				}
+			}
+		}
 	}
-	else if(date._year > today._year){
-		}
-		else if(date._month < today._month){
-			if (date._month!=0){
-				overdueList.push_back(task);
-			}
-		}
-		else if(date._month > today._month){
-		}
-		else if(date._day < today._day){
-			if (date._day!=0){
-				overdueList.push_back(task);
-			}
-		}
 }
 
 //Pre-condition: Input a today date and a vector of overduelist to compare the dates and store overdue task in taskLinkedList into overduelinkedlist instead.
@@ -539,12 +534,12 @@ void TaskLinkedList::compareWithToday(Date today, Date date, std::string task, s
 void TaskLinkedList::getOverdueList(Date today, std::vector<std::string> & overdueList){
 	ListNode *cur = _head;
 
-	while(cur != NULL){
+	while (cur != NULL){
 		if (cur->item.getDeadlineDate()._day == 0 && cur->item.getEndingDate()._day == 0){
 			compareWithToday(today, cur->item.getStartingDate(), cur->item.getTask(), overdueList);
-		}else if(cur->item.getDeadlineDate()._day == 0 && cur->item.getEndingDate()._day != 0){
+		}else if (cur->item.getDeadlineDate()._day == 0 && cur->item.getEndingDate()._day != 0){
 			compareWithToday(today, cur->item.getEndingDate(), cur->item.getTask(), overdueList);
-		}else if(cur->item.getStartingDate()._day == 0){
+		}else if (cur->item.getStartingDate()._day == 0){
 			compareWithToday(today, cur->item.getDeadlineDate(), cur->item.getTask(), overdueList);
 		}
 
