@@ -13,51 +13,55 @@ private:
 	ListNode* _head;
 	int _size;
 	
-	//Returns a ListNode pointer that will traverse to the position given by the index
+	//Returns a ListNode pointer that will traverse to the position given by the index.
 	ListNode* traverseTo(int index);
 	
 public:
-	//empty constructor
+	//Empty constructor
 	DoneLinkedList();
 	
-	//destructor for linked list
+	//Destructor for linked list
 	~DoneLinkedList();
 	
-	//Returns true if the linked list is empty
+	//Return true if the linked list is empty.
 	bool isEmpty();
 	
-	//Returns number of tasks in linked list
+	//Return number of tasks in linked list.
 	int getSize();
 
+	//Copy the Date from one Date to another.
 	void obtainDateSeparately(Date*, Date*);
 
-	//determine if the task has a starting date and time or deadline date and time and pass back the one with the value
+	//Determine if the task has a starting date and time or deadline date and time and pass back the one with the value. Also, update the ending date and time accordingly.
 	void obtainDateAndTime(Task &, Date*, int*, Date*, int*);
 
+	//Compare the 2 dates and return true is one of the date is earlier than the other one. If they are the same, updated the bool value passed into the function.
 	bool compareDates(Date*, Date*, bool*);
 
-	//Returns true if the curTask is of an earlier date and time than listTask
+	//Return true if the one task is of an earlier date and time than the other task and check for clashes in the meantime.
 	bool compareDateAndTime(Task &, Task &);
 
-	//Returns the index at which a Task is to be added
+	//Return the index at which a Task is to be added.
 	int getInsertIndex(Task &);
 	
-	//Returns true if task is added to linked list
+	//Return true if task is added to linked list.
 	bool insert(Task &);
 
+	//Determine which date to look at for updating (starting, ending or deadline) and pass the selected one over.
 	void obtainDateAndTimeForRemoving(Task &, Date*, int*);
 
-	//Return the nidex of the first task that is not overdued
+	//Return a vector of index which indicates the tasks to be deleted.
 	std::vector <int> getIndex(Date);
 
-	//remove the task pointed to by the index
+	//Remove the task pointed to by the index.
 	void remove(int);
 
+	//Return true if the task passed over is found and removed from the linked list.
 	bool removeTask(std::string);
 
-	//Update the linked list such that it does not contain overdued due items
+	//Update the linked list such that it does not contain overdued due items.
 	void update(Date);
 
-	//Return everything in the linked list
+	//Return everything in the linked list.
 	void updateStorageVector(std::vector<std::string> &);
 };
