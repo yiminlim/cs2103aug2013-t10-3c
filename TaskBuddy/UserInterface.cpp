@@ -89,7 +89,6 @@ void UserInterface::commandUI(){
 	std::vector<std::string> clashVector;
 	std::vector<std::string> feedbackVector;
 	std::vector<std::string> displayUser;
-	std::vector<std::string> searchDateVector;
 	
 	do{
 		try{
@@ -121,12 +120,14 @@ void UserInterface::commandUI(){
 				}
 				tbLogic.save();
 				searchTaskVector.clear();
+				searchDateVector.clear();
 				clashVector.clear();
 				displayUser.clear();
 				feedbackVector.clear();
 			}
 			else if (command == COMMAND_SEARCH){
 				searchTaskVector.clear();
+				searchDateVector.clear();
 				displayUser.clear();
 				tbLogic.generalSearch(readTask(command, KEYWORD_EMPTY_STRING), searchTaskVector, searchDateVector);
 				displayInformationInVector(searchTaskVector, displayUser, searchDateVector);
@@ -158,6 +159,7 @@ void UserInterface::commandUI(){
 				}
 				tbLogic.save();
 				searchTaskVector.clear();
+				searchDateVector.clear();
 				displayUser.clear();
 				clashVector.clear();
 			}
@@ -201,6 +203,7 @@ void UserInterface::commandUI(){
 					displayFailMessage(command);
 				}
 				searchOtherTaskVector.clear();
+				searchDateVector.clear();
 				displayUser.clear();
 			}
 			else if (command == COMMAND_OVERDUE){
@@ -216,6 +219,7 @@ void UserInterface::commandUI(){
 					displayFailMessage(command);
 				}
 				searchOtherTaskVector.clear();
+				searchDateVector.clear();
 				displayUser.clear();
 			}
 			else if (command == COMMAND_CLEAROVERDUE){
