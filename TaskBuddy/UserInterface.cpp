@@ -904,7 +904,7 @@ void UserInterface::displayHelpCommandUI(){
 	std::cout << "clear                                                                                ";
 			  
 	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
-	std::cout << "|" <<std::endl
+	std::cout << "|" << std::endl
 			  << "|                                                                                                           |" << std::endl
 			  << "|";
 
@@ -918,30 +918,187 @@ void UserInterface::displayHelpCommandUI(){
 	std::cout << "exit                                                                                         ";
 
 	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
-	std::cout << "@-----------------------------------------------------------------------------------------------------------@" << std::endl;
+	std::cout << "|" << std::endl
+			  << "@-----------------------------------------------------------------------------------------------------------@" << std::endl;
 }
 
 //To display the help message for editBlockUI
 void UserInterface::displayHelpEditBlockUI(){
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
 	std::cout << "@-----------------------------------------------------------------------------------------------------------@" << std::endl
-			  << "|To add: add blockoff [press ENTER]                                                                         |" << std::endl
-			  << "|      : from dd/mm/yyyy hhmm to dd/mm/yyyy hhmm [press ENTER]                                              |" << std::endl
-			  << "|      : by dd/mm/yyyy hhmm                                                                                 |" << std::endl
-			  << "|      : end                                                                                                |" << std::endl
-		   	  << "|Example: add blockoff                                                                                      |" << std::endl
-			  << "|       : from 20/11/2013 1100 to 20/11/2013 1200                                                           |" << std::endl
-			  << "|       : by 21/11/2013 1000                                                                                |" << std::endl
-			  << "|       : end                                                                                               |" << std::endl
+	          << "|";
+	
+	SetConsoleTextAttribute(hConsole, FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
+	std::cout << "Add block off"; 
+	
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+	std::cout << ": "; 
+	
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+	std::cout << "add blockoff"; 
+
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+	std::cout << " [press ENTER]                                                                  ";
+
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+	std::cout << "|" << std::endl << "|";
+
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+	std::cout << "            : "; 
+	
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+	std::cout << "from"; 
+	
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+	std::cout << " dd/mm/yyyy hhmm "; 
+	
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+	std::cout << "to"; 
+	
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+	std::cout << " dd/mm/yyyy hhmm [press ENTER]                                        ";
+
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+	std::cout << "|" << std::endl << "|";
+
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+	std::cout << "            : "; 
+	
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+	std::cout << "by"; 
+	
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+	std::cout << " dd/mm/yyyy hhmm [press ENTER]                                                             ";
+
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+	std::cout << "|" << std::endl << "|";
+
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+	std::cout << "            : "; 
+	
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+	std::cout << "end                                                                                          ";
+
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+	std::cout << "|" << std::endl << "|";
+
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+	std::cout << "Example: add blockoff                                                                                      ";
+
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+	std::cout << "|" << std::endl << "|";
+
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+	std::cout << "       : from 20/11/2013 1100 to 20/11/2013 1200                                                           ";
+
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+	std::cout << "|" << std::endl << "|";
+
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+	std::cout << "       : by 21/11/2013 1000                                                                                ";
+
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+	std::cout << "|" << std::endl << "|";
+	
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+	std::cout << "       : end                                                                                               ";
+	
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+	std::cout << "|" <<std::endl
 			  << "|                                                                                                           |" << std::endl
-			  << "|To edit action and location of all block off: editall \"action\" at \"location\"                               |" << std::endl
-			  << "|Example: editall running at school                                                                         |" << std::endl
+			  << "|";
+
+	SetConsoleTextAttribute(hConsole, FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
+	std::cout << "Edit"; 
+	
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+	std::cout << " action and location of all "; 
+	
+	SetConsoleTextAttribute(hConsole, FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
+	std::cout << "block off"; 
+	
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+	std::cout << ": "; 
+	
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+	std::cout << "editall"; 
+	
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+	std::cout << " \"action\" "; 
+	
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+	std::cout << "at"; 
+	
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+	std::cout << " \"location\"                                  ";
+
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+	std::cout << "|" << std::endl << "|";
+
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+	std::cout << "Example: editall running at school                                                                         ";
+
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+	std::cout << "|" <<std::endl
 			  << "|                                                                                                           |" << std::endl
-			  << "|To delete: delete \"option\"                                                                                 |" << std::endl
-			  << "|Example: delete 1                                                                                          |" << std::endl
+			  << "|";
+
+	SetConsoleTextAttribute(hConsole, FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
+	std::cout << "Delete block off"; 
+	
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+	std::cout << ": "; 
+	
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+	std::cout << "delete"; 
+	
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+	std::cout << " \"option\"                                                                          ";
+
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+	std::cout << "|" << std::endl << "|";
+
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+	std::cout << "Example: delete 1                                                                                          ";
+	
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+	std::cout << "|" <<std::endl
 			  << "|                                                                                                           |" << std::endl
-			  << "|To finalise time slot for task: finalise \"option\"                                                          |" << std::endl
-			  << "|Example: finalise 1 (option 1 is the time slot that user wants)                                            |" << std::endl
+			  << "|";
+
+	SetConsoleTextAttribute(hConsole, FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
+	std::cout << "Finalise"; 
+	
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+	std::cout << " time slot for task: "; 
+	
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+	std::cout << "finalise"; 
+	
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+	std::cout << " \"option\"                                                             ";
+
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+	std::cout << "|" << std::endl << "|";
+
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+	std::cout << "Example: finalise 1 (option 1 is the time slot that user wants)                                            ";
+			  
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+	std::cout << "|" <<std::endl
 			  << "|                                                                                                           |" << std::endl
-			  << "|To return to main menu: return                                                                             |" << std::endl
+			  << "|";
+
+	SetConsoleTextAttribute(hConsole, FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
+	std::cout << "Return"; 
+	
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+	std::cout << " to main menu: "; 
+	
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+	std::cout << "return                                                                                ";
+
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+	std::cout << "|" << std::endl
 			  << "@-----------------------------------------------------------------------------------------------------------@" << std::endl;
 }
