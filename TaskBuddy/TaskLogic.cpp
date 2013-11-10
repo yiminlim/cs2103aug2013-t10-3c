@@ -753,8 +753,8 @@ void TaskLogic::checkValidTask(Task task){
 }
 	
 bool TaskLogic::checkSameDate(Date earlierDate, Date laterDate){
-	assert(!earlierDate.isEmptyDate() || taskParse.isEmptyDate(earlierDate));
-	assert(!laterDate.isEmptyDate() || taskParse.isEmptyDate(laterDate));
+	assert(earlierDate.isEmptyDate() || earlierDate.isValidDate());
+	assert(laterDate.isEmptyDate() || laterDate.isValidDate());
 	
 	return(earlierDate._year == laterDate._year) && (earlierDate._month == laterDate._month) && (earlierDate._day == laterDate._day);
 }
