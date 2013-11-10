@@ -52,8 +52,8 @@ private:
 	static const std::string MESSAGE_EDITALL;
 	static const std::string MESSAGE_FINALISE;
 	static const std::string MESSAGE_MARKDONE;
-	static const std::string MESSAGE_UNDO;
 	static const std::string MESSAGE_CLEAROVERDUE;
+	static const std::string MESSAGE_UNDONE;
 	static const std::string MESSAGE_EXIT;
 
 	static const std::string ERROR_INVALID_COMMAND;	
@@ -113,6 +113,9 @@ public:
 	//Precondition: function call fail
 	//Post-condition: fail message with be displayed
 	void displayFailMessage(const std::string);
+
+	//To display feedback to user for undo function
+	void displayUndoFeedback(std::string, std::vector<std::string>,  std::vector<std::string>);
 
 	//To display the help message for commandUI
 	void displayHelpCommandUI();
