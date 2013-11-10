@@ -378,7 +378,12 @@ void TaskLogic::edit(std::string taskString, std::string editString, bool isBloc
 	
 	Task taskObject(newAction,newLocation,newStartingDate[0],newStartingTime[0],newEndingDate[0],newEndingTime[0],newDeadlineDate[0],newDeadlineTime[0],newIsBlock);
 	
-	tbLinkedList.remove(taskString, getActionLocation(taskString)); // WHEN YOU LEFT ONE ITEM IT GETS REMOVED BLOCKOFF
+	std::string editedString = removeBlockoff(taskString);
+	if(tbLinkedList.checkIfRemainingTask(editedString))
+		tbLinkedList.remove(editedString, getActionLocation(editedString));
+	else
+		tbLinkedList.remove(taskString, getActionLocation(taskString));
+
 	tbLinkedList.insert(taskObject, isClash, clashTasks);
 	editedTask = taskObject.getTask();
 
