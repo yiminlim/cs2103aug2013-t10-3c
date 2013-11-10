@@ -97,7 +97,7 @@ public:
 	void displayTodayTask();
 
 	//To display all information stored in a vector
-	void displayInformationInVector(std::vector<std::string>, std::vector<std::string>&);
+	void displayInformationInVector(std::vector<std::string>, std::vector<std::string>&, std::vector<std::string>);
 
 	//To display feedback to users
 	void displayFeedback(std::string, std::string, std::string, std::vector<std::string>);
