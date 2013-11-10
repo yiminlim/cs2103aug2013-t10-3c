@@ -187,13 +187,16 @@ void Parse::processTaskStringFromUI(std::string taskString, std::string & action
 	assert(startingTime.size() == endingTime.size());
 	assert(deadlineDate.size() == deadlineTime.size());
 
-	try{ 
+	try{
+		//Multiple date/time inputs although not a block
 		if (!block && (startingDate.size() > 1 || endingDate.size() > 1 || deadlineDate.size() > 1)){
 			throw (std::runtime_error(EXCEPTION_NOBLOCK_MULTIPLE_DATES));
 		}
+		//Both starting/ending date/time input and deadline date/time input for a single task
 		if (!block && ((!startingDate[0].isEmptyDate() && !deadlineDate[0].isEmptyDate()) || (!endingDate[0].isEmptyDate() && !deadlineDate[0].isEmptyDate()))){
 			throw (std::runtime_error(EXCEPTION_NOBLOCK_MULTIPLE_TYPES));
 		}
+		//Start time is given without end time and vice versa
 		for (unsigned int i = 0; i < startingDate.size(); i++){
 			if (!startingDate[i].isEmptyDate() && !endingDate[i].isEmptyDate() && startingTime[i] == EMPTY_TIME && endingTime[i] != EMPTY_TIME){
 				throw (std::runtime_error(EXCEPTION_MISSING_START_TIME));
@@ -204,14 +207,16 @@ void Parse::processTaskStringFromUI(std::string taskString, std::string & action
 		}
 		for (unsigned int i = 0; i < startingDate.size(); i++){
 			if (!startingDate[i].isEmptyDate() && !endingDate[i].isEmptyDate() && !startingDate[i].isLaterDate(endingDate[i])){
-				throw (std::runtime_error(EXCEPTION_END_BEFORE_START_DATE));
-			}else if (startingDate[i].isSameDate(endingDate[i])){
-				if (!startingDate[i].isEmptyDate() && !endingDate[i].isEmptyDate() && !isLaterTime(startingTime[i], endingTime[i])){
-					if (isSameTime(startingTime[i], endingTime[i])){
-						throw std::runtime_error(EXCEPTION_START_END_SAME);
-					}else{ 
-						throw std::runtime_error(EXCEPTION_END_BEFORE_START_TIME);
+				if (startingDate[i].isSameDate(endingDate[i])){
+					if (!startingDate[i].isEmptyDate() && !endingDate[i].isEmptyDate() && !isLaterTime(startingTime[i], endingTime[i])){
+						if (isSameTime(startingTime[i], endingTime[i])){
+							throw std::runtime_error(EXCEPTION_START_END_SAME);
+						}else{ 
+							throw std::runtime_error(EXCEPTION_END_BEFORE_START_TIME);
+						}
 					}
+				}else{
+					throw (std::runtime_error(EXCEPTION_END_BEFORE_START_DATE));
 				}
 			}
 		}
@@ -236,7 +241,7 @@ void Parse::processTaskStringFromFile(std::string taskString, std::string & acti
 		taskDetails.push_back(word);
 	}
 	
-	if (taskDetails[0] == KEYWORD_DEADLINE){	//Deadline task case
+	if (taskDetails[0] == KEYWORD_DEADLINE){	//Deadline task 
 		unsigned int i = 1;
 		while (i < taskDetails.size() && taskDetails[i] != KEYWORD_HOURS && taskDetails[i] != SYMBOL_COLLON){
 			if (taskDetails[i].find(DATE_SEPARATOR) != std::string::npos){
@@ -272,7 +277,7 @@ void Parse::processTaskStringFromFile(std::string taskString, std::string & acti
 		if (i < taskDetails.size() && taskDetails[i] == KEYWORD_BLOCK_BRACKETS){
 			block = true;
 		} 
-	}else if (taskDetails[0].find(DATE_SEPARATOR) != std::string::npos){		//Activity task case
+	}else if (taskDetails[0].find(DATE_SEPARATOR) != std::string::npos){		//Activity task 
 		unsigned int i = 0;
 		while (i < taskDetails.size() && taskDetails[i] != KEYWORD_HOURS && taskDetails[i] != SYMBOL_COLLON && taskDetails[i] != SYMBOL_DASH){
 			if (taskDetails[i].find(DATE_SEPARATOR) != std::string::npos){
@@ -322,7 +327,7 @@ void Parse::processTaskStringFromFile(std::string taskString, std::string & acti
 		if (i < taskDetails.size() && taskDetails[i] == KEYWORD_BLOCK_BRACKETS){
 			block = true;
 		}
-	}else{	//Floating task case
+	}else{	//Floating task 
 		unsigned int i = 0;
 		while (i < taskDetails.size() && taskDetails[i] != KEYWORD_LOCATION){
 			if (action != EMPTY_STRING){
@@ -371,8 +376,6 @@ void Parse::processTaskStringFromFile(std::string taskString, std::string & acti
 	Purpose: Takes a date in string type and converts it into Date type.
 	Pre-conditions: Date string is in the correct format 'day/month/year'.
 	Post-conditions: Returns date with correct day/month/year values.
-	Equivalence Partitions: "", 1 '/', 2 '/'
-	Boundary values: '', 1 '/', 2 '/'
 */ 
 Date Parse::convertToDate(std::string dateString){
 	Date date; 
@@ -386,17 +389,17 @@ Date Parse::convertToDate(std::string dateString){
 
 	try {
 		if (yearString.empty()){
-			throw (std::runtime_error(EXCEPTION_DATE_NO_YEAR));
+			throw (std::runtime_error(EXCEPTION_DATE_NO_YEAR));		
 		}else if (monthString.empty()){
-			throw (std::runtime_error(EXCEPTION_DATE_NO_MONTH));
+			throw (std::runtime_error(EXCEPTION_DATE_NO_MONTH));	
 		}else if (dayString.empty()){
-			throw (std::runtime_error(EXCEPTION_DATE_NO_DAY));
+			throw (std::runtime_error(EXCEPTION_DATE_NO_DAY));		 
 		}else if (!yearString.empty() && !isValidYearFormat(yearString)){
-			throw (std::runtime_error(EXCEPTION_INVALID_YEAR_FORMAT));
+			throw (std::runtime_error(EXCEPTION_INVALID_YEAR_FORMAT));	
 		}else if (!monthString.empty() && !isValidMonthFormat(monthString)){
-			throw (std::runtime_error(EXCEPTION_INVALID_MONTH_FORMAT));
+			throw (std::runtime_error(EXCEPTION_INVALID_MONTH_FORMAT));	
 		}else if (!dayString.empty() && !isValidDayFormat(dayString)){
-			throw (std::runtime_error(EXCEPTION_INVALID_DAY_FORMAT));
+			throw (std::runtime_error(EXCEPTION_INVALID_DAY_FORMAT));	
 		}
 	}catch (...) {
 		throw;
@@ -417,11 +420,11 @@ Date Parse::convertToDate(std::string dateString){
 	try {
 		if (!date.isValidDate()){
 			if (!date.isValidDay()){
-				throw std::runtime_error(EXCEPTION_INVALID_DAY_INPUT);
+				throw std::runtime_error(EXCEPTION_INVALID_DAY_INPUT);		
 			}else if (!date.isValidMonth()){
-				throw std::runtime_error(EXCEPTION_INVALID_MONTH_INPUT);
+				throw std::runtime_error(EXCEPTION_INVALID_MONTH_INPUT);	
 			}else if (!date.isValidYear()){
-				throw std::runtime_error(EXCEPTION_INVALID_YEAR_INPUT);
+				throw std::runtime_error(EXCEPTION_INVALID_YEAR_INPUT);		
 			}
 		}
 	}catch (...) {
@@ -435,8 +438,6 @@ Date Parse::convertToDate(std::string dateString){
 	Purpose: Takes a time in string type and converts it into integer type.
 	Pre-conditions: Time string is made up of 4 numerical digits.
 	Post-conditions: Returns time as an integer type value. 
-	Equivalence Partitions: less than 4 digits, 4 digits, 5 digits 
-	Boundary values: 3 digits, 4 digits, 5 digits
 */
 int Parse::convertToTime(std::string timeString){
 	int time;
@@ -469,6 +470,7 @@ int Parse::convertToTime(std::string timeString){
 	Post-conditions: Returns date string corresponding to day keyword input by user. 
 */
 std::string Parse::changeDayToDate(std::string dayKeyword, std::vector<std::string> dateStrings){
+	dayKeyword = convertToLowercase(dayKeyword);
 	if (dayKeyword == DAY_KEYWORD_TODAY){
 		return dateStrings[0];
 	}else if (dayKeyword == DAY_KEYWORD_MONDAY || dayKeyword == DAY_KEYWORD_MON){
@@ -492,6 +494,19 @@ std::string Parse::changeDayToDate(std::string dayKeyword, std::vector<std::stri
 	return NULL;
 }
 
+/*
+	Purpose: Takes a word and changes changes it into lowercase form.
+	Pre-conditions: Word is a string.
+	Post-conditions: Returns word in lowercase if it is made up by letters. 
+*/
+std::string Parse::convertToLowercase(std::string word){
+	for (unsigned int i = 0; word[i] != '\0'; i++){
+		word[i] = tolower(word[i]);
+	}
+
+	return word;
+}
+
 //-----CHECK METHODS---------------------------------------------------------------------------
 
 /*
@@ -512,11 +527,7 @@ bool Parse::isKeyword(std::string word){
 */
 bool Parse::isDayKeyword(std::string word){
 	std::string dayKeywords[20] = {DAY_KEYWORD_TODAY, DAY_KEYWORD_TOMORROW, DAY_KEYWORD_TMR, DAY_KEYWORD_MONDAY, DAY_KEYWORD_MON, DAY_KEYWORD_TUESDAY, DAY_KEYWORD_TUES, DAY_KEYWORD_TUE, DAY_KEYWORD_WEDNESDAY, DAY_KEYWORD_WED, DAY_KEYWORD_THURSDAY, DAY_KEYWORD_THURS, DAY_KEYWORD_THUR, DAY_KEYWORD_THU, DAY_KEYWORD_FRIDAY, DAY_KEYWORD_FRI, DAY_KEYWORD_SATURDAY, DAY_KEYWORD_SAT, DAY_KEYWORD_SUNDAY, DAY_KEYWORD_SUN};
-	
-	for(int i = 0; word[i] != '\0'; i++){
-		word[i] = tolower(word[i]);
-	}
-
+	word = convertToLowercase(word);
 	for (int i = 0; i < 20; i++){
 		if (word == dayKeywords[i]){
 			return true;
