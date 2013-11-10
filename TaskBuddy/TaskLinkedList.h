@@ -99,4 +99,7 @@ public:
 
 	//Return list of overdued items.
 	void getOverdueList(Date, std::vector<std::string> &);
+	
+	//Return whether the task indicated by the index is blocked or not (For g-test).
+	bool getBlockStatus(int index);
 };
