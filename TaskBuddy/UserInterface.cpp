@@ -27,6 +27,8 @@ const std::string UserInterface::KEYWORD_SPACE = " ";
 const std::string UserInterface::KEYWORD_BULLETING = ". ";
 const std::string UserInterface::KEYWORD_QUOTE = "\"";
 const std::string UserInterface::KEYWORD_END = "end";
+const std::string UserInterface::KEYWORD_EQUAL_LEFT = "===[ ";
+const std::string UserInterface::KEYWORD_EQUAL_RIGHT = " ]===";
 
 const std::string UserInterface::MESSAGE_TODAY_TASK = "Task(s) due by TODAY!";
 const std::string UserInterface::MESSAGE_COMMAND = "command: ";
@@ -343,6 +345,7 @@ void UserInterface::editBlockUI(const std::string stringToEditBlock){
 					std::cout << std::endl << MESSAGE_CLASH << std::endl;
 					displayInformationInVector(clashVector, displayUser, searchDateVector);
 				}			
+				searchDateVector.clear();
 				clashVector.clear();
 				displayUser.clear();
 				contEditBlock = false;
@@ -438,9 +441,9 @@ void UserInterface::displayInformationInVector(std::vector<std::string> vec, std
 	int alternate = 1;
 	int countEmptyString = 0;
 
-	if (!searchDateVector.empty()){																	/////
+	if (!searchDateVector.empty()){																	
 		SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
-		std::cout << searchDateVector[countEmptyString] << std::endl << std::endl;
+		std::cout << KEYWORD_EQUAL_LEFT << searchDateVector[countEmptyString] << KEYWORD_EQUAL_RIGHT << std::endl << std::endl;
 	}
 
 	for (unsigned int i = 0; i < vec.size(); i++){
@@ -458,10 +461,11 @@ void UserInterface::displayInformationInVector(std::vector<std::string> vec, std
 			displayUser.push_back(vec[i]);
 		}
 		else{
+			assert(!searchDateVector.empty());
 			std::cout << vec[i] << std::endl;
 			countEmptyString++;
 			SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
-			std::cout << searchDateVector[countEmptyString] << std::endl << std::endl;
+			std::cout << KEYWORD_EQUAL_LEFT << searchDateVector[countEmptyString] << KEYWORD_EQUAL_RIGHT << std::endl << std::endl;
 			alternate++;
 		}
 	}
@@ -514,6 +518,7 @@ void UserInterface::displaySuccessfulMessage(const std::string command){
 
 //To display messages when commands fail to execute successfully
 void UserInterface::displayFailMessage(const std::string command){
+	assert(command == COMMAND_DONE || command == COMMAND_OVERDUE);
 	SetConsoleTextAttribute(hConsole, FOREGROUND_GREEN | FOREGROUND_INTENSITY);
 	if (command == COMMAND_DONE){
 		std::cout << MESSAGE_INVALID_DONE;
