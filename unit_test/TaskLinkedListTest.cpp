@@ -216,3 +216,45 @@ TEST(TaskLinkedListTest, RemoveFunction){
 	EXPECT_EQ(task3.getTask(), listOfTasks[1]);
 	EXPECT_EQ(2, listOfTasks.size());
 }
+
+/****************************
+ TEST FOR RETRIEVE FUNCTION
+****************************/
+
+TEST(TaskLinkedListTest, RetrieveMinorFunction1){
+	TaskLinkedList taskList;
+	EXPECT_EQ("abcdef", taskList.toLowerCase("AbCDeF"));
+}
+
+TEST(TaskLinkedListTest, RetrieveMinorFunction2){
+	TaskLinkedList taskList;
+	EXPECT_EQ("01/02/2013", taskList.getStringDate(1,2,2013));
+	EXPECT_EQ("10/12/2013", taskList.getStringDate(10,12,2013));
+}
+
+TEST(TaskLinkedListTest, RetrieveMinorFunction3){
+	TaskLinkedList taskList;
+	Date tempDate1(31,12,2013), tempDate2(1,2,2014), nullDate;
+	Task task1("lunch with mum", "techno", tempDate1, 1200, tempDate2, 1500, nullDate, -1, false);
+	EXPECT_EQ(task1.getTask() + "31/12/201301/01/201401/02/2014", taskList.compareAndIncludeRange(task1.getTask(), &tempDate1._day, &tempDate1._month, &tempDate1._year, &tempDate2._day, &tempDate2._month, &tempDate2._year));
+}
+
+/*TEST(TaskLinkedListTest, RetrieveMinorFunction3){
+	TaskLinkedList taskList;
+	Date tempDate1(1,2,2013), tempDate2(3,2,2013), nullDate;
+	Task task1("lunch with mum", "deck", tempDate1, 1200, nullDate, -1, nullDate, -1, false);
+	Task task2("lunch with mum", "techno", tempDate1, 1400, tempDate2, 1000, nullDate, -1, false);
+	Task task3("lunch with dad", "YIH", nullDate, -1, nullDate, -1, tempDate2, 1800, false);
+	bool isClash = false;
+	std::vector<std::string> clashTasks, keywords,taskList;
+
+	taskList.insert(task1, isClash, clashTasks);
+	taskList.insert(task2, isClash, clashTasks);
+	taskList.insert(task3, isClash, clashTasks);
+
+	keywords.push_back("lunch");
+	keywords.push_back("with");
+	keywords.push_back("mum");
+
+	bool TaskLinkedList::retrieve(const std::vector<std::string> keywords, std::vector<std::string> & taskList){
+}*/
