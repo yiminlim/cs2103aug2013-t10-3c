@@ -21,5 +21,14 @@ bool Date::isSameDate(Date checkDate){
 }
 
 bool Date::isLaterDate(Date checkDate){
+	if (_year > checkDate._year) {
+		return false;
+	}
+	else if ((_year == checkDate._year) && (_month > checkDate._month)) {
+		return  false; 
+	}
+	else if ((_month == checkDate._month) && (_day > checkDate._day)) {
+		return false;
+	}
 	return true;
 }
