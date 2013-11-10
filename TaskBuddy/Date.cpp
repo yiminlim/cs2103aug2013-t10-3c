@@ -32,3 +32,19 @@ bool Date::isLaterDate(Date checkDate){
 	}
 	return true;
 }
+
+bool Date::isValidDate(){
+	return isValidDay() && isValidMonth() && isValidYear();
+}
+
+bool Date::isValidDay(){
+	return _day >= 1 && _day <= 31;
+}
+
+bool Date::isValidMonth(){
+	return _month >= 1 && _month <= 12;
+}
+
+bool Date::isValidYear(){
+	return _year > 0;
+}
