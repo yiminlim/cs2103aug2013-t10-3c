@@ -59,9 +59,6 @@ public:
 	//Returns task deadline time
 	int getDeadlineTime();
 
-	//Returns task status
-	char getStatus();
-
 	//Returns whether task is part of a block
 	bool getBlock();
 
@@ -85,6 +82,12 @@ public:
 	
 	//Checks if task is deadline type
 	bool isDeadlineType();
+
+	//Checks if task is activity type (from-to)
+	bool isActivityType();
+
+	//Checks if task is floating type
+	bool isFloatingType();
 
 	//Checks if date value is empty i.e. 0/0/0
 	bool isEmptyDate(Date);
