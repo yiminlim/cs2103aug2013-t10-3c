@@ -3,6 +3,10 @@
 
 class TaskTest : public ::testing::Test {
 protected:
-	virtual void SetUp() {}
-
+	virtual void SetUp() {
+	
+	}
+	Date startingDate;
+	Date endingDate;
+	Date deadlineDate;
 };
