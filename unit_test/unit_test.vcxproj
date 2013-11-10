@@ -87,7 +87,7 @@
     <ClCompile Include="DoneLinkedListTest.cpp" />
     <ClCompile Include="LogicTest.cpp" />
     <ClCompile Include="Main.cpp" />
-    <ClCompile Include="OverdueLinkedList.cpp" />
+    <ClCompile Include="OverdueLinkedListTest.cpp" />
     <ClCompile Include="ParseTest.cpp" />
     <ClCompile Include="StorageTest.cpp" />
     <ClCompile Include="TaskLinkedListTest.cpp" />
@@ -97,7 +97,7 @@
   <ItemGroup>
     <ClInclude Include="DoneLinkedListTest.h" />
     <ClInclude Include="LogicTest.h" />
-    <ClInclude Include="OverdueLinkedList.h" />
+    <ClInclude Include="OverdueLinkedListTest.h" />
     <ClInclude Include="ParseTest.h" />
     <ClInclude Include="StorageTest.h" />
     <ClInclude Include="TaskLinkedListTest.h" />
