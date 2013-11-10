@@ -39,7 +39,7 @@
     <ClCompile Include="StorageTest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="OverdueLinkedList.cpp">
+    <ClCompile Include="OverdueLinkedListTest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -65,7 +65,7 @@
     <ClInclude Include="StorageTest.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="OverdueLinkedList.h">
+    <ClInclude Include="OverdueLinkedListTest.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
