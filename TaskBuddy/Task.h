@@ -9,16 +9,16 @@
 
 class Task{
 private:
-	std::string _task;	//whole line in proper output format 
-	std::string _action; 
-	std::string _location;
-	Date _startingDate;
-	int	_startingTime;
+	std::string _task;		//Formatted task output string 
+	std::string _action;	//Task action string
+	std::string _location;	//Task location string
+	Date _startingDate;		
+	int	_startingTime;		
 	Date _endingDate;
 	int _endingTime;
 	Date _deadlineDate;
 	int	_deadlineTime;
-	bool _block;
+	bool _block;			//Indicates if task is part of a block
 
 public:
 //-----CONSTRUCTORS----------------------------------------------------------------------------
@@ -26,7 +26,7 @@ public:
 	//Default constructor
 	Task();
 
-	//Constructor with components
+	//Constructor with values
 	Task(std::string, std::string, Date, int, Date, int, Date, int, bool);
 
 //-----GET METHODS-----------------------------------------------------------------------------
@@ -69,7 +69,7 @@ public:
 //-----FORMATTING METHODS----------------------------------------------------------------------
 
 	//Formats the task output string for display to user
-	std::string Task::formatTask();
+	std::string Task::formatTaskOutputString();
 
 	//Formats the time output string from integer type value
 	std::string formatTimeOutputString(int);
@@ -109,9 +109,9 @@ public:
 	//Checks if time value is valid 
 	bool isValidTime(int);
 
-	//Checks if hour value of time is valid
+	//Checks if hour value of time is valid i.e. between 0-23
 	bool isValidHour(int);
 
-	//Checks if minutes value of time is valid
+	//Checks if minutes value of time is valid i.e. between 0-59
 	bool isValidMins(int);
 };

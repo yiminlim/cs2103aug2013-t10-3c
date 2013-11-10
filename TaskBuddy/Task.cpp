@@ -8,11 +8,9 @@ Task::Task(){
 
 /* 
 	Purpose: Takes task variable values and constructs a task object.
-	Pre-conditions: All variables should have values. (strings should not be NULL)
-	Post-conditions: Given that all variable values are found to be valid and necessary variables are included, formatted task output string is generated and task object is constructed. 
+	Pre-conditions: All variables values should be valid. (e.g. strings should not be NULL)
+	Post-conditions: Formatted task output string is initialised and task object is constructed. 
 */
-//Use isValid/isEmpty methods to check & throw exceptions if necessary
-//Note: isEmpty will be accepted also because they are not included under isValid
 Task::Task(std::string action, std::string location, Date startingDate, int startingTime, Date endingDate, int endingTime, Date deadlineDate, int deadlineTime, bool block){
 	_action = action;
 	_location = location;
@@ -23,15 +21,15 @@ Task::Task(std::string action, std::string location, Date startingDate, int star
 	_deadlineDate = deadlineDate;
 	_deadlineTime = deadlineTime;
 	_block = block;
-	_task = formatTask();
+	_task = formatTaskOutputString();
 }
 
 //-----GET METHODS-----------------------------------------------------------------------------
 
 /* 
-	Purpose: Retrieves task string.
+	Purpose: Retrieves formatted task output string.
 	Pre-condition: Task object has initialised output task string value.
-	Post-condition: Returns formatted task output string. 
+	Post-condition: Returns formatted output string. 
 */
 std::string Task::getTask(){
 	return _task;
@@ -110,17 +108,6 @@ int Task::getDeadlineTime(){
 }
 
 /* 
-	Purpose: Retrieves task status.
-	Pre-condition: Task object has initialised status value.
-	Post-condition: Returns status. 
-*/
-/*char Task::getStatus(){
-	char temp = ' ';
-	return temp;
-}
-*/
-
-/* 
 	Purpose: Checks if task is part of a block.
 	Pre-condition: Task object has initialised block value.
 	Post-condition: Returns true if task is part of a block and false if otherwise.
@@ -135,11 +122,10 @@ bool Task::getBlock(){
 	Purpose: Set whether task is part of a block or not.
 	Pre-condition: Task object has been initialised.
 	Post-condition: Task block variable and formatted task output string are updated. 
-	Equivalence Partitions: true, false 
 */
 void Task::setBlock(bool newBlock) {
-	_block = newBlock;     //why cant we change things in private attributes
-	_task = formatTask();
+	_block = newBlock;     
+	_task = formatTaskOutputString();
 	
 	return;
 }
@@ -151,8 +137,7 @@ void Task::setBlock(bool newBlock) {
 	Pre-condition: Task object variables have been initialised.
 	Post-condition: Returns formatted task output string.
 */
-//refactor to make keywords constant strings? 'at', 'by', 'blockoff'
-std::string Task::formatTask() {
+std::string Task::formatTaskOutputString() {
 	std::ostringstream output;
 	if (isDeadlineType()) {
 		output << "by ";
@@ -171,7 +156,7 @@ std::string Task::formatTask() {
 		}
 	}
 	else {
-		output << "   ";	// for alignment with deadline tasks during display
+		output << "   ";	//For alignment with deadline tasks during display
 		if (!isEmptyDate(_startingDate)) {
 			output << formatDateOutputString(_startingDate);
 		}
@@ -202,14 +187,14 @@ std::string Task::formatTask() {
 /* 
 	Purpose: Formats time output string based on time integer value. 
 	Pre-condition: Time is valid and not empty (i.e. -1)
-	Post-condition: Returns time output string (should be 4 digits) 
+	Post-condition: Returns time output string in 24hr format (should be 4 digits) 
 */
 std::string Task::formatTimeOutputString(int time){
 	std::ostringstream timeString;
 
 	if (time < 1000) {
-		timeString << "0";
-	}
+		timeString << "0";	//Adds zeros for values that are of less 
+	}						//than 4 digits
 	if (time < 100) {
 		timeString << "0";
 	}
@@ -223,15 +208,15 @@ std::string Task::formatTimeOutputString(int time){
 
 /* 
 	Purpose: Formats date output string based on dd/mm/yyyy. 
-	Pre-condition: Date is valid and not empty (i.e. 0/0/0)
-	Post-condition: Returns time output string (should be in dd/mm/yyyy format).
+	Pre-condition: Date is valid and not empty (i.e. 0/0/0).
+	Post-condition: Returns date output string (should be in dd/mm/yyyy format).
 */
 
 std::string Task::formatDateOutputString(Date date) {
 	std::ostringstream dateString;
 	if (date._day < 10) {
-		dateString << "0";
-	}
+		dateString << "0";		//Adds zeros for day and month values that are 
+	}							//single digits to ensure proper format
 	dateString << date._day;
 	dateString << "/";
 	if (date._month < 10) {
@@ -240,8 +225,8 @@ std::string Task::formatDateOutputString(Date date) {
 	dateString << date._month;
 	dateString << "/";
 	if (date._year < 1000) {
-		dateString << "0";
-	}
+		dateString << "0";		//Adds zeros to year values that are less than
+	}							//four digits to ensure proper format
 	if (date._year < 100) {
 		dateString << "0";
 	}
@@ -270,8 +255,6 @@ bool Task::isDeadlineType() {
 	Purpose: Checks if task is an activity type. 
 	Pre-condition: Task object date values have been initialised.
 	Post-condition: Returns true if startingDate is not empty (i.e. 0/0/0) and false otherwise. 
-	Equivalence Partitions: day/month/year = 0, valid integer values.
-	Boundary values: 0, 1
 */
 
 bool Task::isActivityType() {
@@ -281,9 +264,7 @@ bool Task::isActivityType() {
 /* 
 	Purpose: Checks if task is an floating type (only contains action and no dates/times). 
 	Pre-condition: Task object date values have been initialised.
-	Post-condition: Returns true if all dates are empty (i.e. 0/0/0) and false otherwise. 
-	Equivalence Partitions: day/month/year = 0, valid integer values.
-	Boundary values: 0, 1
+	Post-condition: Returns true if all types of dates are empty (i.e. 0/0/0) and false otherwise. 
 */
 
 bool Task::isFloatingType() {
@@ -294,8 +275,6 @@ bool Task::isFloatingType() {
 	Purpose: Checks if date value is empty i.e. 0/0/0. 
 	Pre-condition: Date value has been initialised.
 	Post-condition: Returns true if date is empty (i.e. 0/0/0) and false otherwise.
-	Equivalence Partitions: day/month/year = 0, valid integer values.
-	Boundary values: 0, 1
 */
 bool Task::isEmptyDate(Date date) {
 	return (date._day == 0 && date._month == 0 && date._year == 0);
@@ -325,8 +304,6 @@ bool Task::isValidDay(int day) {
 	Purpose: Checks if month value of date is valid. 
 	Pre-condition: Month value has been initialised.
 	Post-condition: Returns true if month value of date is valid and false otherwise. 
-	Equivalence Partitions: < 1, 1-12, > 12
-	Boundary values: 0, 1, 2, 11, 12, 13
 */
 bool Task::isValidMonth(int month) {
 	return month >= 1 && month <= 12;
@@ -336,8 +313,6 @@ bool Task::isValidMonth(int month) {
 	Purpose: Checks if year value of date is valid. 
 	Pre-condition: Year value has been initialised.
 	Post-condition: Returns true if year value of date is valid and false otherwise. 
-	Equivalence Partitions: < 1, >= 1
-	Boundary values:  0, 1, 2
 */
 bool Task::isValidYear(int year) {
 	return year > 0;
@@ -347,8 +322,6 @@ bool Task::isValidYear(int year) {
 	Purpose: Checks if time value is empty i.e. -1. 
 	Pre-condition: Time value has been initialised.
 	Post-condition: Returns true if time is empty (i.e. -1) and false otherwise. 
-	Equivalence Partitions: -1, any positive integer
-	Boundary values: -1, 1
 */
 bool Task::isEmptyTime(int time) {
 	return time == -1;
@@ -370,8 +343,6 @@ bool Task::isValidTime(int time) {
 	Purpose: Checks if hour value of time is valid. 
 	Pre-condition: Hour value is an integer.
 	Post-condition: Returns true if hour value of time is valid and false otherwise. 
-	Equivalence Partitions: < 1, 1-23, > 23 
-	Boundary values: 0, 1, 2, 22, 23, 24
 */
 bool Task::isValidHour(int hour) {
 	return hour >= 1 && hour <= 23;
@@ -381,8 +352,6 @@ bool Task::isValidHour(int hour) {
 	Purpose: Checks if minutes value of time is valid. 
 	Pre-condition: Minutes value is an integer.
 	Post-condition: Returns true if minutes value of time is valid and false otherwise. 
-	Equivalence Partitions: < 1, 1-59, > 59
-	Boundary values: 0, 1, 2, 58, 59, 60
 */
 bool Task::isValidMins(int mins) {
 	return mins >= 1 && mins <= 59;
