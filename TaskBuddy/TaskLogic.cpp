@@ -13,6 +13,7 @@ const std::string TaskLogic::FILENAME_TB_DONE_STORAGE = "taskBuddyDoneStorage.tx
 const std::string TaskLogic::FILENAME_TB_OVERDUE_STORAGE = "taskBuddyOverdueStorage.txt";
 const std::string TaskLogic::UI_FORMAT = "ui_format";
 const std::string TaskLogic::PROCESSED_FORMAT = "processed_format";
+const std::string TaskLogic::BLOCK_OFF = "(blockoff)";
 
 TaskLogic::TaskLogic(){
 	
@@ -412,11 +413,22 @@ bool TaskLogic::editBlock(const std::string newTaskActionLocation, std::vector<s
 	bool isClashDummy = false;
 	std::vector<std::string> dummyVector;
 	std::string dummyString;
+	std::string delTask = removeBlockoff(blockTaskVector[blockTaskVector.size()-1]);
+	addExistingTask(blockTaskVector[blockTaskVector.size()-1]);
 	for(unsigned int i = 0; i < blockTaskVector.size(); i++){
 		if(!edit( blockTaskVector[i], newTaskActionLocation, isClashDummy, dummyVector, dummyString))
 			isValidEdit = false;
 	}
+	tbLinkedList.remove(delTask, getActionLocation(delTask));
 	return isValidEdit;
+}
+
+std::string TaskLogic::removeBlockoff(std::string taskString){
+	assert(!taskString.empty());
+	size_t posBlockOff = taskString.find(BLOCK_OFF);
+	
+	std::string newTaskString = taskString.substr(0, posBlockOff-1);
+	return newTaskString;
 }
 
 /*
@@ -665,9 +677,9 @@ void TaskLogic::checkValidTask(Task task){
 		assert(task.getDeadlineDate().isValidDate());
 		if(!taskParse.isValidEndDate(taskParse.convertToDate(dateVector[0]), task.getDeadlineDate()))
 			throw (std::runtime_error("Invalid date input: date has already passed"));
-	}/*
+	}
 	else if(task.isActivityType()){
-		assert(!task.getDeadlineDate.isValidDate());
+		assert(!task.getDeadlineDate().isValidDate());
 		assert(task.getDeadlineTime() == -1);
 		assert(task.getStartingDate().isValidDate());
 		if(!taskParse.isValidEndDate(taskParse.convertToDate(dateVector[0]), task.getStartingDate()))
@@ -681,7 +693,7 @@ void TaskLogic::checkValidTask(Task task){
 		assert(task.getStartingTime() == -1);
 		assert(task.getEndingTime() == -1);
 		assert(task.getDeadlineTime() == -1);
-	}*/
+	}
 }
 	
 bool TaskLogic::checkSameDate(Date earlierDate, Date laterDate){
