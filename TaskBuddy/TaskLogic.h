@@ -115,7 +115,7 @@ public:
 	void updateCount(int);
 
 	//To undo the most recent command made by user
-	void undo();
+	void undo(std::string&, std::vector<std::string>&, std::vector<std::string>& );
 	
 //-----HELPER FUNCTIONS---------------------------------------------------------------------------------------
 	

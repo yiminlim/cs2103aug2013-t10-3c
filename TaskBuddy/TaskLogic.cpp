@@ -535,33 +535,47 @@ void TaskLogic::updateCount(int count){
 	Equivalence Partition: empty commandStackHistory, empty taskStackHistory, insufficient taskStackHistory, invalid command, command == COMMAND_EDIT, command == COMMAND_ADD, command == COMMAND_DELETE
 	Boundary: empty commandStackHistory, empty taskStackHistory, insufficient taskStackHistory, invalid command, command == COMMAND_EDIT, command == COMMAND_ADD, command == COMMAND_DELETE
 */
-void TaskLogic::undo(){
+void TaskLogic::undo(std::string& command, std::vector<std::string>& undoTask1, std::vector<std::string>& undoTask2){
 	assert(!commandStackHistory.empty() || !taskStackHistory.empty());
+	command = commandStackHistory.top();
 	int undoCount = countStackHistory.top();
 
 	for(int i=1; i<= undoCount; i++){
 		if(commandStackHistory.top() == COMMAND_EDIT){
+			assert(commandStackHistory.top() == command);
+			
+			undoTask2.push_back(taskStackHistory.top());
 			del(taskStackHistory.top(),true);
 			taskStackHistory.pop();   //if delete fails we should still remove the task to be done from the system?
-		
+			
+			undoTask1.push_back(taskStackHistory.top());
 			addExistingTask(taskStackHistory.top());
 			taskStackHistory.pop();
 	
-			commandStackHistory.pop();  //whether result true or not, let the command be popped out cos otherwise it can never be done
+			commandStackHistory.pop();  //whether result true or not, let the command be popped out cos otherwise it can never be done		
 		}
 		else if(commandStackHistory.top() == COMMAND_ADD){
+			assert(commandStackHistory.top() == command);
+
+			undoTask1.push_back(taskStackHistory.top());
 			del(taskStackHistory.top(),true);
 			taskStackHistory.pop();
 		
 			commandStackHistory.pop();
 		}
 		else if(commandStackHistory.top() == COMMAND_DELETE){
+			assert(commandStackHistory.top() == command);
+
+			undoTask1.push_back(taskStackHistory.top());
 			addExistingTask(taskStackHistory.top());
 			taskStackHistory.pop();
 		
 			commandStackHistory.pop();
 		}
 		else if(commandStackHistory.top() == COMMAND_MARKDONE){
+			assert(commandStackHistory.top() == command);
+			
+			undoTask1.push_back(taskStackHistory.top());
 			tbDoneLinkedList.removeTask(taskStackHistory.top());
 			taskStackHistory.pop();   //if delete fails we should still remove the task to be done from the system?
 		
