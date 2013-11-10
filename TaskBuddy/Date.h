@@ -11,4 +11,8 @@ public:
 	bool isEmptyDate();
 	bool isSameDate(Date);
 	bool isLaterDate(Date);
+	bool isValidDate();
+	bool isValidDay();
+	bool isValidMonth();
+	bool isValidYear();
 };
