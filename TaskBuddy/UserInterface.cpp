@@ -454,6 +454,7 @@ void UserInterface::displayInformationInVector(std::vector<std::string> vec, std
 			displayUser.push_back(vec[i]);
 		}
 		else{
+
 			std::cout << vec[i] << std::endl;
 			countEmptyString++;
 			SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
