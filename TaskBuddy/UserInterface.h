@@ -64,7 +64,6 @@ private:
 	static const std::string MESSAGE_INVALID_MARKDONE;
 	static const std::string MESSAGE_INVALID_DONE;
 	static const std::string MESSAGE_INVALID_OVERDUE;
-	static const std::string MESSAGE_INVALID_UNDO;
 	static const std::string MESSAGE_INVALID_EDITALL;
 	static const std::string MESSAGE_INVALID_DELETEBLOCK;
 	static const std::string MESSAGE_INVALID_FINALISE;
@@ -127,4 +126,6 @@ public:
 
 	//To display the help message for editBlockUI
 	void displayHelpEditBlockUI();
+
+	void displayHelpEditBlockUI1();
 };
