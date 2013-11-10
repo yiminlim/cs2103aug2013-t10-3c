@@ -556,13 +556,16 @@ bool TaskLinkedList::getBlockStatus(int index){
 	return cur->item.getBlock();
 }
 
-
+//Pre-condition: Input a task and check if it is the last remaining task left.
+//Post-condition: Return true if it is the last remaining task
 bool TaskLinkedList::checkIfRemainingTask(std::string task){
 	ListNode *cur = _head;
 
 	while (cur != NULL){
-		if (cur->item.getTask() == task)
+		if (cur->item.getTask() == task){
 			return true;
+		}
+		cur = cur->next;
 	}
 	
 	return false;
