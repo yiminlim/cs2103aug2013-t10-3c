@@ -267,6 +267,30 @@ bool Task::isDeadlineType() {
 }
 
 /* 
+	Purpose: Checks if task is an activity type. 
+	Pre-condition: Task object date values have been initialised.
+	Post-condition: Returns true if startingDate is not empty (i.e. 0/0/0) and false otherwise. 
+	Equivalence Partitions: day/month/year = 0, valid integer values.
+	Boundary values: 0, 1
+*/
+
+bool Task::isActivityType() {
+	return (_startingDate._day && _startingDate._month && _startingDate._year);
+}
+
+/* 
+	Purpose: Checks if task is an floating type (only contains action and no dates/times). 
+	Pre-condition: Task object date values have been initialised.
+	Post-condition: Returns true if all dates are empty (i.e. 0/0/0) and false otherwise. 
+	Equivalence Partitions: day/month/year = 0, valid integer values.
+	Boundary values: 0, 1
+*/
+
+bool Task::isFloatingType() {
+	return (_deadlineDate._day == 0 && _deadlineDate._month == 0 && _deadlineDate._year == 0) && (_startingDate._day == 0 && _startingDate._month == 0 && _startingDate._year == 0) && (_endingDate._day == 0 && _endingDate._month == 0 && _endingDate._year == 0);
+}
+
+/* 
 	Purpose: Checks if date value is empty i.e. 0/0/0. 
 	Pre-condition: Date value has been initialised.
 	Post-condition: Returns true if date is empty (i.e. 0/0/0) and false otherwise.
