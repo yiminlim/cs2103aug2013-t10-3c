@@ -198,3 +198,22 @@ TEST(TaskLinkedList, CheckLastBlockOffInRemove){
 	EXPECT_EQ(true, taskList.getBlockStatus(2));
 }
 	
+TEST(TaskLinkedList, RemoveFunction){
+	TaskLinkedList taskList;
+	Date tempDate1(1,2,2013), nullDate;
+	Task task1("lunch with mum", "techno", tempDate1, 1200, nullDate, -1, nullDate, -1, true);
+	Task task2("lunch with mum", "techno", tempDate1, 1400, nullDate, -1, nullDate, -1, true);
+	Task task3("dance lessons", "dance studio", tempDate1, 1700, nullDate, -1, nullDate, -1, true);
+	bool isClash = false;
+	std::vector<std::string> clashTasks, listOfTasks;
+
+	taskList.insert(task1, isClash, clashTasks);
+	taskList.insert(task2, isClash, clashTasks);
+	taskList.insert(task3, isClash, clashTasks);
+
+	EXPECT_EQ(true, taskList.remove(task1.getTask(), "lunch with mum at techno"));
+	taskList.updateStorageVector(listOfTasks);
+	EXPECT_EQ(task2.getTask(), listOfTasks[0]);
+	EXPECT_EQ(task3.getTask(), listOfTasks[1]);
+	EXPECT_EQ(2, listOfTasks.size());
+}
