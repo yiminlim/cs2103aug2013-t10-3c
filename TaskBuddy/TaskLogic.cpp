@@ -411,9 +411,8 @@ bool TaskLogic::editBlock(const std::string newTaskActionLocation, std::vector<s
 	bool isValidEdit = true;
 	bool isClashDummy = false;
 	std::vector<std::string> dummyVector;
-	std::string dummyString;
 	for(unsigned int i = 0; i < blockTaskVector.size(); i++){
-		if(!edit( blockTaskVector[i], newTaskActionLocation, isClashDummy, dummyVector, dummyString))
+		if(!edit( blockTaskVector[i], newTaskActionLocation, isClashDummy, dummyVector))
 			isValidEdit = false;
 	}
 	return isValidEdit;
@@ -486,39 +485,51 @@ void TaskLogic::update(std::string command, std::string newTask, std::string old
 	Equivalence Partition: empty commandStackHistory, empty taskStackHistory, insufficient taskStackHistory, invalid command, command == COMMAND_EDIT, command == COMMAND_ADD, command == COMMAND_DELETE
 	Boundary: empty commandStackHistory, empty taskStackHistory, insufficient taskStackHistory, invalid command, command == COMMAND_EDIT, command == COMMAND_ADD, command == COMMAND_DELETE
 */
-void TaskLogic::undo(){
-	assert(commandStackHistory.empty() || taskStackHistory.empty());
+bool TaskLogic::undo(){
+	bool result = true;
 
 	if(commandStackHistory.top() == COMMAND_EDIT){
-		del(taskStackHistory.top(),true);
+		if(!del(taskStackHistory.top(),true))
+			result = false;
 		taskStackHistory.pop();   //if delete fails we should still remove the task to be done from the system?
 		
-		addExistingTask(taskStackHistory.top());
+		if(!addExistingTask(taskStackHistory.top()))
+			result = false;
 		taskStackHistory.pop();
 	
 		commandStackHistory.pop();  //whether result true or not, let the command be popped out cos otherwise it can never be done
 	}
 	else if(commandStackHistory.top() == COMMAND_ADD){
-		del(taskStackHistory.top(),true);
+		if(!del(taskStackHistory.top(),true))
+			result = false;
 		taskStackHistory.pop();
 		
 		commandStackHistory.pop();
 	}
 	else if(commandStackHistory.top() == COMMAND_DELETE){
-		addExistingTask(taskStackHistory.top());
+		if(!addExistingTask(taskStackHistory.top()))
+			result = false;
 		taskStackHistory.pop();
 		
 		commandStackHistory.pop();
 	}
 	else if(commandStackHistory.top() == COMMAND_MARKDONE){
-		tbDoneLinkedList.removeTask(taskStackHistory.top());
+		if(!tbDoneLinkedList.removeTask(taskStackHistory.top()))
+			result = false;
 		taskStackHistory.pop();   //if delete fails we should still remove the task to be done from the system?
 		
-		addExistingTask(taskStackHistory.top());
+		if(!addExistingTask(taskStackHistory.top()))
+			result = false;
 		taskStackHistory.pop();
 	
 		commandStackHistory.pop();  //whether result true or not, let the command be popped out cos otherwise it can never be done
 	}
+	else if(commandStackHistory.empty())
+		result = false;
+	else
+		//wrong command sent in or the command Stack is empty i.e nothing to undo
+
+	return result;
 }
 
 //-----HELPER FUNCTIONS---------------------------------------------------------------------------------------------
@@ -677,7 +688,8 @@ bool TaskLogic::checkSameDate(Date earlierDate, Date laterDate){
 
 //-----MARK DONE----------------------------------------------------------------------------------------------------------
 bool TaskLogic::markDone(std::string taskString){
-	del(taskString,false); 
+	if(!del(taskString,false)) 
+		return false;
 	std::vector<Task> taskObjectVector;
 	
 	taskObjectVector = createTask(taskString, PROCESSED_FORMAT);
