@@ -32,14 +32,12 @@ const std::string UserInterface::MESSAGE_TODAY_TASK = "Task(s) due by TODAY!";
 const std::string UserInterface::MESSAGE_COMMAND = "command: ";
 const std::string UserInterface::MESSAGE_ADD = " has been added";
 const std::string UserInterface::MESSAGE_CLASH = "Task added clashes with the following task: ";
-const std::string UserInterface::MESSAGE_DELETE = "Task has been deleted";
-const std::string UserInterface::MESSAGE_EDIT = "Task has been edited";
+const std::string UserInterface::MESSAGE_DELETE = " has been deleted";
+const std::string UserInterface::MESSAGE_EDIT = "has been edited to";
 const std::string UserInterface::MESSAGE_AVAILABLE_BLOCKS = "Available Blocks: ";
-const std::string UserInterface::MESSAGE_ADDBLOCK = "All blocking of dates are successful";
 const std::string UserInterface::MESSAGE_EDITALL = "Tasks' action and location in the all blocked slots have been edited";
-const std::string UserInterface::MESSAGE_DELETEBLOCK = "Requested blocked slot has been deleted";
-const std::string UserInterface::MESSAGE_FINALISE = "Time and date of the task has been finalised";
-const std::string UserInterface::MESSAGE_MARKDONE = "Task has been marked done";
+const std::string UserInterface::MESSAGE_FINALISE = " has been finalised";
+const std::string UserInterface::MESSAGE_MARKDONE = " has been marked done";
 const std::string UserInterface::MESSAGE_UNDO = "Previous command is undone";
 const std::string UserInterface::MESSAGE_CLEAROVERDUE = "Overdue list is cleared";
 const std::string UserInterface::MESSAGE_EXIT = "Thank you for using Task Buddy!";
@@ -49,13 +47,8 @@ const std::string UserInterface::ERROR_SEARCH_BEFORE = "Please search for the ta
 const std::string UserInterface::ERROR_OUT_OF_VECTOR_RANGE = "Please input a number within the range of the search";
 const std::string UserInterface::ERROR_UNDO_INITIALISE = "No existing commands to undo";
 
-const std::string UserInterface::MESSAGE_INVALID_EDIT = "Task cannot be edited";
-const std::string UserInterface::MESSAGE_INVALID_MARKDONE = "Task cannot be marked done";
 const std::string UserInterface::MESSAGE_INVALID_DONE = "No tasks that are marked done is found";
 const std::string UserInterface::MESSAGE_INVALID_OVERDUE = "No tasks that are overdue is found";
-const std::string UserInterface::MESSAGE_INVALID_EDITALL = "Editing of tasks in all blocked slots has failed";
-const std::string UserInterface::MESSAGE_INVALID_DELETEBLOCK = "Deleting of requested blocked slots has failed";
-const std::string UserInterface::MESSAGE_INVALID_FINALISE = "Finalising of the time and date of the task has failed"; 
 
 //User interface constructor
 UserInterface::UserInterface(){
@@ -95,6 +88,7 @@ void UserInterface::commandUI(){
 	std::vector<std::string> searchDateVector;
 	std::vector<std::string> clashVector;
 	std::vector<std::string> feedbackVector;
+	std::vector<std::string> displayUser;
 	
 	do{
 		try{
@@ -118,82 +112,80 @@ void UserInterface::commandUI(){
 
 			if (command == COMMAND_ADD){		
 				tbLogic.add(readTask(command, KEYWORD_EMPTY_STRING), isClash, clashVector, feedbackVector);
-				displayFeedback(command, KEYWORD_EMPTY_STRING, feedbackVector);				
+				displayFeedback(command, KEYWORD_EMPTY_STRING, KEYWORD_EMPTY_STRING, feedbackVector);				
 				if (isClash){
 					SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY);	
 					std::cout << std::endl << MESSAGE_CLASH << std::endl;
-					displayInformationInVector(clashVector);
+					displayInformationInVector(clashVector, displayUser);
 				}
 				tbLogic.save();
 				searchTaskVector.clear();
 				clashVector.clear();
+				displayUser.clear();
 				feedbackVector.clear();
 			}
 			else if (command == COMMAND_SEARCH){
 				searchTaskVector.clear();
+				displayUser.clear();
 				tbLogic.generalSearch(readTask(command, KEYWORD_EMPTY_STRING), searchTaskVector, searchDateVector);
-				displayInformationInVector(searchTaskVector);
+				displayInformationInVector(searchTaskVector, displayUser);
 			}
 			else if (command == COMMAND_DELETE){
 				std::stringstream ss(readTask(command, KEYWORD_EMPTY_STRING));
 				while (!ss.eof() && ss >> option){
-					if (option > searchTaskVector.size()){
+					if (option > displayUser.size()){
 						throw std::runtime_error(ERROR_OUT_OF_VECTOR_RANGE);
 					}
-					tbLogic.del(searchTaskVector[option-1], false);
+					tbLogic.del(displayUser[option-1], false);
 					tbLogic.save();
-					displaySuccessfulMessage(command);			
+					displayFeedback(command, displayUser[option-1], KEYWORD_EMPTY_STRING, feedbackVector);
 				}
 				searchTaskVector.clear();
+				displayUser.clear();
 			}
 			else if (command == COMMAND_EDIT){
 				std::cin >> option;
-				if (option > searchTaskVector.size()){
+				if (option > displayUser.size()){
 					throw std::runtime_error(ERROR_OUT_OF_VECTOR_RANGE);
 				}
-				else if (tbLogic.edit(searchTaskVector[option-1], readTask(COMMAND_EDIT, KEYWORD_EMPTY_STRING), isClash, clashVector, feedback)){
-					displaySuccessfulMessage(command);
-					if (isClash){
-						SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY);	
-						std::cout << std::endl << MESSAGE_CLASH << std::endl;
-						displayInformationInVector(clashVector);
-					}
-					tbLogic.save();
+				tbLogic.edit(displayUser[option-1], readTask(COMMAND_EDIT, KEYWORD_EMPTY_STRING), isClash, clashVector, feedback);
+				displayFeedback(command, displayUser[option-1], feedback, feedbackVector);
+				if (isClash){
+					SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY);	
+					std::cout << std::endl << MESSAGE_CLASH << std::endl;
+					displayInformationInVector(clashVector, displayUser);
 				}
-				else{
-					displayFailMessage(command);
-				}
+				tbLogic.save();
 				searchTaskVector.clear();
+				displayUser.clear();
 				clashVector.clear();
 			}
 			else if (command == COMMAND_EDITBLOCK){
 				std::cin >> option;
 
-				if (option > searchTaskVector.size()){
+				if (option > displayUser.size()){
 					throw std::runtime_error(ERROR_OUT_OF_VECTOR_RANGE);
 				}
 				
 				system("CLS");
-				editBlockUI(searchTaskVector[option-1]);
+				editBlockUI(displayUser[option-1]);
 				searchTaskVector.clear();
+				displayUser.clear();
 				displayWelcomeMessage();
 			}
 			else if (command == COMMAND_MARKDONE){
 				std::stringstream ss(readTask(command, KEYWORD_EMPTY_STRING));
 				while (!ss.eof() && ss >> option){
-					if (option > searchTaskVector.size()){
+					if (option > displayUser.size()){
 						throw std::runtime_error(ERROR_OUT_OF_VECTOR_RANGE);
 					}
-					else if (tbLogic.markDone(searchTaskVector[option-1])){
-						tbLogic.save();
-						tbLogic.saveDone();
-						displaySuccessfulMessage(command);
-					}
-					else{
-						displayFailMessage(command);
-					}
+					tbLogic.markDone(displayUser[option-1]);
+					tbLogic.save();
+					tbLogic.saveDone();
+					displayFeedback(command, displayUser[option-1], KEYWORD_EMPTY_STRING, feedbackVector);
 				}
 				searchTaskVector.clear();
+				displayUser.clear();
 			}
 			else if (command == COMMAND_DONE){
 				if (space == ' '){
@@ -202,12 +194,13 @@ void UserInterface::commandUI(){
 				}
 
 				if (tbLogic.retrieveDoneList(searchOtherTaskVector)){
-					displayInformationInVector(searchOtherTaskVector);
+					displayInformationInVector(searchOtherTaskVector, displayUser);
 				}
 				else{
 					displayFailMessage(command);
 				}
 				searchOtherTaskVector.clear();
+				displayUser.clear();
 			}
 			else if (command == COMMAND_OVERDUE){
 				if (space == ' '){
@@ -216,12 +209,13 @@ void UserInterface::commandUI(){
 				}
 
 				if (tbLogic.retrieveOverdueList(searchOtherTaskVector)){
-					displayInformationInVector(searchOtherTaskVector);
+					displayInformationInVector(searchOtherTaskVector, displayUser);
 				}
 				else{
 					displayFailMessage(command);
 				}
 				searchOtherTaskVector.clear();
+				displayUser.clear();
 			}
 			else if (command == COMMAND_CLEAROVERDUE){
 				if (space == ' '){
@@ -242,10 +236,12 @@ void UserInterface::commandUI(){
 				tbLogic.saveDone();
 				displaySuccessfulMessage(command);
 				searchTaskVector.clear();
+				displayUser.clear();
 			}
 			else if (command == COMMAND_CLEAR){
 				system("CLS");
 				searchTaskVector.clear();
+				displayUser.clear();
 			}
 			else if (command == COMMAND_HELP){
 				if (space == ' '){
@@ -317,15 +313,16 @@ void UserInterface::editBlockUI(const std::string stringToEditBlock){
 	std::vector<std::string> blockTaskVector;
 	std::vector<std::string> clashVector;
 	std::vector<std::string> feedbackVector;
+	std::vector<std::string> displayUser;
 
-	if (tbLogic.getBlock(originalTaskString, taskActionLocation, blockTaskVector)){
-		std::cout << MESSAGE_AVAILABLE_BLOCKS << std::endl;
-		displayInformationInVector(blockTaskVector);
-		std::cout << std::endl;
-	}
+	tbLogic.getBlock(originalTaskString, taskActionLocation, blockTaskVector);
+	std::cout << MESSAGE_AVAILABLE_BLOCKS << std::endl;
+	displayInformationInVector(blockTaskVector, displayUser);
+	std::cout << std::endl;
 
 	do{
 		try{
+			SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
 			std::cout << MESSAGE_COMMAND;
 			std::cin >> command;
 			space = getchar();
@@ -334,51 +331,44 @@ void UserInterface::editBlockUI(const std::string stringToEditBlock){
 				command = COMMAND_ADDBLOCK;
 				tbLogic.addBlock(readTask(command, taskActionLocation), originalTaskString, isClash, clashVector, feedbackVector);
 				tbLogic.save();
-				displaySuccessfulMessage(command);
+				displayFeedback(command, KEYWORD_EMPTY_STRING, KEYWORD_EMPTY_STRING, feedbackVector); 
 				if (isClash){
 					SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY);	
 					std::cout << std::endl << MESSAGE_CLASH << std::endl;
-					displayInformationInVector(clashVector);
+					displayInformationInVector(clashVector, displayUser);
 				}			
 				clashVector.clear();
+				displayUser.clear();
 				contEditBlock = false;
 			}
 			else if (command == COMMAND_EDITALL){
-				if (tbLogic.editBlock(readTask(command, KEYWORD_EMPTY_STRING), blockTaskVector)){
-					tbLogic.save();
-					displaySuccessfulMessage(command);
-					contEditBlock = false;
-				}		
-				else{
-					displayFailMessage(command);
-				}
+				tbLogic.editBlock(readTask(command, KEYWORD_EMPTY_STRING), blockTaskVector);
+				tbLogic.save();
+				displaySuccessfulMessage(command); // !!!
+				contEditBlock = false;			
 			}
 			else if (command == COMMAND_DELETE){
 				command = COMMAND_DELETEBLOCK;
 				std::stringstream ss(readTask(command, KEYWORD_EMPTY_STRING));
 				while (!ss.eof() && ss >> option){
-					if (option > blockTaskVector.size()){
+					if (option > displayUser.size()){
 						throw std::runtime_error(ERROR_OUT_OF_VECTOR_RANGE);
 					}
-					tbLogic.del(blockTaskVector[option-1], false);
+					tbLogic.del(displayUser[option-1], false);
 					tbLogic.save();
-					displaySuccessfulMessage(command);
+					displayFeedback(command, displayUser[option-1], KEYWORD_EMPTY_STRING, feedbackVector);
 					contEditBlock = false;
 				}
 			}
 			else if (command == COMMAND_FINALISE || command == COMMAND_FINALIZE){
 				std::cin >> option;
-				if (option > blockTaskVector.size()){
+				if (option > displayUser.size()){
 						throw std::runtime_error(ERROR_OUT_OF_VECTOR_RANGE);
 				}
-				else if (tbLogic.finaliseBlock(option, blockTaskVector)){
-					tbLogic.save();
-					displaySuccessfulMessage(command);
-					contEditBlock = false;
-				}
-				else{
-					displayFailMessage(command);
-				}
+				tbLogic.finaliseBlock(option, displayUser);
+				tbLogic.save();
+				displayFeedback(command, displayUser[option-1], KEYWORD_EMPTY_STRING, feedbackVector);
+				contEditBlock = false;
 			}
 			else if (command == COMMAND_HELP){
 				displayHelpEditBlockUI();
@@ -424,10 +414,11 @@ void UserInterface::displayWelcomeMessage(){
 void UserInterface::displayTodayTask(){
 	std::vector<std::string> todayTask;
 	std::vector<std::string> searchDateVector;
+	std::vector<std::string> displayUser;
 	try{
 		tbLogic.generalSearch(KEYWORD_TODAY, todayTask, searchDateVector);
 		std::cout << MESSAGE_TODAY_TASK << std::endl;
-		displayInformationInVector(todayTask);
+		displayInformationInVector(todayTask, displayUser);
 	}
 	catch (std::runtime_error &error){
 		std::cout << error.what() << std::endl;
@@ -436,9 +427,9 @@ void UserInterface::displayTodayTask(){
 }
 
 //To display all information in a vector
-void UserInterface::displayInformationInVector(std::vector<std::string> vec){
-	int countEmptyString = 0;
+void UserInterface::displayInformationInVector(std::vector<std::string> vec, std::vector<std::string>& displayUser){
 	int alternate = 1;
+	int countEmptyString = 0;
 
 	for (unsigned int i = 0; i < vec.size(); i++){
 		if (vec[i] != KEYWORD_EMPTY_STRING){
@@ -452,6 +443,7 @@ void UserInterface::displayInformationInVector(std::vector<std::string> vec){
 				SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY);				
 			}
 			std::cout << i+1-countEmptyString << KEYWORD_BULLETING << vec[i] << std::endl;
+			displayUser.push_back(vec[i]);
 		}
 		else{
 			std::cout << vec[i] << std::endl;
@@ -462,43 +454,40 @@ void UserInterface::displayInformationInVector(std::vector<std::string> vec){
 }
 
 //To display feedback to users
-void UserInterface::displayFeedback(std::string command, std::string feedback, std::vector<std::string> feedbackVector){
-	if (command == COMMAND_ADD){
+void UserInterface::displayFeedback(std::string command, std::string oldTask, std::string newTask, std::vector<std::string> feedbackVector){
+	SetConsoleTextAttribute(hConsole, FOREGROUND_GREEN | FOREGROUND_INTENSITY);
+	if (command == COMMAND_ADD || command == COMMAND_ADDBLOCK){
 		for (unsigned int i = 0; i < feedbackVector.size(); i++){
-			SetConsoleTextAttribute(hConsole, FOREGROUND_GREEN | FOREGROUND_INTENSITY);
-			std::cout << KEYWORD_QUOTE << feedbackVector[i] << KEYWORD_QUOTE << MESSAGE_ADD << std::endl;
+			std::cout << KEYWORD_QUOTE << feedbackVector[i] << KEYWORD_QUOTE << MESSAGE_ADD;
 		}
 	}
+	else if (command == COMMAND_DELETE || command == COMMAND_DELETEBLOCK){
+		std::cout << KEYWORD_QUOTE << oldTask << KEYWORD_QUOTE << MESSAGE_DELETE;
+	}
+	else if (command == COMMAND_EDIT){
+		std::cout << KEYWORD_QUOTE << oldTask << KEYWORD_QUOTE << std::endl
+				  << MESSAGE_EDIT << std::endl
+				  << KEYWORD_QUOTE << newTask << KEYWORD_QUOTE;
+	}
+	else if (command == COMMAND_FINALISE || command == COMMAND_FINALIZE){
+		std::cout << KEYWORD_QUOTE << oldTask << KEYWORD_QUOTE << MESSAGE_FINALISE; 
+	}
+	else if (command == COMMAND_MARKDONE){
+		std::cout << KEYWORD_QUOTE << oldTask << KEYWORD_QUOTE << MESSAGE_MARKDONE;
+	}
+	else if (command == COMMAND_CLEAROVERDUE){
+		std::cout << MESSAGE_CLEAROVERDUE;
+	}
+	std::cout << std::endl;
 }
 
 //To display messages when commands are executed successfully
 void UserInterface::displaySuccessfulMessage(const std::string command){
-	if (command == COMMAND_DELETE){
-		std::cout << MESSAGE_DELETE;
-	}
-	else if (command == COMMAND_EDIT){
-		std::cout << MESSAGE_EDIT;
-	}
-	else if (command == COMMAND_MARKDONE){
-		std::cout << MESSAGE_MARKDONE;
-	}
-	else if (command == COMMAND_UNDO){
+	if (command == COMMAND_UNDO){
 		std::cout << MESSAGE_UNDO;
-	}
-	else if (command == COMMAND_ADDBLOCK){
-		std::cout << MESSAGE_ADDBLOCK;
 	}
 	else if (command == COMMAND_EDITALL){
 		std::cout << MESSAGE_EDITALL;
-	}
-	else if (command == COMMAND_DELETEBLOCK){
-		std::cout << MESSAGE_DELETEBLOCK;
-	}
-	else if (command == COMMAND_FINALISE || command == COMMAND_FINALIZE){
-		std::cout << MESSAGE_FINALISE;
-	}
-	else if(command == COMMAND_CLEAROVERDUE){
-		std::cout << MESSAGE_CLEAROVERDUE;
 	}
 	else if (command == COMMAND_EXIT){
 		std::cout << MESSAGE_EXIT;
@@ -508,27 +497,14 @@ void UserInterface::displaySuccessfulMessage(const std::string command){
 
 //To display messages when commands fail to execute successfully
 void UserInterface::displayFailMessage(const std::string command){
-	if (command == COMMAND_EDIT){
-		std::cout << MESSAGE_INVALID_EDIT << std::endl;
-	}
-	else if (command == COMMAND_MARKDONE){
-		std::cout << MESSAGE_INVALID_MARKDONE << std::endl;
-	}
-	else if (command == COMMAND_DONE){
-		std::cout << MESSAGE_INVALID_DONE << std::endl;
+	SetConsoleTextAttribute(hConsole, FOREGROUND_GREEN | FOREGROUND_INTENSITY);
+	if (command == COMMAND_DONE){
+		std::cout << MESSAGE_INVALID_DONE;
 	}
 	else if (command == COMMAND_OVERDUE){
-		std::cout << MESSAGE_INVALID_OVERDUE << std::endl;
+		std::cout << MESSAGE_INVALID_OVERDUE;
 	}
-	else if (command == COMMAND_EDITALL){
-		std::cout << MESSAGE_INVALID_EDITALL << std::endl;
-	}
-	else if (command == COMMAND_DELETEBLOCK){
-		std::cout << MESSAGE_INVALID_DELETEBLOCK << std::endl;
-	}
-	else if (command == COMMAND_FINALISE || command == COMMAND_FINALIZE){
-		std::cout << MESSAGE_INVALID_FINALISE << std::endl;
-	}
+	std::cout << std::endl;
 }
 
 //To display the help message for commandUI
