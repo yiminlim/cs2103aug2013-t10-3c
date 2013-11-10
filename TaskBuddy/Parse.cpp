@@ -189,23 +189,23 @@ void Parse::processTaskStringFromUI(std::string taskString, std::string & action
 		if (!block && (startingDate.size() > 1 || endingDate.size() > 1 || deadlineDate.size() > 1)) {
 			throw (std::runtime_error("Task should only indicate one start/end/deadline"));
 		}
-		if (!block && ((!isEmptyDate(startingDate[0]) && !isEmptyDate(deadlineDate[0])) || (!isEmptyDate(endingDate[0]) && !isEmptyDate(deadlineDate[0])))) {
+		if (!block && ((!startingDate[0].isEmptyDate() && !deadlineDate[0].isEmptyDate()) || (!endingDate[0].isEmptyDate() && !deadlineDate[0].isEmptyDate()))) {
 			throw (std::runtime_error("Task should indicate either a start date or deadline date"));
 		}
 		for (unsigned int i = 0; i < startingDate.size(); i++) {
-			if (!isEmptyDate(startingDate[i]) &&!isEmptyDate(endingDate[i]) && isEmptyTime(startingTime[i]) && !isEmptyTime(endingTime[i])) {
+			if (!startingDate[i].isEmptyDate() && !endingDate[i].isEmptyDate() && startingTime[i] == EMPTY_TIME && endingTime[i] != EMPTY_TIME) {
 				throw (std::runtime_error("No starting time to match ending time"));
 			}
-			if (!isEmptyDate(startingDate[i]) &&!isEmptyDate(endingDate[i]) && !isEmptyTime(startingTime[i]) && isEmptyTime(endingTime[i])) {
+			if (!startingDate[i].isEmptyDate() && !endingDate[i].isEmptyDate() && startingTime[i] != EMPTY_TIME && endingTime[i] == EMPTY_TIME) {
 				throw (std::runtime_error("No ending time to match starting time"));
 			}
 		}
 		for (unsigned int i = 0; i < startingDate.size(); i++) {
-			if (!isEmptyDate(startingDate[i]) && !isEmptyDate(endingDate[i]) && !isValidEndDate(startingDate[i], endingDate[i])) {
+			if (!startingDate[i].isEmptyDate() && !endingDate[i].isEmptyDate() && !isValidEndDate(startingDate[i], endingDate[i])) {
 				throw (std::runtime_error("End date occurs before start date"));
 			}
 			else if (isSameDate(startingDate[i], endingDate[i])) {
-				if (!isEmptyDate(startingDate[i]) && !isEmptyDate(endingDate[i]) && !isValidEndTime(startingTime[i], endingTime[i])) {
+				if (!startingDate[i].isEmptyDate() && !endingDate[i].isEmptyDate() && !isValidEndTime(startingTime[i], endingTime[i])) {
 					throw (std::runtime_error("End time occurs before start time"));
 				}
 			}
