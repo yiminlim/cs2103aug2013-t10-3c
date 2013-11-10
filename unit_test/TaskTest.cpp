@@ -13,7 +13,7 @@ TEST_F(TaskTest, FormatFloatingTaskStringWithLocation) {
 	bool block = true;
 	
 	Task task(action, location, startingDate, startingTime, endingDate, endingTime, deadlineDate, deadlineTime, block);
-	std::string expectedTaskString = "   : action at location";
+	std::string expectedTaskString = "   action at location";
 
 	EXPECT_EQ(expectedTaskString, task.formatTaskOutputString());
 }
