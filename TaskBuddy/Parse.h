@@ -95,6 +95,9 @@ public:
 	//Takes a day keyword and changes it into its corresponding date string
 	std::string changeDayToDate(std::string, std::vector<std::string>);
 
+	//Takes a word and changes it into lowercase form
+	std::string convertToLowercase(std::string word);
+
 //-----CHECK METHODS---------------------------------------------------------------------------
 
 	//Checks if word is a keyword or not
