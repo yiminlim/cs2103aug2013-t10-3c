@@ -41,7 +41,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>D:\Desktop\cs2103aug2013-t10-3c\TaskBuddy\gtest-1.7.0\include;D:\Desktop\cs2103aug2013-t10-3c\TaskBuddy;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)TaskBuddy\gtest-1.7.0\include;$(SolutionDir)\TaskBuddy;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -61,7 +61,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>D:\Desktop\cs2103aug2013-t10-3c\TaskBuddy\gtest-1.7.0\msvc\TaskBuddy\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)TaskBuddy\gtest-1.7.0\msvc\TaskBuddy\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>gtestd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
