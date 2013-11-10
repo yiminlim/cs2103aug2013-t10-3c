@@ -152,6 +152,7 @@ void TaskLogic::saveOverdue(){
 void TaskLogic::add(const std::string taskString, bool& isClash, std::vector<std::string>& clashTasks, std::vector<std::string>& addedTask){
 	std::vector<Task> taskObjectVector;
 	bool clash;
+	int addCount = 0;
 
 	assert(!taskString.empty());
 	assert(clashTasks.empty());
@@ -176,12 +177,14 @@ void TaskLogic::add(const std::string taskString, bool& isClash, std::vector<std
 		if(tbLinkedList.insert(taskObjectVector[i], clash, clashTasks)){
 			addedTask.push_back(taskObjectVector[i].getTask());
 			update(COMMAND_ADD, taskObjectVector[i].getTask(), "");
+			addCount++;
 		}
 		else
 			throw std::runtime_error("Task "+ taskObjectVector[i].getTask() + " cannot be added successfully");
 		if(clash)
 			isClash = true;
 	}
+	updateCount(addCount);
 }
 
 /*
@@ -239,8 +242,10 @@ void TaskLogic::del(const std::string taskString, bool isUndoDel){
 	else
 		tbLinkedList.remove(taskString, getActionLocation(taskString));
 	
-	if(!isUndoDel)
+	if(!isUndoDel){
 		update(COMMAND_DELETE, taskString, "");
+		updateCount(1);
+	}
 }
 
 
@@ -305,16 +310,15 @@ std::vector<Date> TaskLogic::getSearchOutputDateVector(std::vector<std::string> 
 
 std::vector<std::string> TaskLogic::processSearchOutputVector(std::vector<std::string> outputVector, std::vector<std::string>& dates){
 	assert(!outputVector.empty());
-	int j = 0;
 	std::vector<std::string> newOutputVector;
 	std::vector<Date> outputDateVector = getSearchOutputDateVector(outputVector);
 	
 	newOutputVector.push_back(outputVector[0]);
-	dates.push_back(convertToDateString(outputDateVector[j++]));
+	dates.push_back(convertToDateString(outputDateVector[0]));
 	for(unsigned int i=1; i<outputVector.size(); i++){
 		if(!checkSameDate(outputDateVector[i-1], outputDateVector[i])){
 			newOutputVector.push_back("");
-			dates.push_back(convertToDateString(outputDateVector[j++]));
+			dates.push_back(convertToDateString(outputDateVector[i]));
 		}
 		newOutputVector.push_back(outputVector[i]);
 	}
@@ -388,6 +392,7 @@ void TaskLogic::edit(std::string taskString, std::string editString, bool isBloc
 	editedTask = taskObject.getTask();
 
 	update(COMMAND_EDIT, taskObject.getTask(), taskString);
+	updateCount(1);
 }
 
 //-----EDIT BLOCK-----------------------------------------------------------------------------------------------------
@@ -426,14 +431,21 @@ void TaskLogic::editBlock(const std::string newTaskActionLocation, std::vector<s
 	std::vector<std::string> dummyVector;
 	std::string editedTaskString;
 	std::string delTask = removeBlockoff(blockTaskVector[blockTaskVector.size()-1]);
+	int editCount=0;
+
 	//addExistingTask(blockTaskVector[blockTaskVector.size()-1]); // assert??
 	try{
 	for(unsigned int i = 0; i < blockTaskVector.size(); i++)
 		edit( blockTaskVector[i], newTaskActionLocation, isClashDummy, dummyVector, editedTaskString);
+		editCount++;
 	}
 	catch(...){
 		throw;
 	}
+
+	for(int i=1; i <= editCount; i++)
+		countStackHistory.pop();
+	countStackHistory.push(editCount);
 	//tbLinkedList.remove(delTask, getActionLocation(delTask));
 }
 
@@ -468,20 +480,22 @@ void TaskLogic::addBlock(const std::string taskString, const std::string origina
 	Equivalence Partition: valid int index, invalid int index, empty vector, empty strings, valid strings, invalid strings
 	Boundary: index 0, index 1, index size-1, any invalid index, Empty vector, Empty strings, Any valid strings, Any invalid strings
 */
-bool TaskLogic::finaliseBlock(int delIndex, std::vector<std::string>& blockTaskVector){
-	unsigned int count = 0;
+void TaskLogic::finaliseBlock(int delIndex, std::vector<std::string>& blockTaskVector){
+	unsigned int deleteCount = 0;
 	delIndex -= 1; //convert to 0-based
 	try{
 		for(unsigned int i=0; i < blockTaskVector.size() ; i++){
 			if(i != delIndex){
 				del(blockTaskVector[i],false);
-				count++;
+				deleteCount++;
 			}
 		}
 	}catch(...){
 		throw;
 	}
-	return (count == blockTaskVector.size() - 1);
+	for(unsigned int i=1; i<=deleteCount; i++)
+		countStackHistory.pop();
+	countStackHistory.push(deleteCount);
 }
 
 //-----UNDO--------------------------------------------------------------------------------------------------------
@@ -507,6 +521,9 @@ void TaskLogic::update(std::string command, std::string newTask, std::string old
 	}
 }
 
+void TaskLogic::updateCount(int count){
+	countStackHistory.push(count);
+}
 /*
 	Purpose: Undo the last previous command stored at the top of commandStackHistory
 	Pre-conditions: commandStackHistory is not empty, and taskStackHistory is not empty and contains sufficient tasks
@@ -517,37 +534,41 @@ void TaskLogic::update(std::string command, std::string newTask, std::string old
 */
 void TaskLogic::undo(){
 	assert(!commandStackHistory.empty() || !taskStackHistory.empty());
+	int undoCount = countStackHistory.top();
 
-	if(commandStackHistory.top() == COMMAND_EDIT){
-		del(taskStackHistory.top(),true);
-		taskStackHistory.pop();   //if delete fails we should still remove the task to be done from the system?
+	for(int i=1; i<= undoCount; i++){
+		if(commandStackHistory.top() == COMMAND_EDIT){
+			del(taskStackHistory.top(),true);
+			taskStackHistory.pop();   //if delete fails we should still remove the task to be done from the system?
 		
-		addExistingTask(taskStackHistory.top());
-		taskStackHistory.pop();
+			addExistingTask(taskStackHistory.top());
+			taskStackHistory.pop();
 	
-		commandStackHistory.pop();  //whether result true or not, let the command be popped out cos otherwise it can never be done
-	}
-	else if(commandStackHistory.top() == COMMAND_ADD){
-		del(taskStackHistory.top(),true);
-		taskStackHistory.pop();
+			commandStackHistory.pop();  //whether result true or not, let the command be popped out cos otherwise it can never be done
+		}
+		else if(commandStackHistory.top() == COMMAND_ADD){
+			del(taskStackHistory.top(),true);
+			taskStackHistory.pop();
 		
-		commandStackHistory.pop();
-	}
-	else if(commandStackHistory.top() == COMMAND_DELETE){
-		addExistingTask(taskStackHistory.top());
-		taskStackHistory.pop();
+			commandStackHistory.pop();
+		}
+		else if(commandStackHistory.top() == COMMAND_DELETE){
+			addExistingTask(taskStackHistory.top());
+			taskStackHistory.pop();
 		
-		commandStackHistory.pop();
-	}
-	else if(commandStackHistory.top() == COMMAND_MARKDONE){
-		tbDoneLinkedList.removeTask(taskStackHistory.top());
-		taskStackHistory.pop();   //if delete fails we should still remove the task to be done from the system?
+			commandStackHistory.pop();
+		}
+		else if(commandStackHistory.top() == COMMAND_MARKDONE){
+			tbDoneLinkedList.removeTask(taskStackHistory.top());
+			taskStackHistory.pop();   //if delete fails we should still remove the task to be done from the system?
 		
-		addExistingTask(taskStackHistory.top());
-		taskStackHistory.pop();
-	
-		commandStackHistory.pop();  //whether result true or not, let the command be popped out cos otherwise it can never be done
+			addExistingTask(taskStackHistory.top());
+			taskStackHistory.pop();
+		
+			commandStackHistory.pop();  //whether result true or not, let the command be popped out cos otherwise it can never be done
+		}
 	}
+	countStackHistory.pop();
 
 }
 
@@ -731,9 +752,10 @@ void TaskLogic::markDone(std::string taskString){
 	taskObjectVector = createTask(taskString, PROCESSED_FORMAT);
 
 
-	if(tbDoneLinkedList.insert(taskObjectVector[0]))
+	if(tbDoneLinkedList.insert(taskObjectVector[0])){
 		update(COMMAND_MARKDONE,taskString,taskString);
-
+		updateCount(1);
+	}
 }
 
 bool TaskLogic::retrieveDoneList(std::vector<std::string>& tbDoneVector){

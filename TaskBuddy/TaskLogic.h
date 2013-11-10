@@ -105,12 +105,14 @@ public:
 
 	//delete all the blocks of the string given
 	//finaliseBlock is the same as deleteBlock. Just give in all those that is meant to be deleted. If only one left, send in isBloack = false
-	bool finaliseBlock(int, std::vector<std::string> &);
+	void finaliseBlock(int, std::vector<std::string> &);
 
 //-----UNDO---------------------------------------------------------------------------------------------------
 
 	//To update taskVector with new command and task by user
 	void update(std::string, std::string, std::string);
+
+	void updateCount(int);
 
 	//To undo the most recent command made by user
 	void undo();
