@@ -201,7 +201,7 @@ void Parse::processTaskStringFromUI(std::string taskString, std::string & action
 			}
 		}
 		for (unsigned int i = 0; i < startingDate.size(); i++) {
-			if (!startingDate[i].isEmptyDate() && !endingDate[i].isEmptyDate() && !isValidEndDate(startingDate[i], endingDate[i])) {
+			if (!startingDate[i].isEmptyDate() && !endingDate[i].isEmptyDate() && !startingDate[i].isLaterDate(endingDate[i])) {
 				throw (std::runtime_error("End date occurs before start date"));
 			}
 			else if (isSameDate(startingDate[i], endingDate[i])) {
