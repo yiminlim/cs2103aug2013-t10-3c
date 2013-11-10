@@ -109,7 +109,7 @@ public:
 	void update(std::string, std::string, std::string);
 
 	//To undo the most recent command made by user
-	bool undo();
+	void undo();
 	
 //-----HELPER FUNCTIONS---------------------------------------------------------------------------------------
 	
