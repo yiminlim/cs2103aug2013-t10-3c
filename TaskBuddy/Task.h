@@ -49,7 +49,7 @@ public:
 	//Default constructor
 	Task();
 
-	//Constructor with values
+	//Constructor with parameters
 	Task(std::string, std::string, Date, int, Date, int, Date, int, bool);
 
 //-----GET METHODS-----------------------------------------------------------------------------

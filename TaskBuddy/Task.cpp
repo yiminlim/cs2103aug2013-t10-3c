@@ -167,7 +167,7 @@ std::string Task::formatTaskOutputString(){
 		if (!_deadlineDate.isEmptyDate()){
 			output << formatDateOutputString(_deadlineDate);
 		}
-		if (!isEmptyTime(_deadlineTime)){
+		if (_deadlineTime != EMPTY_TIME){
 			output << SINGLE_SPACE + formatTimeOutputString(_deadlineTime) + SINGLE_SPACE + KEYWORD_HOURS;
 		}
 		output << SINGLE_SPACE + SYMBOL_COLLON + SINGLE_SPACE + _action;
@@ -181,12 +181,12 @@ std::string Task::formatTaskOutputString(){
 	else if (isActivityType()){
 		output << SINGLE_SPACE + SINGLE_SPACE + SINGLE_SPACE;	//For alignment with deadline tasks during display
 		output << formatDateOutputString(_startingDate);
-		if (!isEmptyTime(_startingTime)){
+		if (_startingTime != EMPTY_TIME){
 			output << SINGLE_SPACE + formatTimeOutputString(_startingTime) + SINGLE_SPACE + KEYWORD_HOURS;
 		}
 		if (!_endingDate.isEmptyDate()){
 			output << SINGLE_SPACE + SYMBOL_DASH + SINGLE_SPACE + formatDateOutputString(_endingDate);
-			if (!isEmptyTime(_endingTime)){
+			if (_endingTime != EMPTY_TIME){
 				output << SINGLE_SPACE + formatTimeOutputString(_endingTime) + SINGLE_SPACE + KEYWORD_HOURS;
 			}
 		}
@@ -249,15 +249,6 @@ std::string Task::formatDateOutputString(Date date){
 	}
 	dateString << date._month;
 	dateString << DATE_SEPARATOR;
-	if (date._year < 1000){
-		dateString << ZERO_DIGIT;		//Adds zeros to year values that are less than
-	}							//four digits to ensure proper format
-	if (date._year < 100){
-		dateString << ZERO_DIGIT;
-	}
-	if (date._year < 10){
-		dateString << ZERO_DIGIT;
-	}
 	dateString << date._year;
 
 	return dateString.str();
@@ -294,90 +285,4 @@ bool Task::isActivityType(){
 
 bool Task::isFloatingType(){
 	return _deadlineDate.isEmptyDate() && _startingDate.isEmptyDate() && _endingDate.isEmptyDate();
-}
-
-/* 
-	Purpose: Checks if date value is empty i.e. 0/0/0. 
-	Pre-condition: Date value has been initialised.
-	Post-condition: Returns true if date is empty (i.e. 0/0/0) and false otherwise.
-*/
-bool Task::isEmptyDate(Date date){
-	return (date._day == 0 && date._month == 0 && date._year == 0);
-}
-
-/* 
-	Purpose: Checks if date value is valid. 
-	Pre-condition: Date value has been initialised.
-	Post-condition: Returns true if date is valid and false otherwise. 
-*/
-bool Task::isValidDate(Date date){
-	return isValidDay(date._day) && isValidMonth(date._month) && isValidYear(date._year);
-}
-
-/* 
-	Purpose: Checks if day value of year is valid. 
-	Pre-condition: Day value has been initialised.
-	Post-condition: Returns true if day value of date is valid and false otherwise. 
-	Equivalence Partitions: < 1, 1-31, > 31
-	Boundary values: 0, 1, 2, 30, 31, 32
-*/
-bool Task::isValidDay(int day){
-	return day >= 1 && day <= 31;
-}
-
-/* 
-	Purpose: Checks if month value of date is valid. 
-	Pre-condition: Month value has been initialised.
-	Post-condition: Returns true if month value of date is valid and false otherwise. 
-*/
-bool Task::isValidMonth(int month){
-	return month >= 1 && month <= 12;
-}
-
-/* 
-	Purpose: Checks if year value of date is valid. 
-	Pre-condition: Year value has been initialised.
-	Post-condition: Returns true if year value of date is valid and false otherwise. 
-*/
-bool Task::isValidYear(int year){
-	return year > 0;
-}
-
-/* 
-	Purpose: Checks if time value is empty i.e. -1. 
-	Pre-condition: Time value has been initialised.
-	Post-condition: Returns true if time is empty (i.e. -1) and false otherwise. 
-*/
-bool Task::isEmptyTime(int time){
-	return time == EMPTY_TIME;
-}
-
-/* 
-	Purpose: Checks if time value is valid. 
-	Pre-condition: Time value has been initialised.
-	Post-condition: Returns true if time is valid and false otherwise. 
-*/
-bool Task::isValidTime(int time){
-	int hour = time/100;
-	int mins = time - (hour*100);
-
-	return isValidHour(hour) && isValidMins(mins);
-}
-
-/* 
-	Purpose: Checks if hour value of time is valid. 
-	Pre-condition: Hour value is an integer.
-	Post-condition: Returns true if hour value of time is valid and false otherwise. 
-*/
-bool Task::isValidHour(int hour){
-	return hour >= 1 && hour <= 23;
-}
-
-/* 
-	Purpose: Checks if minutes value of time is valid. 
-	Pre-condition: Minutes value is an integer.
-	Post-condition: Returns true if minutes value of time is valid and false otherwise. 
-*/
-bool Task::isValidMins(int mins){
-	return mins >= 1 && mins <= 59;
 }
