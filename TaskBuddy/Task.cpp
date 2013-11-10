@@ -248,7 +248,7 @@ std::string Task::formatDateOutputString(Date date) {
 	Boundary values: 0, 1
 */
 bool Task::isDeadlineType() {
-	return (_deadlineDate._day && _deadlineDate._month && _deadlineDate._year);
+	return !isEmptyDate(_deadlineDate);
 }
 
 /* 
@@ -258,7 +258,7 @@ bool Task::isDeadlineType() {
 */
 
 bool Task::isActivityType() {
-	return (_startingDate._day && _startingDate._month && _startingDate._year);
+	return !isEmptyDate(_startingDate);
 }
 
 /* 
@@ -268,7 +268,7 @@ bool Task::isActivityType() {
 */
 
 bool Task::isFloatingType() {
-	return (_deadlineDate._day == 0 && _deadlineDate._month == 0 && _deadlineDate._year == 0) && (_startingDate._day == 0 && _startingDate._month == 0 && _startingDate._year == 0) && (_endingDate._day == 0 && _endingDate._month == 0 && _endingDate._year == 0);
+	return isEmptyDate(_deadlineDate) && isEmptyDate(_startingDate) && isEmptyDate(_endingDate);
 }
 
 /* 
