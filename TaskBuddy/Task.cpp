@@ -17,6 +17,7 @@ const std::string Task::SINGLE_SPACE = " ";
 const std::string Task::DATE_SEPARATOR = "/";
 const std::string Task::SYMBOL_DASH = "-";
 const std::string Task::SYMBOL_COLLON = ":";
+const std::string Task::ZERO_DIGIT = "0";
 
 //-----CONSTANT INTEGERS-----------------------------------------------------------------------
 
@@ -145,7 +146,7 @@ bool Task::getBlock(){
 	Pre-condition: Task object has been initialised.
 	Post-condition: Task block variable and formatted task output string are updated. 
 */
-void Task::setBlock(bool newBlock) {
+void Task::setBlock(bool newBlock){
 	_block = newBlock;     
 	_task = formatTaskOutputString();
 	
@@ -159,48 +160,48 @@ void Task::setBlock(bool newBlock) {
 	Pre-condition: Task object variables have been initialised.
 	Post-condition: Returns formatted task output string.
 */
-std::string Task::formatTaskOutputString() {
+std::string Task::formatTaskOutputString(){
 	std::ostringstream output;
-	if (isDeadlineType()) {
+	if (isDeadlineType()){
 		output << KEYWORD_DEADLINE + SINGLE_SPACE;
-		if (!isEmptyDate(_deadlineDate)) {
+		if (!isEmptyDate(_deadlineDate)){
 			output << formatDateOutputString(_deadlineDate);
 		}
-		if (!isEmptyTime(_deadlineTime)) {
+		if (!isEmptyTime(_deadlineTime)){
 			output << SINGLE_SPACE + formatTimeOutputString(_deadlineTime) + SINGLE_SPACE + KEYWORD_HOURS;
 		}
 		output << SINGLE_SPACE + SYMBOL_COLLON + SINGLE_SPACE + _action;
-		if (!_location.empty()) {
+		if (!_location.empty()){
 			output << SINGLE_SPACE + KEYWORD_LOCATION + SINGLE_SPACE + _location;
 		}
-		if (_block) {
+		if (_block){
 			output << SINGLE_SPACE + KEYWORD_BLOCK_BRACKETS;
 		}
 	}
-	else if (isActivityType()) {
+	else if (isActivityType()){
 		output << SINGLE_SPACE + SINGLE_SPACE + SINGLE_SPACE;	//For alignment with deadline tasks during display
 		output << formatDateOutputString(_startingDate);
-		if (!isEmptyTime(_startingTime)) {
+		if (!isEmptyTime(_startingTime)){
 			output << SINGLE_SPACE + formatTimeOutputString(_startingTime) + SINGLE_SPACE + KEYWORD_HOURS;
 		}
-		if (!isEmptyDate(_endingDate)) {
+		if (!isEmptyDate(_endingDate)){
 			output << SINGLE_SPACE + SYMBOL_DASH + SINGLE_SPACE + formatDateOutputString(_endingDate);
-			if (!isEmptyTime(_endingTime)) {
+			if (!isEmptyTime(_endingTime)){
 				output << SINGLE_SPACE + formatTimeOutputString(_endingTime) + SINGLE_SPACE + KEYWORD_HOURS;
 			}
 		}
 		output << SINGLE_SPACE + SYMBOL_COLLON + SINGLE_SPACE + _action;
-		if (!_location.empty()) {
+		if (!_location.empty()){
 			output << SINGLE_SPACE + KEYWORD_LOCATION + SINGLE_SPACE + _location;
 		}
-		if (_block) {
+		if (_block){
 			output << SINGLE_SPACE + KEYWORD_BLOCK_BRACKETS;
 		}
 	}
-	else if (isFloatingType()) {
+	else if (isFloatingType()){
 		output << SINGLE_SPACE + SINGLE_SPACE + SINGLE_SPACE; //For alignment with deadline tasks during display
 		output << _action;
-		if (!_location.empty()) {
+		if (!_location.empty()){
 			output << SINGLE_SPACE + KEYWORD_LOCATION + SINGLE_SPACE + _location;
 		}
 	}
@@ -216,14 +217,14 @@ std::string Task::formatTaskOutputString() {
 std::string Task::formatTimeOutputString(int time){
 	std::ostringstream timeString;
 
-	if (time < 1000) {
-		timeString << "0";	//Adds zeros for values that are of less 
-	}						//than 4 digits
-	if (time < 100) {
-		timeString << "0";
+	if (time < 1000){
+		timeString << ZERO_DIGIT;	//Adds zeros for values that are of less 
+	}								//than 4 digits
+	if (time < 100){
+		timeString << ZERO_DIGIT;
 	}
-	if (time < 10) {
-		timeString << "0";
+	if (time < 10){
+		timeString << ZERO_DIGIT;
 	}
 	timeString << time;
 
@@ -236,26 +237,26 @@ std::string Task::formatTimeOutputString(int time){
 	Post-condition: Returns date output string (should be in dd/mm/yyyy format).
 */
 
-std::string Task::formatDateOutputString(Date date) {
+std::string Task::formatDateOutputString(Date date){
 	std::ostringstream dateString;
-	if (date._day < 10) {
-		dateString << "0";		//Adds zeros for day and month values that are 
-	}							//single digits to ensure proper format
+	if (date._day < 10){
+		dateString << ZERO_DIGIT;		//Adds zeros for day and month values that are 
+	}									//single digits to ensure proper format
 	dateString << date._day;
-	dateString << "/";
-	if (date._month < 10) {
-		dateString << "0";
+	dateString << DATE_SEPARATOR;
+	if (date._month < 10){
+		dateString << ZERO_DIGIT;
 	}
 	dateString << date._month;
-	dateString << "/";
-	if (date._year < 1000) {
-		dateString << "0";		//Adds zeros to year values that are less than
+	dateString << DATE_SEPARATOR;
+	if (date._year < 1000){
+		dateString << ZERO_DIGIT;		//Adds zeros to year values that are less than
 	}							//four digits to ensure proper format
-	if (date._year < 100) {
-		dateString << "0";
+	if (date._year < 100){
+		dateString << ZERO_DIGIT;
 	}
-	if (date._year < 10) {
-		dateString << "0";
+	if (date._year < 10){
+		dateString << ZERO_DIGIT;
 	}
 	dateString << date._year;
 
@@ -271,7 +272,7 @@ std::string Task::formatDateOutputString(Date date) {
 	Equivalence Partitions: day/month/year = 0, valid integer values.
 	Boundary values: 0, 1
 */
-bool Task::isDeadlineType() {
+bool Task::isDeadlineType(){
 	return !isEmptyDate(_deadlineDate);
 }
 
@@ -281,7 +282,7 @@ bool Task::isDeadlineType() {
 	Post-condition: Returns true if startingDate is not empty (i.e. 0/0/0) and false otherwise. 
 */
 
-bool Task::isActivityType() {
+bool Task::isActivityType(){
 	return !isEmptyDate(_startingDate);
 }
 
@@ -291,7 +292,7 @@ bool Task::isActivityType() {
 	Post-condition: Returns true if all types of dates are empty (i.e. 0/0/0) and false otherwise. 
 */
 
-bool Task::isFloatingType() {
+bool Task::isFloatingType(){
 	return isEmptyDate(_deadlineDate) && isEmptyDate(_startingDate) && isEmptyDate(_endingDate);
 }
 
@@ -300,7 +301,7 @@ bool Task::isFloatingType() {
 	Pre-condition: Date value has been initialised.
 	Post-condition: Returns true if date is empty (i.e. 0/0/0) and false otherwise.
 */
-bool Task::isEmptyDate(Date date) {
+bool Task::isEmptyDate(Date date){
 	return (date._day == 0 && date._month == 0 && date._year == 0);
 }
 
@@ -309,7 +310,7 @@ bool Task::isEmptyDate(Date date) {
 	Pre-condition: Date value has been initialised.
 	Post-condition: Returns true if date is valid and false otherwise. 
 */
-bool Task::isValidDate(Date date) {
+bool Task::isValidDate(Date date){
 	return isValidDay(date._day) && isValidMonth(date._month) && isValidYear(date._year);
 }
 
@@ -320,7 +321,7 @@ bool Task::isValidDate(Date date) {
 	Equivalence Partitions: < 1, 1-31, > 31
 	Boundary values: 0, 1, 2, 30, 31, 32
 */
-bool Task::isValidDay(int day) {
+bool Task::isValidDay(int day){
 	return day >= 1 && day <= 31;
 }
 
@@ -329,7 +330,7 @@ bool Task::isValidDay(int day) {
 	Pre-condition: Month value has been initialised.
 	Post-condition: Returns true if month value of date is valid and false otherwise. 
 */
-bool Task::isValidMonth(int month) {
+bool Task::isValidMonth(int month){
 	return month >= 1 && month <= 12;
 }
 
@@ -338,7 +339,7 @@ bool Task::isValidMonth(int month) {
 	Pre-condition: Year value has been initialised.
 	Post-condition: Returns true if year value of date is valid and false otherwise. 
 */
-bool Task::isValidYear(int year) {
+bool Task::isValidYear(int year){
 	return year > 0;
 }
 
@@ -347,7 +348,7 @@ bool Task::isValidYear(int year) {
 	Pre-condition: Time value has been initialised.
 	Post-condition: Returns true if time is empty (i.e. -1) and false otherwise. 
 */
-bool Task::isEmptyTime(int time) {
+bool Task::isEmptyTime(int time){
 	return time == -1;
 }
 
@@ -356,7 +357,7 @@ bool Task::isEmptyTime(int time) {
 	Pre-condition: Time value has been initialised.
 	Post-condition: Returns true if time is valid and false otherwise. 
 */
-bool Task::isValidTime(int time) {
+bool Task::isValidTime(int time){
 	int hour = time/100;
 	int mins = time - (hour*100);
 
@@ -368,7 +369,7 @@ bool Task::isValidTime(int time) {
 	Pre-condition: Hour value is an integer.
 	Post-condition: Returns true if hour value of time is valid and false otherwise. 
 */
-bool Task::isValidHour(int hour) {
+bool Task::isValidHour(int hour){
 	return hour >= 1 && hour <= 23;
 }
 
@@ -377,6 +378,6 @@ bool Task::isValidHour(int hour) {
 	Pre-condition: Minutes value is an integer.
 	Post-condition: Returns true if minutes value of time is valid and false otherwise. 
 */
-bool Task::isValidMins(int mins) {
+bool Task::isValidMins(int mins){
 	return mins >= 1 && mins <= 59;
 }

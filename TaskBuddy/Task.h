@@ -37,6 +37,7 @@ private:
 	static const std::string DATE_SEPARATOR;
 	static const std::string SYMBOL_DASH;
 	static const std::string SYMBOL_COLLON;
+	static const std::string ZERO_DIGIT;
 
 //-----CONSTANT INTEGERS-----------------------------------------------------------------------
 

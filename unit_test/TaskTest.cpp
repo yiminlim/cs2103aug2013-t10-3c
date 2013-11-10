@@ -15,6 +15,6 @@ TEST(TaskTest, FormatFloatingTaskStringWithLocation) {
 	Task task(action, location, startingDate, startingTime, endingDate, endingTime, deadlineDate, deadlineTime, block);
 	std::string expectedTaskString = "   : action at location";
 
-	EXPECT_EQ(expectedTaskString, task.formatTask());
+	EXPECT_EQ(expectedTaskString, task.formatTaskOutputString());
 }
 
