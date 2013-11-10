@@ -458,7 +458,7 @@ void UserInterface::displayFeedback(std::string command, std::string oldTask, st
 	SetConsoleTextAttribute(hConsole, FOREGROUND_GREEN | FOREGROUND_INTENSITY);
 	if (command == COMMAND_ADD || command == COMMAND_ADDBLOCK){
 		for (unsigned int i = 0; i < feedbackVector.size(); i++){
-			std::cout << KEYWORD_QUOTE << feedbackVector[i] << KEYWORD_QUOTE << MESSAGE_ADD;
+			std::cout << KEYWORD_QUOTE << feedbackVector[i] << KEYWORD_QUOTE << MESSAGE_ADD << std::endl;
 		}
 	}
 	else if (command == COMMAND_DELETE || command == COMMAND_DELETEBLOCK){
@@ -478,7 +478,9 @@ void UserInterface::displayFeedback(std::string command, std::string oldTask, st
 	else if (command == COMMAND_CLEAROVERDUE){
 		std::cout << MESSAGE_CLEAROVERDUE;
 	}
-	std::cout << std::endl;
+	if (command != COMMAND_ADD || command != COMMAND_ADDBLOCK){
+		std::cout << std::endl;
+	}
 }
 
 //To display messages when commands are executed successfully
