@@ -368,7 +368,7 @@ bool TaskLogic::edit(std::string taskString, std::string editString, bool isBloc
 	
 	Task taskObject(newAction,newLocation,newStartingDate[0],newStartingTime[0],newEndingDate[0],newEndingTime[0],newDeadlineDate[0],newDeadlineTime[0],newIsBlock);
 	
-	tbLinkedList.remove(taskString, getActionLocation(taskString));
+	tbLinkedList.remove(taskString, getActionLocation(taskString)); // WHEN YOU LEFT ONE ITEM IT GETS REMOVED BLOCKOFF
 	tbLinkedList.insert(taskObject, isClash, clashTasks);
 	editedTask = taskObject.getTask();
 
@@ -658,14 +658,30 @@ bool TaskLogic::checkUndoStackEmpty(){
 
 void TaskLogic::checkValidTask(Task task){
 	if(task.isDeadlineType()){
+		assert(!task.getStartingDate().isValidDate());
+		assert(!task.getEndingDate().isValidDate());
+		assert(task.getStartingTime() == -1);
+		assert(task.getEndingTime() == -1);
+		assert(task.getDeadlineDate().isValidDate());
 		if(!taskParse.isValidEndDate(taskParse.convertToDate(dateVector[0]), task.getDeadlineDate()))
 			throw (std::runtime_error("Invalid date input: date has already passed"));
-	}
-	else{
+	}/*
+	else if(task.isActivityType()){
+		assert(!task.getDeadlineDate.isValidDate());
+		assert(task.getDeadlineTime() == -1);
+		assert(task.getStartingDate().isValidDate());
 		if(!taskParse.isValidEndDate(taskParse.convertToDate(dateVector[0]), task.getStartingDate()))
 			throw (std::runtime_error("Invalid date input: date has already passed"));
-	}
 
+	}
+	else if(task.isFloatingType()){
+		assert(!task.getStartingDate().isValidDate());
+		assert(!task.getEndingDate().isValidDate());
+		assert(!task.getDeadlineDate().isValidDate());
+		assert(task.getStartingTime() == -1);
+		assert(task.getEndingTime() == -1);
+		assert(task.getDeadlineTime() == -1);
+	}*/
 }
 	
 bool TaskLogic::checkSameDate(Date earlierDate, Date laterDate){
