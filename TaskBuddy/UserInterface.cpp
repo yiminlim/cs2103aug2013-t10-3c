@@ -40,7 +40,7 @@ const std::string UserInterface::MESSAGE_AVAILABLE_BLOCKS = "Available Blocks: "
 const std::string UserInterface::MESSAGE_EDITALL = "Task's action and location of all blocked slots have been edited to ";
 const std::string UserInterface::MESSAGE_FINALISE = " has been finalised";
 const std::string UserInterface::MESSAGE_MARKDONE = " has been marked done";
-const std::string UserInterface::MESSAGE_UNDO = "Previous command is undone";
+const std::string UserInterface::MESSAGE_UNDONE = " has been marked undone";
 const std::string UserInterface::MESSAGE_CLEAROVERDUE = "Overdue list is cleared";
 const std::string UserInterface::MESSAGE_EXIT = "Thank you for using Task Buddy!";
 
@@ -84,12 +84,14 @@ void UserInterface::commandUI(){
 	bool contProgram = true;
 	bool isClash;
 	std::string command;
+	std::string undoCommand;
 	std::string feedback;
 	std::vector<std::string> searchTaskVector;
 	std::vector<std::string> searchOtherTaskVector;
 	std::vector<std::string> searchDateVector;
 	std::vector<std::string> clashVector;
-	std::vector<std::string> feedbackVector;
+	std::vector<std::string> feedbackOldVector;
+	std::vector<std::string> feedbackNewVector;
 	std::vector<std::string> displayUser;
 	
 	do{
@@ -113,8 +115,8 @@ void UserInterface::commandUI(){
 			}
 
 			if (command == COMMAND_ADD){		
-				tbLogic.add(readTask(command, KEYWORD_EMPTY_STRING), isClash, clashVector, feedbackVector);
-				displayFeedback(command, KEYWORD_EMPTY_STRING, KEYWORD_EMPTY_STRING, feedbackVector);				
+				tbLogic.add(readTask(command, KEYWORD_EMPTY_STRING), isClash, clashVector, feedbackOldVector);
+				displayFeedback(command, KEYWORD_EMPTY_STRING, KEYWORD_EMPTY_STRING, feedbackOldVector);				
 				if (isClash){
 					SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY);	
 					std::cout << std::endl << MESSAGE_CLASH << std::endl;
@@ -125,7 +127,7 @@ void UserInterface::commandUI(){
 				searchDateVector.clear();
 				clashVector.clear();
 				displayUser.clear();
-				feedbackVector.clear();
+				feedbackOldVector.clear();
 			}
 			else if (command == COMMAND_SEARCH){
 				searchTaskVector.clear();
@@ -142,9 +144,10 @@ void UserInterface::commandUI(){
 					}
 					tbLogic.del(displayUser[option-1], false);
 					tbLogic.save();
-					displayFeedback(command, displayUser[option-1], KEYWORD_EMPTY_STRING, feedbackVector);
+					displayFeedback(command, displayUser[option-1], KEYWORD_EMPTY_STRING, feedbackOldVector);
 				}
 				searchTaskVector.clear();
+				feedbackOldVector.clear();
 				displayUser.clear();
 			}
 			else if (command == COMMAND_EDIT){
@@ -153,7 +156,7 @@ void UserInterface::commandUI(){
 					throw std::runtime_error(ERROR_OUT_OF_VECTOR_RANGE);
 				}
 				tbLogic.edit(displayUser[option-1], readTask(COMMAND_EDIT, KEYWORD_EMPTY_STRING), isClash, clashVector, feedback);
-				displayFeedback(command, displayUser[option-1], feedback, feedbackVector);
+				displayFeedback(command, displayUser[option-1], feedback, feedbackOldVector);
 				if (isClash){
 					SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY);	
 					std::cout << std::endl << MESSAGE_CLASH << std::endl;
@@ -162,6 +165,7 @@ void UserInterface::commandUI(){
 				tbLogic.save();
 				searchTaskVector.clear();
 				searchDateVector.clear();
+				feedbackOldVector.clear();
 				displayUser.clear();
 				clashVector.clear();
 			}
@@ -187,9 +191,10 @@ void UserInterface::commandUI(){
 					tbLogic.markDone(displayUser[option-1]);
 					tbLogic.save();
 					tbLogic.saveDone();
-					displayFeedback(command, displayUser[option-1], KEYWORD_EMPTY_STRING, feedbackVector);
+					displayFeedback(command, displayUser[option-1], KEYWORD_EMPTY_STRING, feedbackOldVector);
 				}
 				searchTaskVector.clear();
+				feedbackOldVector.clear();
 				displayUser.clear();
 			}
 			else if (command == COMMAND_DONE){
@@ -238,10 +243,12 @@ void UserInterface::commandUI(){
 					std::cin.clear();
 					std::cin.ignore(INT_MAX, '\n');
 				}
-				tbLogic.undo();
+				tbLogic.undo(undoCommand, feedbackOldVector, feedbackNewVector);
 				tbLogic.save();
 				tbLogic.saveDone();
-				displaySuccessfulMessage(command);
+				displayUndoFeedback(undoCommand, feedbackOldVector, feedbackNewVector);
+				feedbackOldVector.clear();
+				feedbackNewVector.clear();
 				searchTaskVector.clear();
 				displayUser.clear();
 			}
@@ -507,10 +514,7 @@ void UserInterface::displayFeedback(std::string command, std::string oldTask, st
 
 //To display messages when commands are executed successfully
 void UserInterface::displaySuccessfulMessage(const std::string command){
-	if (command == COMMAND_UNDO){
-		std::cout << MESSAGE_UNDO;
-	}
-	else if (command == COMMAND_EXIT){
+	if (command == COMMAND_EXIT){
 		std::cout << MESSAGE_EXIT;
 	}
 	std::cout << std::endl;
@@ -527,6 +531,33 @@ void UserInterface::displayFailMessage(const std::string command){
 		std::cout << MESSAGE_INVALID_OVERDUE;
 	}
 	std::cout << std::endl;
+}
+
+//To display feedback to user for undo function
+void UserInterface::displayUndoFeedback(std::string undoCommand, std::vector<std::string> feedbackOldVector, std::vector<std::string> feedbackNewVector){
+	SetConsoleTextAttribute(hConsole, FOREGROUND_GREEN | FOREGROUND_INTENSITY);
+	if (undoCommand == COMMAND_ADD){
+		for (unsigned int i = 0; i < feedbackOldVector.size(); i++){
+			std::cout << KEYWORD_QUOTE << feedbackOldVector[i] << KEYWORD_QUOTE << MESSAGE_DELETE;
+		}
+	}
+	else if (undoCommand == COMMAND_DELETE){
+		for (unsigned int i = 0; i < feedbackOldVector.size(); i++){
+			std::cout << KEYWORD_QUOTE << feedbackOldVector[i] << KEYWORD_QUOTE << MESSAGE_ADD << std::endl;
+		}
+	}
+	else if (undoCommand == COMMAND_EDIT){
+		for (unsigned int i = 0; i < feedbackOldVector.size(); i++){
+			std::cout << KEYWORD_QUOTE << feedbackNewVector[i] << KEYWORD_QUOTE << std::endl
+					  << MESSAGE_EDIT << std::endl
+					  << KEYWORD_QUOTE << feedbackOldVector[i] << KEYWORD_QUOTE;
+		}
+	}
+	else if (undoCommand == COMMAND_MARKDONE){
+		for (unsigned int i = 0; i < feedbackOldVector.size(); i++){
+			std::cout << KEYWORD_QUOTE << feedbackOldVector[i] << KEYWORD_QUOTE << MESSAGE_UNDONE << std::endl;
+		}
+	}
 }
 
 //To display the help message for commandUI
