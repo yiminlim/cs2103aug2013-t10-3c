@@ -441,19 +441,29 @@ Date Parse::convertToDate(std::string dateString){
 	dayInput >> date._day;
 	monthInput >> date._month;
 	yearInput >> date._year;
-
+	
+	if (date._year < 100){
+		date._year += 2000;
+	}
+	
 	try {
-		if (!isValidDate(date)) {
-			throw (std::runtime_error("Invalid date input: day/month/year out of range"));
+		if (!date.isValidDate()) {
+			if (!date.isValidDay()) {
+				throw std::runtime_error("Invalid day input: value out of range");
+			}
+			else if (!date.isValidMonth()){
+				throw std::runtime_error("Invalid month input: value out of range");
+			}
+			else if (!date.isValidYear()){
+				throw std::runtime_error("Invalid year input: value out of range");
+			}
 		}
 	}
 	catch (...) {
 		throw;
 	}
 
-	if (date._year < 100){
-		date._year += 2000;
-	}
+	
 
 	return date;
 }
