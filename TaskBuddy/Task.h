@@ -20,6 +20,28 @@ private:
 	int	_deadlineTime;
 	bool _block;			//Indicates if task is part of a block
 
+//-----CONSTANT STRINGS------------------------------------------------------------------------
+
+	//KEYWORDS
+	static const std::string KEYWORD_LOCATION;
+	static const std::string KEYWORD_STARTING;
+	static const std::string KEYWORD_ENDING;
+	static const std::string KEYWORD_DEADLINE;
+	static const std::string KEYWORD_HOURS;
+	static const std::string KEYWORD_BLOCK;
+	static const std::string KEYWORD_BLOCK_BRACKETS;
+
+	//MISC
+	static const std::string EMPTY_STRING;
+	static const std::string SINGLE_SPACE;
+	static const std::string DATE_SEPARATOR;
+	static const std::string SYMBOL_DASH;
+	static const std::string SYMBOL_COLLON;
+
+//-----CONSTANT INTEGERS-----------------------------------------------------------------------
+
+	static const int EMPTY_TIME;
+
 public:
 //-----CONSTRUCTORS----------------------------------------------------------------------------
 
