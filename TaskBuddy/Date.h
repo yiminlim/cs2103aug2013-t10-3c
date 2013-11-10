@@ -8,5 +8,7 @@ public:
 
 	Date();
 	Date(int, int, int);
-	bool isValidDate();
+	bool isEmptyDate();
+	bool isSameDate(Date);
+	bool isLaterDate(Date);
 };

@@ -9,17 +9,39 @@
 
 class Task{
 private:
-	std::string _task;	//whole line in proper output format 
-	std::string _action; 
-	std::string _location;
-	Date _startingDate;
-	int	_startingTime;
+	std::string _task;		//Formatted task output string 
+	std::string _action;	//Task action string
+	std::string _location;	//Task location string
+	Date _startingDate;		
+	int	_startingTime;		
 	Date _endingDate;
 	int _endingTime;
 	Date _deadlineDate;
 	int	_deadlineTime;
-	//char _status;
-	bool _block;
+	bool _block;			//Indicates if task is part of a block
+
+//-----CONSTANT STRINGS------------------------------------------------------------------------
+
+	//KEYWORDS
+	static const std::string KEYWORD_LOCATION;
+	static const std::string KEYWORD_STARTING;
+	static const std::string KEYWORD_ENDING;
+	static const std::string KEYWORD_DEADLINE;
+	static const std::string KEYWORD_HOURS;
+	static const std::string KEYWORD_BLOCK;
+	static const std::string KEYWORD_BLOCK_BRACKETS;
+
+	//MISC
+	static const std::string EMPTY_STRING;
+	static const std::string SINGLE_SPACE;
+	static const std::string DATE_SEPARATOR;
+	static const std::string SYMBOL_DASH;
+	static const std::string SYMBOL_COLLON;
+	static const std::string ZERO_DIGIT;
+
+//-----CONSTANT INTEGERS-----------------------------------------------------------------------
+
+	static const int EMPTY_TIME;
 
 public:
 //-----CONSTRUCTORS----------------------------------------------------------------------------
@@ -27,7 +49,7 @@ public:
 	//Default constructor
 	Task();
 
-	//Constructor with components
+	//Constructor with values
 	Task(std::string, std::string, Date, int, Date, int, Date, int, bool);
 
 //-----GET METHODS-----------------------------------------------------------------------------
@@ -59,9 +81,6 @@ public:
 	//Returns task deadline time
 	int getDeadlineTime();
 
-	//Returns task status
-	char getStatus();
-
 	//Returns whether task is part of a block
 	bool getBlock();
 
@@ -73,7 +92,7 @@ public:
 //-----FORMATTING METHODS----------------------------------------------------------------------
 
 	//Formats the task output string for display to user
-	std::string Task::formatTask();
+	std::string Task::formatTaskOutputString();
 
 	//Formats the time output string from integer type value
 	std::string formatTimeOutputString(int);
@@ -85,7 +104,13 @@ public:
 	
 	//Checks if task is deadline type
 	bool isDeadlineType();
+	
+	//Checks if task is activity type (from-to)
+	bool isActivityType();
 
+	//Checks if task is floating type
+	bool isFloatingType();
+	
 	//Checks if date value is empty i.e. 0/0/0
 	bool isEmptyDate(Date);
 
@@ -107,9 +132,9 @@ public:
 	//Checks if time value is valid 
 	bool isValidTime(int);
 
-	//Checks if hour value of time is valid
+	//Checks if hour value of time is valid i.e. between 0-23
 	bool isValidHour(int);
 
-	//Checks if minutes value of time is valid
+	//Checks if minutes value of time is valid i.e. between 0-59
 	bool isValidMins(int);
 };

@@ -35,6 +35,7 @@ private:
 	static const std::string FILENAME_TB_OVERDUE_STORAGE;
 	static const std::string UI_FORMAT;
 	static const std::string PROCESSED_FORMAT;
+	static const std::string BLOCK_OFF;
 
 public:
 
@@ -59,7 +60,7 @@ public:
 
 //-----ADD TASK----------------------------------------------------------------------------------------------
 
-	void add(const std::string, bool&, std::vector<std::string>&);
+	void add(const std::string, bool&, std::vector<std::string>&, std::vector<std::string>&);
 
 	//add a new task to the list (search for correct index first)
 	bool addExistingTask(const std::string); //for initLogic use only
@@ -71,7 +72,7 @@ public:
 //-----DELETE TASK-------------------------------------------------------------------------------------------
 
 	//delete a task from the list at the index given
-	bool del(const std::string, bool);
+	void del(const std::string, bool);
 
 //-----SEARCH TASK-------------------------------------------------------------------------------------------
 
@@ -85,7 +86,9 @@ public:
 //-----EDIT TASK---------------------------------------------------------------------------------------------
 
 	//edit a task from the list at the index given
-	bool edit(std::string, std::string, bool, std::vector<std::string>&);
+	bool edit(std::string, std::string, bool, std::vector<std::string>&, std::string);
+
+	std::string removeBlockoff(std::string);
 
 //-----EDIT BLOCK--------------------------------------------------------------------------------------------
 
@@ -96,7 +99,7 @@ public:
 	bool editBlock(const std::string, std::vector<std::string> &);
 
 	//for adding in new blocks, const string contains action + location while vector string contains timings and dates
-	void addBlock(const std::string, const std::string, bool, std::vector<std::string>&);
+	void addBlock(const std::string, const std::string, bool, std::vector<std::string>&, std::vector<std::string>&);
 	// first string is the action and location of original taskString, 2nd string is the original taskString
 
 	//delete all the blocks of the string given
@@ -109,7 +112,7 @@ public:
 	void update(std::string, std::string, std::string);
 
 	//To undo the most recent command made by user
-	bool undo();
+	void undo();
 	
 //-----HELPER FUNCTIONS---------------------------------------------------------------------------------------
 	

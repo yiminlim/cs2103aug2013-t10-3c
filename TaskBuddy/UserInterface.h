@@ -37,6 +37,7 @@ private:
 	static const std::string KEYWORD_EMPTY_STRING;
 	static const std::string KEYWORD_SPACE;
 	static const std::string KEYWORD_BULLETING;
+	static const std::string KEYWORD_QUOTE;
 	static const std::string KEYWORD_END;
 
 	static const std::string MESSAGE_TODAY_TASK;
@@ -60,12 +61,10 @@ private:
 	static const std::string ERROR_OUT_OF_VECTOR_RANGE;
 	static const std::string ERROR_UNDO_INITIALISE;
 
-	static const std::string MESSAGE_INVALID_DELETE;
 	static const std::string MESSAGE_INVALID_EDIT;
 	static const std::string MESSAGE_INVALID_MARKDONE;
 	static const std::string MESSAGE_INVALID_DONE;
 	static const std::string MESSAGE_INVALID_OVERDUE;
-	static const std::string MESSAGE_INVALID_UNDO;
 	static const std::string MESSAGE_INVALID_EDITALL;
 	static const std::string MESSAGE_INVALID_DELETEBLOCK;
 	static const std::string MESSAGE_INVALID_FINALISE;
@@ -94,8 +93,6 @@ public:
 	std::string readTask(const std::string, const std::string);
 
 	//To display the sub-menu for editing of block off dates
-	//Precondition: 
-	//Post-condition:
 	void editBlockUI(const std::string);
 
 	//To display welcome message
@@ -103,20 +100,19 @@ public:
 	//Post-condition: welcome message is displayed
 	void displayWelcomeMessage();
 
-	//To display the tasks to be done for that day
-	//Precondition: 
-	//Post-condition: 
+	//To display the tasks to be done for that day 
 	void displayTodayTask();
 
 	//To display all information stored in a vector
-	//Precondition:
-	//Post-condition:
 	void displayInformationInVector(std::vector<std::string>);
+
+	//To display feedback to users
+	void displayFeedback(std::string, std::string, std::vector<std::string>);
 
 	//To display messages when commands are executed successfully
 	//Precondition: function successfully call
 	//Post-condition: success message with respect to command will be displayed
-	void displayMessage(const std::string);
+	void displaySuccessfulMessage(const std::string);
 
 	//To display messages when commands fail to executed successfully
 	//Precondition: function call fail

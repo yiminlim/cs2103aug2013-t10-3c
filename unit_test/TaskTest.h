@@ -1,8 +1,20 @@
 #include <gtest\gtest.h>
 #include <Task.h>
+#include <Date.h>
 
 class TaskTest : public ::testing::Test {
 protected:
-	virtual void SetUp() {}
+	TaskTest(){
+	}
 
+	virtual ~TaskTest(){
+	}
+	
+
+	virtual void SetUp() {
+	
+	}
+
+	Task task;
 };
+
