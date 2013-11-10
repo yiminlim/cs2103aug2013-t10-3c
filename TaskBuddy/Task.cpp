@@ -164,7 +164,7 @@ std::string Task::formatTaskOutputString(){
 	std::ostringstream output;
 	if (isDeadlineType()){
 		output << KEYWORD_DEADLINE + SINGLE_SPACE;
-		if (!isEmptyDate(_deadlineDate)){
+		if (!_deadlineDate.isEmptyDate()){
 			output << formatDateOutputString(_deadlineDate);
 		}
 		if (!isEmptyTime(_deadlineTime)){
@@ -184,7 +184,7 @@ std::string Task::formatTaskOutputString(){
 		if (!isEmptyTime(_startingTime)){
 			output << SINGLE_SPACE + formatTimeOutputString(_startingTime) + SINGLE_SPACE + KEYWORD_HOURS;
 		}
-		if (!isEmptyDate(_endingDate)){
+		if (!_endingDate.isEmptyDate()){
 			output << SINGLE_SPACE + SYMBOL_DASH + SINGLE_SPACE + formatDateOutputString(_endingDate);
 			if (!isEmptyTime(_endingTime)){
 				output << SINGLE_SPACE + formatTimeOutputString(_endingTime) + SINGLE_SPACE + KEYWORD_HOURS;
@@ -273,7 +273,7 @@ std::string Task::formatDateOutputString(Date date){
 	Boundary values: 0, 1
 */
 bool Task::isDeadlineType(){
-	return !isEmptyDate(_deadlineDate);
+	return !_deadlineDate.isEmptyDate();
 }
 
 /* 
@@ -283,7 +283,7 @@ bool Task::isDeadlineType(){
 */
 
 bool Task::isActivityType(){
-	return !isEmptyDate(_startingDate);
+	return !_startingDate.isEmptyDate();
 }
 
 /* 
@@ -293,7 +293,7 @@ bool Task::isActivityType(){
 */
 
 bool Task::isFloatingType(){
-	return isEmptyDate(_deadlineDate) && isEmptyDate(_startingDate) && isEmptyDate(_endingDate);
+	return _deadlineDate.isEmptyDate() && _startingDate.isEmptyDate() && _endingDate.isEmptyDate();
 }
 
 /* 
@@ -349,7 +349,7 @@ bool Task::isValidYear(int year){
 	Post-condition: Returns true if time is empty (i.e. -1) and false otherwise. 
 */
 bool Task::isEmptyTime(int time){
-	return time == -1;
+	return time == EMPTY_TIME;
 }
 
 /* 

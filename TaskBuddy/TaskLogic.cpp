@@ -287,9 +287,9 @@ std::vector<Date> TaskLogic::getSearchOutputDateVector(std::vector<std::string> 
 		bool isBlock = false;
 		
 		stringParse(outputVector[i],PROCESSED_FORMAT,action,location,startingDateVector,startingTimeVector,endingDateVector,endingTimeVector,deadlineDateVector,deadlineTimeVector,isBlock);   
-		if(startingDateVector[0].isValidDate())
+		if(!startingDateVector[0].isEmptyDate())
 			outputDateVector.push_back(startingDateVector[0]);
-		else if(deadlineDateVector[0].isValidDate())
+		else if(!deadlineDateVector[0].isEmptyDate())
 			outputDateVector.push_back(deadlineDateVector[0]);
 		else														//assume floating task
 			outputDateVector.push_back(floatingDate);
@@ -349,15 +349,15 @@ bool TaskLogic::edit(std::string taskString, std::string editString, bool isBloc
 	
 	bool isDateEdited = false;
 
-	if(newDeadlineDate[0].isValidDate() || newStartingDate[0].isValidDate() || newEndingDate[0].isValidDate() ) //check is by Date instead of time because we want to be able to allow time to be undefined. Also check if we want to allow only to.
+	if(!newDeadlineDate[0].isEmptyDate() || !newStartingDate[0].isEmptyDate() || !newEndingDate[0].isEmptyDate() ) //check is by Date instead of time because we want to be able to allow time to be undefined. Also check if we want to allow only to.
 		isDateEdited = true;
 
 	if(!isDateEdited){
-		if(currentStartingDate[0].isValidDate() )  //actually necessary to have all these checks?
+		if(!currentStartingDate[0].isEmptyDate() )  //actually necessary to have all these checks?
 			newStartingDate[0] = currentStartingDate[0];
-		if(currentEndingDate[0].isValidDate() )
+		if(!currentEndingDate[0].isEmptyDate() )
 			newEndingDate[0] = currentEndingDate[0];
-		if(currentDeadlineDate[0].isValidDate() )
+		if(!currentDeadlineDate[0].isEmptyDate() )
 			newDeadlineDate[0] = currentDeadlineDate[0];
 		if(currentStartingTime[0] != -1)
 			newStartingTime[0] = currentStartingTime[0];
@@ -571,20 +571,20 @@ std::vector<Task> TaskLogic::createTask(std::string taskString, std::string form
 
 	//MUST DO A CHECK TO ENSURE THAT StartingDate Vector and Endng Date Vector must be the same size!
 	
-	if(startingDateVector.size()==1 && !startingDateVector[0].isValidDate() && deadlineDateVector.size()==1 && !deadlineDateVector[0].isValidDate()){
+	if(startingDateVector.size()==1 && startingDateVector[0].isEmptyDate() && deadlineDateVector.size()==1 && deadlineDateVector[0].isEmptyDate()){
 		Date deadlineDate, startingDate, endingDate;
 		int deadlineTime = -1, startingTime = -1, endingTime = -1;
 		Task taskObject(action,location,startingDate,startingTime,endingDate,endingTime,deadlineDate,deadlineTime,isBlock);
 		taskObjectVector.push_back(taskObject);
 	}
 	else{
-		for(unsigned int i = 0 ; i < startingDateVector.size() && startingDateVector[i].isValidDate(); i++){
+		for(unsigned int i = 0 ; i < startingDateVector.size() && !startingDateVector[i].isEmptyDate(); i++){
 			Date deadlineDate;
 			int deadlineTime = -1;
 			Task taskObject(action,location,startingDateVector[i],startingTimeVector[i],endingDateVector[i],endingTimeVector[i],deadlineDate,deadlineTime,isBlock);
 			taskObjectVector.push_back(taskObject);
 		}
-		for(unsigned int i = 0 ; i < deadlineDateVector.size() && deadlineDateVector[i].isValidDate() ; i++){
+		for(unsigned int i = 0 ; i < deadlineDateVector.size() && !deadlineDateVector[i].isEmptyDate() ; i++){
 			Date startingDate, endingDate;
 			int startingTime = -1, endingTime = -1;
 			Task taskObject(action,location,startingDate,startingTime,endingDate,endingTime,deadlineDateVector[i],deadlineTimeVector[i],isBlock);
@@ -644,7 +644,7 @@ bool TaskLogic::isSingleDigit(int num){
 
 std::string TaskLogic::convertToDateString(Date date){
 	std::ostringstream oss;
-	if(date.isValidDate())
+	if(!date.isEmptyDate())
 		oss << date._day << "/" << date._month << "/" << date._year;
 	else
 		oss << "Floating Task";
@@ -670,26 +670,26 @@ bool TaskLogic::checkUndoStackEmpty(){
 
 void TaskLogic::checkValidTask(Task task){
 	if(task.isDeadlineType()){
-		assert(!task.getStartingDate().isValidDate());
-		assert(!task.getEndingDate().isValidDate());
+		assert(task.getStartingDate().isEmptyDate());
+		assert(task.getEndingDate().isEmptyDate());
 		assert(task.getStartingTime() == -1);
 		assert(task.getEndingTime() == -1);
-		assert(task.getDeadlineDate().isValidDate());
+		assert(!task.getDeadlineDate().isEmptyDate());
 		if(!taskParse.isValidEndDate(taskParse.convertToDate(dateVector[0]), task.getDeadlineDate()))
 			throw (std::runtime_error("Invalid date input: date has already passed"));
 	}
 	else if(task.isActivityType()){
-		assert(!task.getDeadlineDate().isValidDate());
+		assert(task.getDeadlineDate().isEmptyDate());
 		assert(task.getDeadlineTime() == -1);
-		assert(task.getStartingDate().isValidDate());
+		assert(!task.getStartingDate().isEmptyDate());
 		if(!taskParse.isValidEndDate(taskParse.convertToDate(dateVector[0]), task.getStartingDate()))
 			throw (std::runtime_error("Invalid date input: date has already passed"));
 
 	}
 	else if(task.isFloatingType()){
-		assert(!task.getStartingDate().isValidDate());
-		assert(!task.getEndingDate().isValidDate());
-		assert(!task.getDeadlineDate().isValidDate());
+		assert(task.getStartingDate().isEmptyDate());
+		assert(task.getEndingDate().isEmptyDate());
+		assert(task.getDeadlineDate().isEmptyDate());
 		assert(task.getStartingTime() == -1);
 		assert(task.getEndingTime() == -1);
 		assert(task.getDeadlineTime() == -1);
@@ -697,8 +697,8 @@ void TaskLogic::checkValidTask(Task task){
 }
 	
 bool TaskLogic::checkSameDate(Date earlierDate, Date laterDate){
-	assert(earlierDate.isValidDate() || taskParse.isEmptyDate(earlierDate));
-	assert(laterDate.isValidDate() || taskParse.isEmptyDate(laterDate));
+	assert(!earlierDate.isEmptyDate() || taskParse.isEmptyDate(earlierDate));
+	assert(!laterDate.isEmptyDate() || taskParse.isEmptyDate(laterDate));
 	
 	return(earlierDate._year == laterDate._year) && (earlierDate._month == laterDate._month) && (earlierDate._day == laterDate._day);
 }

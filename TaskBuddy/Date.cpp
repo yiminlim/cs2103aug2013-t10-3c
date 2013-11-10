@@ -12,11 +12,14 @@ Date::Date(int day, int month, int year) {
 	_year = year;
 }
 
-bool Date::isValidDate(){
-	if (_day==0 && _month==0 && _year==0){
-		return false;
-	}
-	else{
-		return true;
-	}
+bool Date::isEmptyDate(){
+	return _day == 0 && _month == 0 && _year == 0;
+}
+
+bool Date::isSameDate(Date checkDate){
+	return true;
+}
+
+bool Date::isLaterDate(Date checkDate){
+	return true;
 }
