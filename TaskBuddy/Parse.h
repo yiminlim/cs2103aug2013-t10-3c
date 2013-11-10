@@ -80,19 +80,19 @@ public:
 	bool isDayKeyword(std::string);
 
 	//Checks if date value is empty i.e. 0/0/0
-	bool isEmptyDate(Date);
+	bool isEmptyDate(Date); //in date***********
 
 	//Checks if date value is valid
-	bool isValidDate(Date);
+	bool isValidDate(Date); //in date***************
 
 	//Checks if day value of date is valid
-	bool isValidDay(int);
+	bool isValidDay(int);	//in date***************
 
 	//Checks if month value of date is valid
-	bool isValidMonth(int);
+	bool isValidMonth(int);	//in date***************
 
 	//Checks if year value of date is valid
-	bool isValidYear(int);
+	bool isValidYear(int);	//in date***************
 
 	//Checks if time value is empty i.e. -1
 	bool isEmptyTime(int);
@@ -107,19 +107,16 @@ public:
 	bool isValidMins(int);
 
 	//Checks if end date is not before the start date
-	bool isValidEndDate(Date, Date);
+	bool isValidEndDate(Date, Date); //in date*******
 
 	//Checks if dates are equal
-	bool isSameDate(Date, Date);
+	bool isSameDate(Date, Date); //in date***********
 
 	//Checks if second time is after the first time
 	bool isLaterTime(int, int);
 
 	//Checks if times are equal
 	bool isSameTime(int, int);
-
-	//Checks if date has passed 
-	bool dateHasPassed(Date);
 
 	//Checks if the input year format is correct (yyyy)
 	bool isValidYearFormat(std::string);
