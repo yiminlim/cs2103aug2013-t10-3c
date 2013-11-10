@@ -394,8 +394,7 @@ void Parse::processTaskStringFromFile(std::string taskString, std::string & acti
 	Post-conditions: Returns date with correct day/month/year values.
 	Equivalence Partitions: "", 1 '/', 2 '/'
 	Boundary values: '', 1 '/', 2 '/'
-*/
-//Implement check to make sure user input 2 '/' and 3 numbers 
+*/ 
 Date Parse::convertToDate(std::string dateString){
 	Date date; 
 
@@ -415,9 +414,6 @@ Date Parse::convertToDate(std::string dateString){
 		}
 		else if (dayString.empty()) {
 			throw (std::runtime_error("Missing day input"));
-		}
-		else if (!yearString.empty() && !isValidYearFormat(yearString)) {
-			throw (std::runtime_error("Invalid year input format"));
 		}
 		else if (!yearString.empty() && !isValidYearFormat(yearString)) {
 			throw (std::runtime_error("Invalid year input format"));
@@ -448,6 +444,10 @@ Date Parse::convertToDate(std::string dateString){
 	}
 	catch (...) {
 		throw;
+	}
+
+	if (date._year < 100){
+		date._year += 2000;
 	}
 
 	return date;
@@ -726,14 +726,14 @@ bool Parse::isValidDayFormat(std::string dayString) {
 }
 
 /* 
-	Purpose: Checks if the input year format is correct (yyyy). 
+	Purpose: Checks if the input year format is correct (yy or yyyy). 
 	Pre-condition: String is not empty.
-	Post-condition: Returns true if year string has 4 characters and false otherwise. 
-	Equivalence Partitions: empty string, 1-4 characters, more than 4 characters
+	Post-condition: Returns true if year string has 2/4 characters and false otherwise. 
+	Equivalence Partitions: less than 2 characters,  2/3/4 characters, more than 4 characters
 	Boundary values: 0/1/2/3/4/5 characters 
 */
 bool Parse::isValidYearFormat(std::string yearString) {
-	return yearString.size() >= 1 && yearString.size() <= 4;
+	return yearString.size() == 2 || yearString.size() == 4;
 }
 
 /* 
