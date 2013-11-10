@@ -94,7 +94,7 @@ public:
 //-----EDIT BLOCK--------------------------------------------------------------------------------------------
 
 	//gives back entire block of taskStrings and also a string that contains the task (action + " at " location )
-	void getBlock(std::string &, std::string &, std::vector<std::string> &);
+	void getBlock(std::string &, std::string &, std::vector<std::string> &, std::vector<std::string> &);
 	
 	//for editing location, action of all blocked item.
 	void editBlock(const std::string, std::vector<std::string> &);

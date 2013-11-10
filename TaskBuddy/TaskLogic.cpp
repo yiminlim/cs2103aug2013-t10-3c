@@ -264,7 +264,9 @@ void TaskLogic::generalSearch(std::string userInput, std::vector<std::string>& v
 	std::stringstream iss;
 	std::string keyword;
 	iss << userInput;
-	
+	assert(vectorOutput.empty());
+	assert(dates.empty());
+
 	while (iss >> keyword){
 		if(isDay(keyword)){
 			dayKeyword = keyword;
@@ -308,19 +310,19 @@ std::vector<Date> TaskLogic::getSearchOutputDateVector(std::vector<std::string> 
 	return outputDateVector;
 }
 
-std::vector<std::string> TaskLogic::processSearchOutputVector(std::vector<std::string> outputVector, std::vector<std::string>& dates){
-	assert(!outputVector.empty());
+std::vector<std::string> TaskLogic::processSearchOutputVector(std::vector<std::string> vectorOutput, std::vector<std::string>& dates){
+	assert(!vectorOutput.empty());
 	std::vector<std::string> newOutputVector;
-	std::vector<Date> outputDateVector = getSearchOutputDateVector(outputVector);
+	std::vector<Date> outputDateVector = getSearchOutputDateVector(vectorOutput);
 	
-	newOutputVector.push_back(outputVector[0]);
+	newOutputVector.push_back(vectorOutput[0]);
 	dates.push_back(convertToDateString(outputDateVector[0]));
-	for(unsigned int i=1; i<outputVector.size(); i++){
+	for(unsigned int i=1; i< vectorOutput.size(); i++){
 		if(!checkSameDate(outputDateVector[i-1], outputDateVector[i])){
 			newOutputVector.push_back("");
 			dates.push_back(convertToDateString(outputDateVector[i]));
 		}
-		newOutputVector.push_back(outputVector[i]);
+		newOutputVector.push_back(vectorOutput[i]);
 	}
 
 	return newOutputVector;
@@ -406,11 +408,11 @@ void TaskLogic::edit(std::string taskString, std::string editString, bool isBloc
 	Equivalence Partition: Empty string, Invalid string, Valid string
 	Boundary: Empty string, Any valid string, Any invalid string
 */
-void TaskLogic::getBlock(std::string& taskString, std::string& taskActionLocation, std::vector<std::string>& blockTaskVector){	
+void TaskLogic::getBlock(std::string& taskString, std::string& taskActionLocation, std::vector<std::string>& blockTaskVector, std::vector<std::string>& dates){	
 	assert(!taskString.empty());
 	taskActionLocation = getActionLocation(taskString);
 	std::vector<std::string> dummyVector;
-	generalSearch(taskActionLocation, blockTaskVector,dummyVector);
+	generalSearch(taskActionLocation, blockTaskVector,dates);
 	
 	assert(!blockTaskVector.empty());
 
