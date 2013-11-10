@@ -555,3 +555,15 @@ bool TaskLinkedList::getBlockStatus(int index){
 	ListNode *cur = traverseTo(index);
 	return cur->item.getBlock();
 }
+
+
+bool TaskLinkedList::checkIfRemainingTask(std::string task){
+	ListNode *cur = _head;
+
+	while (cur != NULL){
+		if (cur->item.getTask() == task)
+			return true;
+	}
+	
+	return false;
+}
