@@ -1,5 +1,27 @@
 #include "Task.h"
 
+//-----CONSTANT STRINGS------------------------------------------------------------------------
+
+//KEYWORDS
+const std::string Task::KEYWORD_LOCATION = "at";
+const std::string Task::KEYWORD_STARTING = "from";
+const std::string Task::KEYWORD_ENDING = "to";
+const std::string Task::KEYWORD_DEADLINE = "by";
+const std::string Task::KEYWORD_HOURS = "hrs";
+const std::string Task::KEYWORD_BLOCK = "blockoff";
+const std::string Task::KEYWORD_BLOCK_BRACKETS = "(blockoff)";
+
+//MISC
+const std::string Task::EMPTY_STRING = "";
+const std::string Task::SINGLE_SPACE = " ";
+const std::string Task::DATE_SEPARATOR = "/";
+const std::string Task::SYMBOL_DASH = "-";
+const std::string Task::SYMBOL_COLLON = ":";
+
+//-----CONSTANT INTEGERS-----------------------------------------------------------------------
+
+const int Task::EMPTY_TIME = -1;
+
 //-----CONSTRUCTORS----------------------------------------------------------------------------
 
 //Default constructor
@@ -140,44 +162,46 @@ void Task::setBlock(bool newBlock) {
 std::string Task::formatTaskOutputString() {
 	std::ostringstream output;
 	if (isDeadlineType()) {
-		output << "by ";
+		output << KEYWORD_DEADLINE + SINGLE_SPACE;
 		if (!isEmptyDate(_deadlineDate)) {
 			output << formatDateOutputString(_deadlineDate);
 		}
 		if (!isEmptyTime(_deadlineTime)) {
-			output << " " << formatTimeOutputString(_deadlineTime) << " hrs";
+			output << SINGLE_SPACE + formatTimeOutputString(_deadlineTime) + SINGLE_SPACE + KEYWORD_HOURS;
 		}
-		output << " : " << _action;
-		if (_location.size() > 0) {
-			output << " at " << _location;
+		output << SINGLE_SPACE + SYMBOL_COLLON + SINGLE_SPACE + _action;
+		if (!_location.empty()) {
+			output << SINGLE_SPACE + KEYWORD_LOCATION + SINGLE_SPACE + _location;
 		}
 		if (_block) {
-			output << " (blockoff)";
+			output << SINGLE_SPACE + KEYWORD_BLOCK_BRACKETS;
 		}
 	}
-	else {
-		output << "   ";	//For alignment with deadline tasks during display
-		if (!isEmptyDate(_startingDate)) {
-			output << formatDateOutputString(_startingDate);
-		}
+	else if (isActivityType()) {
+		output << SINGLE_SPACE + SINGLE_SPACE + SINGLE_SPACE;	//For alignment with deadline tasks during display
+		output << formatDateOutputString(_startingDate);
 		if (!isEmptyTime(_startingTime)) {
-			output << " " << formatTimeOutputString(_startingTime) << " hrs";
+			output << SINGLE_SPACE + formatTimeOutputString(_startingTime) + SINGLE_SPACE + KEYWORD_HOURS;
 		}
-		if (!isEmptyDate(_endingDate) || !isEmptyTime(_endingTime)) {
-			output << " -";
-			if (!isEmptyDate(_endingDate)) {
-				output << " " << formatDateOutputString(_endingDate);
-			}
+		if (!isEmptyDate(_endingDate)) {
+			output << SINGLE_SPACE + SYMBOL_DASH + SINGLE_SPACE + formatDateOutputString(_endingDate);
 			if (!isEmptyTime(_endingTime)) {
-				output << " " << formatTimeOutputString(_endingTime) << " hrs";
+				output << SINGLE_SPACE + formatTimeOutputString(_endingTime) + SINGLE_SPACE + KEYWORD_HOURS;
 			}
 		}
-		output << " : " << _action;
-		if (_location.size() > 0) {
-			output << " at " << _location;
+		output << SINGLE_SPACE + SYMBOL_COLLON + SINGLE_SPACE + _action;
+		if (!_location.empty()) {
+			output << SINGLE_SPACE + KEYWORD_LOCATION + SINGLE_SPACE + _location;
 		}
 		if (_block) {
-			output << " (blockoff)";
+			output << SINGLE_SPACE + KEYWORD_BLOCK_BRACKETS;
+		}
+	}
+	else if (isFloatingType()) {
+		output << SINGLE_SPACE + SINGLE_SPACE + SINGLE_SPACE; //For alignment with deadline tasks during display
+		output << _action;
+		if (!_location.empty()) {
+			output << SINGLE_SPACE + KEYWORD_LOCATION + SINGLE_SPACE + _location;
 		}
 	}
 

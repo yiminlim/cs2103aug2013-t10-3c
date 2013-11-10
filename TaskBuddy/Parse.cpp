@@ -232,6 +232,7 @@ void Parse::processTaskStringFromFile(std::string taskString, std::string & acti
 		taskDetails.push_back(word);
 	}
 	
+	//Deadline task case
 	if (taskDetails[0] == KEYWORD_DEADLINE) {
 		unsigned int i = 1;
 
@@ -276,7 +277,9 @@ void Parse::processTaskStringFromFile(std::string taskString, std::string & acti
 			block = true;
 		} 
 	}
-	else {
+
+	//Activity task case
+	else if (taskDetails[0].find(DATE_SEPARATOR) != std::string::npos){
 		unsigned int i = 0;
 
 		while (i < taskDetails.size() && taskDetails[i] != KEYWORD_HOURS && taskDetails[i] != SYMBOL_COLLON && taskDetails[i] != SYMBOL_DASH) {
@@ -336,6 +339,28 @@ void Parse::processTaskStringFromFile(std::string taskString, std::string & acti
 		
 		if (i < taskDetails.size() && taskDetails[i] == KEYWORD_BLOCK_BRACKETS) {
 			block = true;
+		}
+	}
+
+	//Floating task case
+	else{			
+		unsigned int i = 0;
+		while (i < taskDetails.size() && taskDetails[i] != KEYWORD_LOCATION){
+			if (action != EMPTY_STRING) {
+				action += SINGLE_SPACE;
+			}
+			action += taskDetails[i];
+			i++;
+		}
+		if (i < taskDetails.size() && taskDetails[i] == KEYWORD_LOCATION){
+			i++;
+		}
+		while (i < taskDetails.size()){
+			if (location != EMPTY_STRING){
+				location += SINGLE_SPACE;
+			}
+			location += taskDetails[i];
+			i++;
 		}
 	}
 
@@ -420,9 +445,6 @@ Date Parse::convertToDate(std::string dateString){
 		if (!isValidDate(date)) {
 			throw (std::runtime_error("Invalid date input: day/month/year out of range"));
 		}
-		/*else if (dateHasPassed(date)) {
-			throw (std::runtime_error("Invalid date input: date has already passed"));
-		}*/
 	}
 	catch (...) {
 		throw;
