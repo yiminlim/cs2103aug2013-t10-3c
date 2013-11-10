@@ -148,7 +148,7 @@ void TaskLogic::saveOverdue(){
 	Equivalence Partition: Empty string, Invalid string, Valid string
 	Boundary: Empty string, Any valid string, Any invalid string
 */
-void TaskLogic::add(const std::string taskString, bool& isClash, std::vector<std::string>& clashTasks){
+void TaskLogic::add(const std::string taskString, bool& isClash, std::vector<std::string>& clashTasks, std::vector<std::string>& addedTask){
 	std::vector<Task> taskObjectVector;
 	bool clash;
 
@@ -172,8 +172,10 @@ void TaskLogic::add(const std::string taskString, bool& isClash, std::vector<std
 
 	for(unsigned int i = 0; i < taskObjectVector.size() ; i++){
 		clash = false;
-		if(tbLinkedList.insert(taskObjectVector[i], clash, clashTasks))
+		if(tbLinkedList.insert(taskObjectVector[i], clash, clashTasks)){
+			addedTask.push_back(taskObjectVector[i].getTask());
 			update(COMMAND_ADD, taskObjectVector[0].getTask(), "");
+		}
 		else
 			throw std::runtime_error("Task "+ taskObjectVector[i].getTask() + " cannot be added successfully");
 		if(clash)
@@ -227,16 +229,12 @@ void TaskLogic::addOverdueTask(const std::string taskString){
 	Equivalence Partition: Empty string, Invalid string, Valid string
 	Boundary: Empty string, Any valid string, Any invalid string
 */
-bool TaskLogic::del(const std::string taskString, bool isUndoDel){
-	bool checkDeleted = true;
+void TaskLogic::del(const std::string taskString, bool isUndoDel){
+	assert(!taskString.empty());
+	tbLinkedList.remove(taskString, getActionLocation(taskString));
 
-	checkDeleted = tbLinkedList.remove(taskString, getActionLocation(taskString));
-
-	if(checkDeleted)
-		if(!isUndoDel)
-			update(COMMAND_DELETE, taskString, "");
-
-	return checkDeleted;
+	if(!isUndoDel)
+		update(COMMAND_DELETE, taskString, "");
 }
 
 
@@ -328,7 +326,7 @@ std::vector<std::string> TaskLogic::processSearchOutputVector(std::vector<std::s
 	Equivalence Partition: Empty strings, Invalid strings, Valid strings
 	Boundary: Empty strings, Any valid strings, Any invalid strings
 */
-bool TaskLogic::edit(std::string taskString, std::string editString, bool isBlock, std::vector<std::string>& clashTasks){
+bool TaskLogic::edit(std::string taskString, std::string editString, bool isBlock, std::vector<std::string>& clashTasks, std::string editedTask){
 	std::string newTask, newAction = "", newLocation = "", currentAction = "", currentLocation = "";
 	std::vector<Date> newStartingDate, newEndingDate, newDeadlineDate, currentStartingDate, currentEndingDate, currentDeadlineDate;
 	std::vector<int> newStartingTime, newEndingTime, newDeadlineTime, currentStartingTime, currentEndingTime, currentDeadlineTime; 
@@ -372,6 +370,7 @@ bool TaskLogic::edit(std::string taskString, std::string editString, bool isBloc
 	
 	tbLinkedList.remove(taskString, getActionLocation(taskString));
 	tbLinkedList.insert(taskObject, isClash, clashTasks);
+	editedTask = taskObject.getTask();
 
 	update(COMMAND_EDIT, taskObject.getTask(), taskString);
 	return true; // need to do checking
@@ -426,11 +425,11 @@ bool TaskLogic::editBlock(const std::string newTaskActionLocation, std::vector<s
 	Equivalence Partition: Empty strings, Invalid strings, Valid strings
 	Boundary: Empty strings, Any valid strings, Any invalid strings
 */
-void TaskLogic::addBlock(const std::string taskString, const std::string originalTaskString, bool isClash, std::vector<std::string>& clashTasks){
+void TaskLogic::addBlock(const std::string taskString, const std::string originalTaskString, bool isClash, std::vector<std::string>& clashTasks, std::vector<std::string>& addedTask){
 	assert(!taskString.empty());
 	tbLinkedList.setBlock(originalTaskString);   
 	
-	add(taskString, isClash, clashTasks);
+	add(taskString, isClash, clashTasks, addedTask);
 }
 
 /*
