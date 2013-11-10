@@ -89,7 +89,7 @@ void UserInterface::commandUI(){
 	std::vector<std::string> clashVector;
 	std::vector<std::string> feedbackVector;
 	std::vector<std::string> displayUser;
-	std::vector<std::string> emptyVector;
+	std::vector<std::string> searchDateVector;
 	
 	do{
 		try{
@@ -117,7 +117,7 @@ void UserInterface::commandUI(){
 				if (isClash){
 					SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY);	
 					std::cout << std::endl << MESSAGE_CLASH << std::endl;
-					displayInformationInVector(clashVector, displayUser, emptyVector);
+					displayInformationInVector(clashVector, displayUser, searchDateVector);
 				}
 				tbLogic.save();
 				searchTaskVector.clear();
@@ -154,7 +154,7 @@ void UserInterface::commandUI(){
 				if (isClash){
 					SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY);	
 					std::cout << std::endl << MESSAGE_CLASH << std::endl;
-					displayInformationInVector(clashVector, displayUser, emptyVector);
+					displayInformationInVector(clashVector, displayUser, searchDateVector);
 				}
 				tbLogic.save();
 				searchTaskVector.clear();
@@ -195,7 +195,7 @@ void UserInterface::commandUI(){
 				}
 
 				if (tbLogic.retrieveDoneList(searchOtherTaskVector)){
-					displayInformationInVector(searchOtherTaskVector, displayUser, emptyVector);
+					displayInformationInVector(searchOtherTaskVector, displayUser, searchDateVector);
 				}
 				else{
 					displayFailMessage(command);
@@ -210,7 +210,7 @@ void UserInterface::commandUI(){
 				}
 
 				if (tbLogic.retrieveOverdueList(searchOtherTaskVector)){
-					displayInformationInVector(searchOtherTaskVector, displayUser, emptyVector);
+					displayInformationInVector(searchOtherTaskVector, displayUser, searchDateVector);
 				}
 				else{
 					displayFailMessage(command);
@@ -315,11 +315,11 @@ void UserInterface::editBlockUI(const std::string stringToEditBlock){
 	std::vector<std::string> clashVector;
 	std::vector<std::string> feedbackVector;
 	std::vector<std::string> displayUser;
-	std::vector<std::string> emptyVector;
+	std::vector<std::string> searchDateVector;
 
-	tbLogic.getBlock(originalTaskString, taskActionLocation, blockTaskVector);
+	tbLogic.getBlock(originalTaskString, taskActionLocation, blockTaskVector, searchDateVector);
 	std::cout << MESSAGE_AVAILABLE_BLOCKS << std::endl;
-	displayInformationInVector(blockTaskVector, displayUser, emptyVector);
+	displayInformationInVector(blockTaskVector, displayUser, searchDateVector);
 	std::cout << std::endl;
 
 	do{
@@ -337,7 +337,7 @@ void UserInterface::editBlockUI(const std::string stringToEditBlock){
 				if (isClash){
 					SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY);	
 					std::cout << std::endl << MESSAGE_CLASH << std::endl;
-					displayInformationInVector(clashVector, displayUser, emptyVector);
+					displayInformationInVector(clashVector, displayUser, searchDateVector);
 				}			
 				clashVector.clear();
 				displayUser.clear();
