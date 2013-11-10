@@ -25,6 +25,7 @@ private:
 	std::vector<std::string> dateVector; //dateVector[0] : today, dateVector[1] : coming Monday, ....dateVector[7] : coming Sunday, dateVector[8] : tomorrow (all in the form : dd/mm/yy)
 	std::stack<std::string> commandStackHistory;
 	std::stack<std::string> taskStackHistory;
+	std::stack<int> countStackHistory;
 
 	static const std::string COMMAND_ADD;
 	static const std::string COMMAND_DELETE;
@@ -86,17 +87,17 @@ public:
 //-----EDIT TASK---------------------------------------------------------------------------------------------
 
 	//edit a task from the list at the index given
-	bool edit(std::string, std::string, bool, std::vector<std::string>&, std::string);
+	void edit(std::string, std::string, bool, std::vector<std::string>&, std::string);
 
 	std::string removeBlockoff(std::string);
 
 //-----EDIT BLOCK--------------------------------------------------------------------------------------------
 
 	//gives back entire block of taskStrings and also a string that contains the task (action + " at " location )
-	bool getBlock(std::string &, std::string &, std::vector<std::string> &);
+	void getBlock(std::string &, std::string &, std::vector<std::string> &);
 	
 	//for editing location, action of all blocked item.
-	bool editBlock(const std::string, std::vector<std::string> &);
+	void editBlock(const std::string, std::vector<std::string> &);
 
 	//for adding in new blocks, const string contains action + location while vector string contains timings and dates
 	void addBlock(const std::string, const std::string, bool, std::vector<std::string>&, std::vector<std::string>&);
@@ -138,7 +139,7 @@ public:
 	bool checkSameDate(Date, Date);
 
 //-----MARK DONE------------------------------------------------------------------------------------------------
-	bool markDone(std::string taskString); 
+	void markDone(std::string taskString); 
 
 	bool retrieveDoneList(std::vector<std::string> &);
 
