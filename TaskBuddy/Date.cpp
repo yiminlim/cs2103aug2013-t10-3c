@@ -17,7 +17,7 @@ bool Date::isEmptyDate(){
 }
 
 bool Date::isSameDate(Date checkDate){
-	return true;
+	return _year == checkDate._year && _month == checkDate._month && _day == checkDate._day;
 }
 
 bool Date::isLaterDate(Date checkDate){
