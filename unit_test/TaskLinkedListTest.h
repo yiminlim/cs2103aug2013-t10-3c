@@ -5,8 +5,6 @@
 
 class TaskLinkedListTest : public ::testing::Test {
 protected:
-	TaskLinkedListTest() {
-	}
-	virtual ~TaskLinkedListTest() {
-	}
+	virtual void SetUp() {}
+
 };

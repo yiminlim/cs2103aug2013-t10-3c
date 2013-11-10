@@ -239,7 +239,7 @@ TEST(TaskLinkedListTest, RetrieveMinorFunction3){
 	EXPECT_EQ(task1.getTask() + "31/12/201301/01/201401/02/2014", taskList.compareAndIncludeRange(task1.getTask(), &tempDate1._day, &tempDate1._month, &tempDate1._year, &tempDate2._day, &tempDate2._month, &tempDate2._year));
 }
 
-TEST(TaskLinkedListTest, RetrieveMinorFunction4){
+TEST(TaskLinkedListTest, RetrieveFunction){
 	TaskLinkedList taskList;
 	Date tempDate1(1,2,2013), tempDate2(3,2,2013), nullDate;
 	Task task1("lunch with mum", "deck", tempDate1, 1200, nullDate, -1, nullDate, -1, false);
@@ -270,4 +270,42 @@ TEST(TaskLinkedListTest, RetrieveMinorFunction4){
 	retrieveTasks.clear();
 	keywords.push_back("dad");
 	EXPECT_EQ(false, taskList.retrieve(keywords, retrieveTasks));
+}
+
+/****************************************
+ TEST FOR UPDATING OVERDUELIST FUNCTION
+*****************************************/
+
+TEST(TaskLinkedListTest, UpdateMinorFunction1){
+	TaskLinkedList taskList;
+	Date today(10,11,2013), beforeDate(9,11,2013), afterDate(11,11,2013);
+	std::vector<std::string> overdueList;
+	std::string task1 = "lunch with mum", task2 = "lunch with dad", task3 = "lunch with sis";
+
+	taskList.compareWithToday(today, today, task1, overdueList);
+	EXPECT_EQ(0, overdueList.size());
+	taskList.compareWithToday(today, beforeDate, task2, overdueList);
+	EXPECT_EQ(task2, overdueList[0]);
+	EXPECT_EQ(1, overdueList.size());
+	taskList.compareWithToday(today, afterDate, task3, overdueList);
+	EXPECT_EQ(task2, overdueList[0]);
+	EXPECT_EQ(1, overdueList.size());
+}
+
+TEST(TaskLinkedListTest, UpdateFunction){
+	TaskLinkedList taskList;
+	Date tempDate1(1,2,2013), tempDate2(3,2,2013), nullDate, today(2,2,2013);
+	Task task1("lunch with mum", "deck", tempDate1, 1200, nullDate, -1, nullDate, -1, false);
+	Task task2("lunch with mum", "techno", tempDate1, 1400, tempDate2, 1000, nullDate, -1, false);
+	Task task3("lunch with dad", "YIH", nullDate, -1, nullDate, -1, tempDate2, 1800, false);
+	bool isClash = false;
+	std::vector<std::string> clashTasks, overdueList;
+
+	taskList.insert(task1, isClash, clashTasks);
+	taskList.insert(task2, isClash, clashTasks);
+	taskList.insert(task3, isClash, clashTasks);
+
+	taskList.getOverdueList(today, overdueList);
+	EXPECT_EQ(1, overdueList.size());
+	EXPECT_EQ(task1.getTask(), overdueList[0]);
 }
