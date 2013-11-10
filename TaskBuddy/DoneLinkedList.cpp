@@ -55,10 +55,8 @@ void DoneLinkedList::obtainDateAndTime(Task & task, Date *date, int *time, Date 
 	if (task.getDeadlineDate()._day == 0){
 		obtainDateSeparately(&task.getStartingDate(), date);
 		*time = task.getStartingTime();
-		if (task.getEndingDate()._day != 0){
-			obtainDateSeparately(&task.getEndingDate(), endDate);
-			*endTime = task.getEndingTime();
-		}
+		obtainDateSeparately(&task.getEndingDate(), endDate);
+		*endTime = task.getEndingTime();
 	}else{
 		obtainDateSeparately(&task.getDeadlineDate(), date);
 		*time = task.getDeadlineTime();
@@ -104,19 +102,23 @@ bool DoneLinkedList::compareDateAndTime(Task & curTask, Task & listTask){
 		if (check){
 			if (*curTime < *listTime){
 				condition = true;
-			}else if (*curTime = *listTime){
-				check = false;
-				condition = compareDates(endCurDate, endListDate, &check);
-				if (check){
-					if (*endCurTime < *endListTime){
-						condition = true;
-					}else{
-						condition = false;
+			}else if (*curTime == *listTime){
+				if (*curTime == -1){
+					condition = true;
+				}else{
+					check = false;
+					condition = compareDates(endCurDate, endListDate, &check);
+					if (check){
+						if (*endCurTime < *endListTime){
+							condition = true;
+						}else{
+							condition = false;
+						}
 					}
 				}
-			}else{
+			}else if(*curTime > *listTime){
 				condition = false;
-			}
+				}
 		}
 
 		delete curDate;
