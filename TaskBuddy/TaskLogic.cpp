@@ -731,14 +731,14 @@ void TaskLogic::checkValidTask(Task task){
 		assert(task.getStartingTime() == -1);
 		assert(task.getEndingTime() == -1);
 		assert(!task.getDeadlineDate().isEmptyDate());
-		if(!taskParse.isValidEndDate(taskParse.convertToDate(dateVector[0]), task.getDeadlineDate()))
+		if(!taskParse.convertToDate(dateVector[0]).isLaterDate(task.getDeadlineDate()))
 			throw (std::runtime_error("Invalid date input: date has already passed"));
 	}
 	else if(task.isActivityType()){
 		assert(task.getDeadlineDate().isEmptyDate());
 		assert(task.getDeadlineTime() == -1);
 		assert(!task.getStartingDate().isEmptyDate());
-		if(!taskParse.isValidEndDate(taskParse.convertToDate(dateVector[0]), task.getStartingDate()))
+		if(!taskParse.convertToDate(dateVector[0]).isLaterDate(task.getStartingDate()))
 			throw (std::runtime_error("Invalid date input: date has already passed"));
 
 	}
