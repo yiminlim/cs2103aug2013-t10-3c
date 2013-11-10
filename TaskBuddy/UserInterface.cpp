@@ -25,11 +25,12 @@ const std::string UserInterface::KEYWORD_BLOCKOFF = "blockoff";
 const std::string UserInterface::KEYWORD_EMPTY_STRING = "";
 const std::string UserInterface::KEYWORD_SPACE = " ";
 const std::string UserInterface::KEYWORD_BULLETING = ". ";
+const std::string UserInterface::KEYWORD_QUOTE = "\"";
 const std::string UserInterface::KEYWORD_END = "end";
 
 const std::string UserInterface::MESSAGE_TODAY_TASK = "Task(s) due by TODAY!";
 const std::string UserInterface::MESSAGE_COMMAND = "command: ";
-const std::string UserInterface::MESSAGE_ADD = "Task has been added";
+const std::string UserInterface::MESSAGE_ADD = " has been added";
 const std::string UserInterface::MESSAGE_CLASH = "Task added clashes with the following task: ";
 const std::string UserInterface::MESSAGE_DELETE = "Task has been deleted";
 const std::string UserInterface::MESSAGE_EDIT = "Task has been edited";
@@ -55,8 +56,6 @@ const std::string UserInterface::MESSAGE_INVALID_OVERDUE = "No tasks that are ov
 const std::string UserInterface::MESSAGE_INVALID_EDITALL = "Editing of tasks in all blocked slots has failed";
 const std::string UserInterface::MESSAGE_INVALID_DELETEBLOCK = "Deleting of requested blocked slots has failed";
 const std::string UserInterface::MESSAGE_INVALID_FINALISE = "Finalising of the time and date of the task has failed"; 
-
-
 
 //User interface constructor
 UserInterface::UserInterface(){
@@ -99,6 +98,7 @@ void UserInterface::commandUI(){
 	
 	do{
 		try{
+			SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
 			std::cout << MESSAGE_COMMAND;
 			std::cin >> command;
 			isClash = false;
@@ -118,9 +118,10 @@ void UserInterface::commandUI(){
 
 			if (command == COMMAND_ADD){		
 				tbLogic.add(readTask(command, KEYWORD_EMPTY_STRING), isClash, clashVector, feedbackVector);
-				displayMessage(command);
+				displayFeedback(command, KEYWORD_EMPTY_STRING, feedbackVector);				
 				if (isClash){
-					std::cout << MESSAGE_CLASH << std::endl;
+					SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY);	
+					std::cout << std::endl << MESSAGE_CLASH << std::endl;
 					displayInformationInVector(clashVector);
 				}
 				tbLogic.save();
@@ -141,7 +142,7 @@ void UserInterface::commandUI(){
 					}
 					tbLogic.del(searchTaskVector[option-1], false);
 					tbLogic.save();
-					displayMessage(command);			
+					displaySuccessfulMessage(command);			
 				}
 				searchTaskVector.clear();
 			}
@@ -151,9 +152,10 @@ void UserInterface::commandUI(){
 					throw std::runtime_error(ERROR_OUT_OF_VECTOR_RANGE);
 				}
 				else if (tbLogic.edit(searchTaskVector[option-1], readTask(COMMAND_EDIT, KEYWORD_EMPTY_STRING), isClash, clashVector, feedback)){
-					displayMessage(command);
+					displaySuccessfulMessage(command);
 					if (isClash){
-						std::cout << MESSAGE_CLASH << std::endl;
+						SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY);	
+						std::cout << std::endl << MESSAGE_CLASH << std::endl;
 						displayInformationInVector(clashVector);
 					}
 					tbLogic.save();
@@ -185,7 +187,7 @@ void UserInterface::commandUI(){
 					else if (tbLogic.markDone(searchTaskVector[option-1])){
 						tbLogic.save();
 						tbLogic.saveDone();
-						displayMessage(command);
+						displaySuccessfulMessage(command);
 					}
 					else{
 						displayFailMessage(command);
@@ -228,7 +230,7 @@ void UserInterface::commandUI(){
 				}
 				tbLogic.clearOverdueList();
 				tbLogic.saveOverdue();
-				displayMessage(command);
+				displaySuccessfulMessage(command);
 			}
 			else if (command == COMMAND_UNDO){
 				if (space == ' '){
@@ -238,7 +240,7 @@ void UserInterface::commandUI(){
 				tbLogic.undo();
 				tbLogic.save();
 				tbLogic.saveDone();
-				displayMessage(command);
+				displaySuccessfulMessage(command);
 				searchTaskVector.clear();
 			}
 			else if (command == COMMAND_CLEAR){
@@ -257,7 +259,7 @@ void UserInterface::commandUI(){
 					std::cin.clear();
 					std::cin.ignore(INT_MAX, '\n');
 				}
-				displayMessage(command);
+				displaySuccessfulMessage(command);
 				contProgram = false;
 			}
 			else{
@@ -269,6 +271,7 @@ void UserInterface::commandUI(){
 			}
 		}
 		catch (std::runtime_error &error){
+			SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_INTENSITY);
 			std::cout << error.what() << std::endl;
 		}
 
@@ -331,9 +334,10 @@ void UserInterface::editBlockUI(const std::string stringToEditBlock){
 				command = COMMAND_ADDBLOCK;
 				tbLogic.addBlock(readTask(command, taskActionLocation), originalTaskString, isClash, clashVector, feedbackVector);
 				tbLogic.save();
-				displayMessage(command);
+				displaySuccessfulMessage(command);
 				if (isClash){
-					std::cout << MESSAGE_CLASH << std::endl;
+					SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY);	
+					std::cout << std::endl << MESSAGE_CLASH << std::endl;
 					displayInformationInVector(clashVector);
 				}			
 				clashVector.clear();
@@ -342,7 +346,7 @@ void UserInterface::editBlockUI(const std::string stringToEditBlock){
 			else if (command == COMMAND_EDITALL){
 				if (tbLogic.editBlock(readTask(command, KEYWORD_EMPTY_STRING), blockTaskVector)){
 					tbLogic.save();
-					displayMessage(command);
+					displaySuccessfulMessage(command);
 					contEditBlock = false;
 				}		
 				else{
@@ -358,7 +362,7 @@ void UserInterface::editBlockUI(const std::string stringToEditBlock){
 					}
 					tbLogic.del(blockTaskVector[option-1], false);
 					tbLogic.save();
-					displayMessage(command);
+					displaySuccessfulMessage(command);
 					contEditBlock = false;
 				}
 			}
@@ -369,7 +373,7 @@ void UserInterface::editBlockUI(const std::string stringToEditBlock){
 				}
 				else if (tbLogic.finaliseBlock(option, blockTaskVector)){
 					tbLogic.save();
-					displayMessage(command);
+					displaySuccessfulMessage(command);
 					contEditBlock = false;
 				}
 				else{
@@ -398,6 +402,7 @@ void UserInterface::editBlockUI(const std::string stringToEditBlock){
 
 //To display welcome message after the program is initialised
 void UserInterface::displayWelcomeMessage(){
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
 	std::cout << "@===========================================================================================================@" << std::endl
 			  << "(                                                                                                           )" << std::endl
 		      << " )                           **********       **         *******    **    **                               ( " << std::endl
@@ -422,12 +427,7 @@ void UserInterface::displayTodayTask(){
 	try{
 		tbLogic.generalSearch(KEYWORD_TODAY, todayTask, searchDateVector);
 		std::cout << MESSAGE_TODAY_TASK << std::endl;
-		for (unsigned int i = 0; i < todayTask.size(); i++){
-			if (i < 9){ 
-				std::cout << KEYWORD_SPACE;
-			}
-			std::cout << i+1 << KEYWORD_BULLETING << todayTask[i] << std::endl;
-		}		
+		displayInformationInVector(todayTask);
 	}
 	catch (std::runtime_error &error){
 		std::cout << error.what() << std::endl;
@@ -437,20 +437,43 @@ void UserInterface::displayTodayTask(){
 
 //To display all information in a vector
 void UserInterface::displayInformationInVector(std::vector<std::string> vec){
+	int countEmptyString = 0;
+	int alternate = 1;
+
 	for (unsigned int i = 0; i < vec.size(); i++){
-		if (i < 9){
-			std::cout << KEYWORD_SPACE;
+		if (vec[i] != KEYWORD_EMPTY_STRING){
+			if (i+1-countEmptyString < 10){
+				std::cout << KEYWORD_SPACE;
+			}
+			if (alternate % 2 == 1){
+				SetConsoleTextAttribute(hConsole, FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY); 
+			}
+			else{
+				SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY);				
+			}
+			std::cout << i+1-countEmptyString << KEYWORD_BULLETING << vec[i] << std::endl;
 		}
-		std::cout << i+1 << KEYWORD_BULLETING << vec[i] << std::endl;
+		else{
+			std::cout << vec[i] << std::endl;
+			countEmptyString++;
+			alternate++;
+		}
+	}
+}
+
+//To display feedback to users
+void UserInterface::displayFeedback(std::string command, std::string feedback, std::vector<std::string> feedbackVector){
+	if (command == COMMAND_ADD){
+		for (unsigned int i = 0; i < feedbackVector.size(); i++){
+			SetConsoleTextAttribute(hConsole, FOREGROUND_GREEN | FOREGROUND_INTENSITY);
+			std::cout << KEYWORD_QUOTE << feedbackVector[i] << KEYWORD_QUOTE << MESSAGE_ADD << std::endl;
+		}
 	}
 }
 
 //To display messages when commands are executed successfully
-void UserInterface::displayMessage(const std::string command){
-	if (command == COMMAND_ADD){
-		std::cout << MESSAGE_ADD;
-	}
-	else if (command == COMMAND_DELETE){
+void UserInterface::displaySuccessfulMessage(const std::string command){
+	if (command == COMMAND_DELETE){
 		std::cout << MESSAGE_DELETE;
 	}
 	else if (command == COMMAND_EDIT){
