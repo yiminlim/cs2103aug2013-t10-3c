@@ -126,6 +126,4 @@ public:
 
 	//To display the help message for editBlockUI
 	void displayHelpEditBlockUI();
-
-	void displayHelpEditBlockUI1();
 };
