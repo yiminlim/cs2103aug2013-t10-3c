@@ -249,15 +249,6 @@ std::string Task::formatDateOutputString(Date date){
 	}
 	dateString << date._month;
 	dateString << DATE_SEPARATOR;
-	if (date._year < 1000){
-		dateString << ZERO_DIGIT;		//Adds zeros to year values that are less than
-	}							//four digits to ensure proper format
-	if (date._year < 100){
-		dateString << ZERO_DIGIT;
-	}
-	if (date._year < 10){
-		dateString << ZERO_DIGIT;
-	}
 	dateString << date._year;
 
 	return dateString.str();
