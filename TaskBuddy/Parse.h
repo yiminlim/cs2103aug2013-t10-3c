@@ -47,6 +47,30 @@ private:
 	static const std::string DAY_KEYWORD_SUNDAY;
 	static const std::string DAY_KEYWORD_SUN;
 
+	//-----EXCEPTION FEEDBACK MESSAGES-------------------------------------------------------------
+
+	static const std::string Parse::EXCEPTION_NO_START_DATE;
+	static const std::string Parse::EXCEPTION_NO_END_DATE;
+	static const std::string Parse::EXCEPTION_NO_DEADLINE_DATE;
+	static const std::string Parse::EXCEPTION_DATE_NO_YEAR;
+	static const std::string Parse::EXCEPTION_DATE_NO_MONTH;
+	static const std::string Parse::EXCEPTION_DATE_NO_DAY;
+	static const std::string Parse::EXCEPTION_INVALID_YEAR_INPUT;
+	static const std::string Parse::EXCEPTION_INVALID_MONTH_INPUT;
+	static const std::string Parse::EXCEPTION_INVALID_DAY_INPUT;
+	static const std::string Parse::EXCEPTION_INVALID_TIME_INPUT;
+	static const std::string Parse::EXCEPTION_INVALID_YEAR_FORMAT;
+	static const std::string Parse::EXCEPTION_INVALID_MONTH_FORMAT;
+	static const std::string Parse::EXCEPTION_INVALID_DAY_FORMAT;
+	static const std::string Parse::EXCEPTION_INVALID_TIME_FORMAT;
+	static const std::string Parse::EXCEPTION_NOBLOCK_MULTIPLE_DATES;
+	static const std::string Parse::EXCEPTION_NOBLOCK_MULTIPLE_TYPES;
+	static const std::string Parse::EXCEPTION_MISSING_START_TIME;
+	static const std::string Parse::EXCEPTION_MISSING_END_TIME;
+	static const std::string Parse::EXCEPTION_END_BEFORE_START_DATE;
+	static const std::string Parse::EXCEPTION_START_END_SAME;
+	static const std::string Parse::EXCEPTION_END_BEFORE_START_TIME;
+
 //-----CONSTANT INTEGERS-----------------------------------------------------------------------
 
 	static const int EMPTY_TIME;
@@ -71,6 +95,9 @@ public:
 	//Takes a day keyword and changes it into its corresponding date string
 	std::string changeDayToDate(std::string, std::vector<std::string>);
 
+	//Takes a word and changes it into lowercase form
+	std::string convertToLowercase(std::string word);
+
 //-----CHECK METHODS---------------------------------------------------------------------------
 
 	//Checks if word is a keyword or not
@@ -78,45 +105,6 @@ public:
 
 	//Checks if word is a valid day keyword or not
 	bool isDayKeyword(std::string);
-
-	//Checks if date value is empty i.e. 0/0/0
-	bool isEmptyDate(Date);
-
-	//Checks if date value is valid
-	bool isValidDate(Date);
-
-	//Checks if day value of date is valid
-	bool isValidDay(int);
-
-	//Checks if month value of date is valid
-	bool isValidMonth(int);
-
-	//Checks if year value of date is valid
-	bool isValidYear(int);
-
-	//Checks if time value is empty i.e. -1
-	bool isEmptyTime(int);
-
-	//Checks if time value is valid 
-	bool isValidTime(int);
-
-	//Checks if hour value of time is valid
-	bool isValidHour(int);
-
-	//Checks if minutes value of time is valid
-	bool isValidMins(int);
-
-	//Checks if end date is not before the start date
-	bool isValidEndDate(Date, Date);
-
-	//Checks if dates are equal
-	bool isSameDate(Date, Date);
-
-	//Checks if end time is after the start time
-	bool isValidEndTime(int, int);
-
-	//Checks if date has passed 
-	bool dateHasPassed(Date);
 
 	//Checks if the input year format is correct (yyyy)
 	bool isValidYearFormat(std::string);
@@ -129,4 +117,23 @@ public:
 
 	//Checks if the input time format is correct 
 	bool isValidTimeFormat(std::string);
+
+	//Checks if time value is valid 
+	bool isValidTime(int);
+
+	//Checks if hour value of time is valid
+	bool isValidHour(int);
+
+	//Checks if minutes value of time is valid
+	bool isValidMins(int);
+
+	//Checks if second time is after the first time
+	bool isLaterTime(int, int);
+
+	//Checks if times are equal
+	bool isSameTime(int, int);
+
+	bool isValidEndDate(Date, Date); //in date*******
+
+	bool isEmptyDate(Date); //in date*****************
 };
