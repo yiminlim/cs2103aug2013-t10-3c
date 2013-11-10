@@ -131,16 +131,16 @@ TEST(DoneLinkedListTest, RemoveMinorFunction2) {
 	Date tempDate1(1,2,2013), tempDate2(3,2,2013), nullDate, today(2,2,2013);
 	Task task1("lunch with mum", "techno", tempDate1, 1200, nullDate, -1, nullDate, -1, false);
 	Task task2("dance lessons", "dance studio", tempDate1, 1500, tempDate2, 1800, nullDate, -1, false);
-	Task task3("homework assignment 2", "", nullDate, -1, nullDate, -1, tempDate2, 2359, false);
+	Task task3("homework assignment 2", "", nullDate, -1, nullDate, -1, tempDate1, 2359, false);
 	std::vector<int> index;
 
 	doneList.insert(task1);
 	doneList.insert(task2);
 	doneList.insert(task3);
 	index = doneList.getIndex(today);
-	EXPECT_EQ(1, index.size());
+	EXPECT_EQ(2, index.size());
 	EXPECT_EQ(1, index[0]);
-	//EXPECT_EQ(3, index[1]);
+	EXPECT_EQ(3, index[1]);
 }
 
 TEST(DoneLinkedListTest, RemoveFunctionByIndex) {
@@ -177,4 +177,25 @@ TEST(DoneLinkedListTest, RemoveFunctionByTask) {
 	EXPECT_EQ(2, listOfTasks.size());
 	EXPECT_EQ(task1.getTask(), listOfTasks[0]);
 	EXPECT_EQ(task3.getTask(), listOfTasks[1]);
+}
+
+/****************************
+ TEST FOR UPDATE FUNCTION
+****************************/
+
+TEST(DoneLinkedListTest, UpdateFunction) {
+	DoneLinkedList doneList;
+	Date tempDate1(1,2,2013), tempDate2(3,2,2013), nullDate, today(2,2,2013);
+	Task task1("lunch with mum", "techno", tempDate1, 1200, nullDate, -1, nullDate, -1, false);
+	Task task2("dance lessons", "dance studio", tempDate1, 1500, tempDate2, 1800, nullDate, -1, false);
+	Task task3("homework assignment 2", "", nullDate, -1, nullDate, -1, tempDate1, 2359, false);
+	std::vector<std::string> listOfTasks;
+
+	doneList.insert(task1);
+	doneList.insert(task2);
+	doneList.insert(task3);
+	doneList.update(today);
+	doneList.updateStorageVector(listOfTasks);
+	EXPECT_EQ(1, listOfTasks.size());
+	EXPECT_EQ(task2.getTask(), listOfTasks[0]);
 }
