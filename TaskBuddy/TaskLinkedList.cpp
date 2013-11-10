@@ -226,6 +226,7 @@ bool TaskLinkedList::insert(Task & curTask, bool & isClash, std::vector<std::str
 //Pre-condition: Input a string containing the output format of the task to be deleted from the linked list and a pointer indicating the index, search for the task in the linked list and obtain the index of the task.
 //Post-condition: Return true if task is found in the linked list and the index pointer will be updated accordingly.
 bool TaskLinkedList::getRemoveIndex(std::string task, int *index){
+	assert(*index == 1);
 	ListNode *cur = _head;
 
 	while (cur->item.getTask() != task && cur != NULL){
@@ -546,4 +547,26 @@ void TaskLinkedList::getOverdueList(Date today, std::vector<std::string> & overd
 
 		cur = cur->next;
 	}
+}
+
+//Pre-condition: Input an index to retrieve the block status of the task indicated by the index.
+//Post-condition: Return the block status of the task indicated by the index.
+bool TaskLinkedList::getBlockStatus(int index){
+	ListNode *cur = traverseTo(index);
+	return cur->item.getBlock();
+}
+
+//Pre-condition: Input a task and check if it is the last remaining task left.
+//Post-condition: Return true if it is the last remaining task
+bool TaskLinkedList::checkIfRemainingTask(std::string task){
+	ListNode *cur = _head;
+
+	while (cur != NULL){
+		if (cur->item.getTask() == task){
+			return true;
+		}
+		cur = cur->next;
+	}
+	
+	return false;
 }

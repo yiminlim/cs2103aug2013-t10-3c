@@ -47,9 +47,7 @@ private:
 	static const std::string MESSAGE_DELETE;
 	static const std::string MESSAGE_EDIT;
 	static const std::string MESSAGE_AVAILABLE_BLOCKS;
-	static const std::string MESSAGE_ADDBLOCK;
 	static const std::string MESSAGE_EDITALL;
-	static const std::string MESSAGE_DELETEBLOCK;
 	static const std::string MESSAGE_FINALISE;
 	static const std::string MESSAGE_MARKDONE;
 	static const std::string MESSAGE_UNDO;
@@ -61,13 +59,8 @@ private:
 	static const std::string ERROR_OUT_OF_VECTOR_RANGE;
 	static const std::string ERROR_UNDO_INITIALISE;
 
-	static const std::string MESSAGE_INVALID_EDIT;
-	static const std::string MESSAGE_INVALID_MARKDONE;
 	static const std::string MESSAGE_INVALID_DONE;
 	static const std::string MESSAGE_INVALID_OVERDUE;
-	static const std::string MESSAGE_INVALID_EDITALL;
-	static const std::string MESSAGE_INVALID_DELETEBLOCK;
-	static const std::string MESSAGE_INVALID_FINALISE;
 
 public:
 		
@@ -104,10 +97,10 @@ public:
 	void displayTodayTask();
 
 	//To display all information stored in a vector
-	void displayInformationInVector(std::vector<std::string>);
+	void displayInformationInVector(std::vector<std::string>, std::vector<std::string>&, std::vector<std::string>);
 
 	//To display feedback to users
-	void displayFeedback(std::string, std::string, std::vector<std::string>);
+	void displayFeedback(std::string, std::string, std::string, std::vector<std::string>);
 
 	//To display messages when commands are executed successfully
 	//Precondition: function successfully call
