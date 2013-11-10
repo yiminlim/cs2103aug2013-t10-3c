@@ -514,7 +514,7 @@ void UserInterface::displayHelpCommandUI(){
 	std::cout << "@-----------------------------------------------------------------------------------------------------------@" << std::endl
 	          << "|";
 	
-	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_BLUE);
+	SetConsoleTextAttribute(hConsole, FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
 	std::cout << "Add(timed tasks)";
 	
 	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
@@ -555,7 +555,7 @@ void UserInterface::displayHelpCommandUI(){
 			  << "|                                                                                                           |" << std::endl
 			  << "|";
 	
-	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_BLUE);
+	SetConsoleTextAttribute(hConsole, FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
 	std::cout << "Add(deadline tasks)";
 	
 	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
@@ -590,7 +590,7 @@ void UserInterface::displayHelpCommandUI(){
 			  << "|                                                                                                           |" << std::endl
 			  << "|";
 	
-	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_BLUE);
+	SetConsoleTextAttribute(hConsole, FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
 	std::cout << "Add(floating tasks)";
 	
 	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
@@ -619,7 +619,7 @@ void UserInterface::displayHelpCommandUI(){
 			  << "|                                                                                                           |" << std::endl
 			  << "|";
 			
-	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_BLUE);
+	SetConsoleTextAttribute(hConsole, FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
 	std::cout << "Add(block off time slots)"; 
 	
 	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
@@ -711,7 +711,7 @@ void UserInterface::displayHelpCommandUI(){
 			  << "|                                                                                                           |" << std::endl
 			  << "|";
 			  
-	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_BLUE);
+	SetConsoleTextAttribute(hConsole, FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
 	std::cout << "Search"; 
 	
 	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
@@ -734,7 +734,7 @@ void UserInterface::displayHelpCommandUI(){
 			  << "|                                                                                                           |" << std::endl
 			  << "|";
 			  
-	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_BLUE);
+	SetConsoleTextAttribute(hConsole, FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
 	std::cout << "Delete"; 
 	
 	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN);
@@ -757,7 +757,7 @@ void UserInterface::displayHelpCommandUI(){
 			  << "|                                                                                                           |" << std::endl
 			  << "|";
 			  
-	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_BLUE);
+	SetConsoleTextAttribute(hConsole, FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
 	std::cout << "Edit"; 
 	
 	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN);
@@ -773,20 +773,20 @@ void UserInterface::displayHelpCommandUI(){
 	std::cout << "|" << std::endl << "|";
 
 	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
-	std::cout << "Example: edit 1 running at school                                                                          " << std::endl;
+	std::cout << "Example: edit 1 running at school                                                                          ";
 
 	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
 	std::cout << "|" <<std::endl
 			  << "|                                                                                                           |" << std::endl
 			  << "|";
 			  
-	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_BLUE);
+	SetConsoleTextAttribute(hConsole, FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
 	std::cout << "Edit"; 
 	
 	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
 	std::cout << " tasks with "; 
 	
-	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_BLUE);
+	SetConsoleTextAttribute(hConsole, FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
 	std::cout << "block off"; 
 	
 	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
@@ -809,7 +809,7 @@ void UserInterface::displayHelpCommandUI(){
 			  << "|                                                                                                           |" << std::endl
 			  << "|";
 			  
-	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_BLUE);
+	SetConsoleTextAttribute(hConsole, FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
 	std::cout << "Mark done"; 
 	
 	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
@@ -835,7 +835,7 @@ void UserInterface::displayHelpCommandUI(){
 	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
 	std::cout << "Display tasks that are "; 
 	
-	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_BLUE);
+	SetConsoleTextAttribute(hConsole, FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
 	std::cout << "done"; 
 	
 	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
@@ -852,7 +852,7 @@ void UserInterface::displayHelpCommandUI(){
 	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
 	std::cout << "Display tasks that are "; 
 	
-	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_BLUE);
+	SetConsoleTextAttribute(hConsole, FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
 	std::cout << "overdue"; 
 	
 	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
@@ -866,7 +866,7 @@ void UserInterface::displayHelpCommandUI(){
 			  << "|                                                                                                           |" << std::endl
 			  << "|";
 			  
-	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_BLUE);
+	SetConsoleTextAttribute(hConsole, FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
 	std::cout << "Clear overdue"; 
 
 	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN);
@@ -880,42 +880,42 @@ void UserInterface::displayHelpCommandUI(){
 			  << "|                                                                                                           |" << std::endl
 			  << "|";
 
-	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_BLUE);
+	SetConsoleTextAttribute(hConsole, FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
 	std::cout << "Undo"; 
 	
 	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN);
 	std::cout << " previous command: "; 
 	
 	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
-	std::cout << "undo                                                                                " << std::endl;
+	std::cout << "undo                                                                                ";
 
 	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
 	std::cout << "|" <<std::endl
 			  << "|                                                                                                           |" << std::endl
 			  << "|";
 	
-	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_BLUE);			  
+	SetConsoleTextAttribute(hConsole, FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY);	  
 	std::cout << "Clear"; 
 	
 	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN);
 	std::cout << " display screen: "; 
 	
 	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
-	std::cout << "clear                                                                                " << std::endl;
+	std::cout << "clear                                                                                ";
 			  
 	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
 	std::cout << "|" <<std::endl
 			  << "|                                                                                                           |" << std::endl
 			  << "|";
 
-	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_BLUE);			  
+	SetConsoleTextAttribute(hConsole, FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY);	  
 	std::cout << "Exit"; 
 	
 	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN);
 	std::cout << " program: "; 
 	
 	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
-	std::cout << "exit                                                                                         " << std::endl;
+	std::cout << "exit                                                                                         ";
 
 	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
 	std::cout << "@-----------------------------------------------------------------------------------------------------------@" << std::endl;
@@ -933,7 +933,7 @@ void UserInterface::displayHelpEditBlockUI(){
 			  << "|       : by 21/11/2013 1000                                                                                |" << std::endl
 			  << "|       : end                                                                                               |" << std::endl
 			  << "|                                                                                                           |" << std::endl
-			  << "|To edit action and location of all block off: editall \"action\" at \"location\"                             |" << std::endl
+			  << "|To edit action and location of all block off: editall \"action\" at \"location\"                               |" << std::endl
 			  << "|Example: editall running at school                                                                         |" << std::endl
 			  << "|                                                                                                           |" << std::endl
 			  << "|To delete: delete \"option\"                                                                                 |" << std::endl
@@ -944,33 +944,4 @@ void UserInterface::displayHelpEditBlockUI(){
 			  << "|                                                                                                           |" << std::endl
 			  << "|To return to main menu: return                                                                             |" << std::endl
 			  << "@-----------------------------------------------------------------------------------------------------------@" << std::endl;
-}
-
-void UserInterface::displayHelpEditBlockUI1(){
-	
-	std::vector<std::string> display;
-	//for (int i = 0; i < 21; i++){ 
-	
-		
-	display[0] = "@-----------------------------------------------------------------------------------------------------------@"; 
-	display[1] = "|To add: add blockoff [press ENTER]                                                                         |";
-	display[1] = "|      : from dd/mm/yyyy hhmm to dd/mm/yyyy hhmm [press ENTER]                                              |"; 
-	display[1] = "|      : by dd/mm/yyyy hhmm                                                                                 |"; 
-	display[1] = "|      : end                                                                                                |";
-	display[1] = "|Example: add blockoff                                                                                      |";
-	display[1] = "|       : from 20/11/2013 1100 to 20/11/2013 1200                                                           |";
-	display[1] = "|       : by 21/11/2013 1000                                                                                |";
-	display[1] = "|       : end                                                                                               |";
-	display[1] = "|                                                                                                           |";
-	display[1] = "|To edit action and location of all block off: editall \"action\" at \"location\"                             |";
-	display[1] = "|Example: editall running at school                                                                         |";
-	display[1] = "|                                                                                                           |";
-	display[1] = "|To delete: delete \"option\"                                                                                 |";
-	display[1] = "|Example: delete 1                                                                                          |";
-	display[1] = "|                                                                                                           |";
-	display[1] = "|To finalise time slot for task: finalise \"option\"                                                          |"; 
-	display[1] = "|Example: finalise 1 (option 1 is the time slot that user wants)                                            |"; 
-	display[1] = "|                                                                                                           |"; 
-	display[1] = "|To return to main menu: return                                                                             |"; 
-	display[1] = "@-----------------------------------------------------------------------------------------------------------@";
 }
