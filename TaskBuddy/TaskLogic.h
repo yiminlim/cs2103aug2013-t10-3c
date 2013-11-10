@@ -35,6 +35,7 @@ private:
 	static const std::string FILENAME_TB_OVERDUE_STORAGE;
 	static const std::string UI_FORMAT;
 	static const std::string PROCESSED_FORMAT;
+	static const std::string BLOCK_OFF;
 
 public:
 
@@ -86,6 +87,8 @@ public:
 
 	//edit a task from the list at the index given
 	bool edit(std::string, std::string, bool, std::vector<std::string>&, std::string);
+
+	std::string removeBlockoff(std::string);
 
 //-----EDIT BLOCK--------------------------------------------------------------------------------------------
 
