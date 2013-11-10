@@ -39,6 +39,8 @@ private:
 	static const std::string KEYWORD_BULLETING;
 	static const std::string KEYWORD_QUOTE;
 	static const std::string KEYWORD_END;
+	static const std::string KEYWORD_EQUAL_LEFT;
+	static const std::string KEYWORD_EQUAL_RIGHT;
 
 	static const std::string MESSAGE_TODAY_TASK;
 	static const std::string MESSAGE_COMMAND;
