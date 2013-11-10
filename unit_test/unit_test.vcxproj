@@ -84,10 +84,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="DateTest.cpp" />
     <ClCompile Include="DoneLinkedListTest.cpp" />
     <ClCompile Include="LogicTest.cpp" />
     <ClCompile Include="Main.cpp" />
-    <ClCompile Include="OverdueLinkedListTest.cpp" />
     <ClCompile Include="ParseTest.cpp" />
     <ClCompile Include="StorageTest.cpp" />
     <ClCompile Include="TaskLinkedListTest.cpp" />
@@ -95,9 +95,9 @@
     <ClCompile Include="UserInterfaceTest.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DateTest.h" />
     <ClInclude Include="DoneLinkedListTest.h" />
     <ClInclude Include="LogicTest.h" />
-    <ClInclude Include="OverdueLinkedListTest.h" />
     <ClInclude Include="ParseTest.h" />
     <ClInclude Include="StorageTest.h" />
     <ClInclude Include="TaskLinkedListTest.h" />

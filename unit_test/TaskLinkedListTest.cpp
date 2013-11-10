@@ -5,6 +5,7 @@
  TEST FOR INSERT FUNCTION
 ****************************/
 
+//Check to see if the function copies the date from one Date class to another Date class correctly.
 TEST(TaskLinkedListTest, InsertMinorFunction1){
 	TaskLinkedList taskList;
 	Date inputDate(1, 2, 2013);
@@ -17,6 +18,7 @@ TEST(TaskLinkedListTest, InsertMinorFunction1){
 	EXPECT_EQ(2013, date._year);
 }
 
+//Check to see if the function obtains the right date and time (either starting or deadline) and updates the ending date and time accordingly.
 TEST(TaskLinkedListTest, InsertMinorFunction2){
 	TaskLinkedList taskList;
 	Date tempDate1(1,2,2013), tempDate2(3,4,2013), tempDate3(5,6,2013), nullDate;
@@ -46,6 +48,7 @@ TEST(TaskLinkedListTest, InsertMinorFunction2){
 	EXPECT_EQ(1300, endTime);
 }	
 
+//Check to see if the comparing of 2 dates give the correct result (true if cur is earlier than list).
 TEST(TaskLinkedListTest, InsertMinorFunction3){
 	TaskLinkedList taskList;
 	Date curDate(1,2,2013), listDate(3,4,2013);
@@ -61,6 +64,7 @@ TEST(TaskLinkedListTest, InsertMinorFunction3){
 	EXPECT_EQ(true, check);
 }
 
+//Check to see if the comaring of 2 tasks give the correct result (meaning which task should be sorted in front of which task accordingly to date and time).
 TEST(TaskLinkedListTest, InsertMinorFunction4){
 	TaskLinkedList taskList;
 	Date tempDate1(1,2,2013), tempDate2(3,4,2013), tempDate3(5,6,2013), nullDate;
@@ -77,6 +81,7 @@ TEST(TaskLinkedListTest, InsertMinorFunction4){
 	EXPECT_EQ(false, taskList.compareDateAndTime(task2, task4, isClash, clashTasks));
 }
 
+//Check to see if function returns the correct index pointing to the task that is passed over.
 TEST(TaskLinkedListTest, InsertMinorFunction5){
 	TaskLinkedList taskList;
 	Date tempDate1(1,2,2013), nullDate;
@@ -87,6 +92,7 @@ TEST(TaskLinkedListTest, InsertMinorFunction5){
 	EXPECT_EQ(1, taskList.getInsertIndex(task1, isClash, clashTasks));
 }
 
+//Check to see if the function inserts a task properly, sorted according to date and time.
 TEST(TaskLinkedListTest, InsertFunction){
 	TaskLinkedList taskList;
 	Date tempDate1(1,2,2013), tempDate2(3,4,2013), nullDate;
@@ -107,6 +113,7 @@ TEST(TaskLinkedListTest, InsertFunction){
 	EXPECT_EQ(task3.getTask(), listOfTasks[2]);
 }
 
+//Check to see if function is able to detect clashes in time properly or not.
 TEST(TaskLinkedListTest, CheckForClashesInInsert){
 	TaskLinkedList taskList;
 	Date tempDate1(1,2,2013), nullDate;
@@ -147,6 +154,7 @@ TEST(TaskLinkedListTest, CheckForClashesInInsert){
  TEST FOR REMOVE FUNCTION
 ****************************/
 
+//Check to see if the function returns the correct index for the task to be removed.
 TEST(TaskLinkedListTest, RemoveMinorFunction1){
 	TaskLinkedList taskList;
 	Date tempDate1(1,2,2013), nullDate;
@@ -165,6 +173,7 @@ TEST(TaskLinkedListTest, RemoveMinorFunction1){
 	EXPECT_EQ(3, index);
 }
 
+//Check the function if it splits a sentence into a vector of keywords properly.
 TEST(TaskLinkedListTest, RemoveMinorFunction2){
 	TaskLinkedList taskList;
 	std::vector<std::string> keywords;
@@ -176,6 +185,7 @@ TEST(TaskLinkedListTest, RemoveMinorFunction2){
 	EXPECT_EQ(3, keywords.size());
 }
 
+//Check to see if the function unblocks a task when the task is found to be the last remaining blockoff one.
 TEST(TaskLinkedListTest, CheckLastBlockOffInRemove){
 	TaskLinkedList taskList;
 	Date tempDate1(1,2,2013), nullDate;
@@ -197,6 +207,7 @@ TEST(TaskLinkedListTest, CheckLastBlockOffInRemove){
 	EXPECT_EQ(true, taskList.getBlockStatus(2));
 }
 	
+//Check to see if the function removes a task from the linked list properly.
 TEST(TaskLinkedListTest, RemoveFunction){
 	TaskLinkedList taskList;
 	Date tempDate1(1,2,2013), nullDate;
@@ -221,17 +232,20 @@ TEST(TaskLinkedListTest, RemoveFunction){
  TEST FOR RETRIEVE FUNCTION
 ****************************/
 
+//Check to see if the function converts the line to lowercase.
 TEST(TaskLinkedListTest, RetrieveMinorFunction1){
 	TaskLinkedList taskList;
 	EXPECT_EQ("abcdef", taskList.toLowerCase("AbCDeF"));
 }
 
+//Check to see if the function strings up the integers into a string date in the dd/mm/yyyy format.
 TEST(TaskLinkedListTest, RetrieveMinorFunction2){
 	TaskLinkedList taskList;
 	EXPECT_EQ("01/02/2013", taskList.getStringDate(1,2,2013));
 	EXPECT_EQ("10/12/2013", taskList.getStringDate(10,12,2013));
 }
 
+//Check to see if the function pushes in the range of dates correctly.
 TEST(TaskLinkedListTest, RetrieveMinorFunction3){
 	TaskLinkedList taskList;
 	Date tempDate1(31,12,2013), tempDate2(1,2,2014), nullDate;
@@ -239,6 +253,7 @@ TEST(TaskLinkedListTest, RetrieveMinorFunction3){
 	EXPECT_EQ(task1.getTask() + "31/12/201301/01/201401/02/2014", taskList.compareAndIncludeRange(task1.getTask(), &tempDate1._day, &tempDate1._month, &tempDate1._year, &tempDate2._day, &tempDate2._month, &tempDate2._year));
 }
 
+//Check to see if the function is able to retrieve tasks that contains the keywords.
 TEST(TaskLinkedListTest, RetrieveFunction){
 	TaskLinkedList taskList;
 	Date tempDate1(1,2,2013), tempDate2(3,2,2013), nullDate;
@@ -276,6 +291,7 @@ TEST(TaskLinkedListTest, RetrieveFunction){
  TEST FOR UPDATING OVERDUELIST FUNCTION
 *****************************************/
 
+//Check to see if the function compares the date properly and push those task that are overdued into a vector.
 TEST(TaskLinkedListTest, UpdateMinorFunction1){
 	TaskLinkedList taskList;
 	Date today(10,11,2013), beforeDate(9,11,2013), afterDate(11,11,2013);
@@ -292,6 +308,7 @@ TEST(TaskLinkedListTest, UpdateMinorFunction1){
 	EXPECT_EQ(1, overdueList.size());
 }
 
+//Check to see if the function is able to update properly by removing overdued items.
 TEST(TaskLinkedListTest, UpdateFunction){
 	TaskLinkedList taskList;
 	Date tempDate1(1,2,2013), tempDate2(3,2,2013), nullDate, today(2,2,2013);
