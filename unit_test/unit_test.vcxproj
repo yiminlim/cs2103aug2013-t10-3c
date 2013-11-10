@@ -84,6 +84,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="DateTest.cpp" />
     <ClCompile Include="DoneLinkedListTest.cpp" />
     <ClCompile Include="LogicTest.cpp" />
     <ClCompile Include="Main.cpp" />
@@ -94,6 +95,7 @@
     <ClCompile Include="UserInterfaceTest.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DateTest.h" />
     <ClInclude Include="DoneLinkedListTest.h" />
     <ClInclude Include="LogicTest.h" />
     <ClInclude Include="ParseTest.h" />
