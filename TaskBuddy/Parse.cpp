@@ -205,8 +205,13 @@ void Parse::processTaskStringFromUI(std::string taskString, std::string & action
 				throw (std::runtime_error("End date occurs before start date"));
 			}
 			else if (isSameDate(startingDate[i], endingDate[i])) {
-				if (!startingDate[i].isEmptyDate() && !endingDate[i].isEmptyDate() && !isValidEndTime(startingTime[i], endingTime[i])) {
-					throw (std::runtime_error("End time occurs before start time"));
+				if (!startingDate[i].isEmptyDate() && !endingDate[i].isEmptyDate() && !isLaterTime(startingTime[i], endingTime[i])) {
+					if (isSameTime(startingTime[i], endingTime[i])){
+						throw std::runtime_error("Start and end dates and times are the same");
+					}
+					else { 
+						throw std::runtime_error("End time occurs before start time");
+					}
 				}
 			}
 		}
@@ -687,21 +692,21 @@ bool Parse::isSameDate(Date firstDate, Date secondDate) {
 
 /* 
 	Purpose: Checks if end time is after start time. 
-	Pre-condition: Minutes value is an integer.
+	Pre-condition: Time values are integers.
 	Post-condition: Returns true if ending time value of time is after starting time and false otherwise. 
 */
-bool Parse::isValidEndTime(int startingTime, int endingTime) {
-	return startingTime < endingTime;
+bool Parse::isLaterTime(int time1, int time2) {
+	return time1 < time2;
 }
 
-/* 
-	Purpose: Checks if the date has already passed. 
-	Pre-condition: Date is a valid date.
-	Post-condition: Returns true if date has already passed and false otherwise. 
+/*
+	Purpose: Checks if times are equal.
+	Pre-condition: Time values are integers.
+	Post-condition: Returns true if times are of the same value and false if otherwise.
 */
-/*bool Parse::dateHasPassed(Date date, ) {
-	return !isValidEndDate(dateVector[0], date);
-}*/
+bool Parse::isSameTime(int time1, int time2){
+	return time1 == time2;
+}
 
 /* 
 	Purpose: Checks if the input month format is correct (m, mm). 

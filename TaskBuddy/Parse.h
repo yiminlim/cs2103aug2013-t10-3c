@@ -112,8 +112,11 @@ public:
 	//Checks if dates are equal
 	bool isSameDate(Date, Date);
 
-	//Checks if end time is after the start time
-	bool isValidEndTime(int, int);
+	//Checks if second time is after the first time
+	bool isLaterTime(int, int);
+
+	//Checks if times are equal
+	bool isSameTime(int, int);
 
 	//Checks if date has passed 
 	bool dateHasPassed(Date);
