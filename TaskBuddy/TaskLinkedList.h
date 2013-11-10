@@ -102,4 +102,7 @@ public:
 	
 	//Return whether the task indicated by the index is blocked or not (For g-test).
 	bool getBlockStatus(int index);
+
+	//Return true if it is the last remaining task.
+	bool checkIfRemainingTask(std::string);
 };
