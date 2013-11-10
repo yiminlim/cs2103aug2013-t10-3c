@@ -41,7 +41,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(SolutionDir)TaskBuddy\gtest-1.7.0\include;$(SolutionDir)TaskBuddy;$(IncludePath)</IncludePath>
+    <IncludePath>D:\Desktop\cs2103aug2013-t10-3c\TaskBuddy\gtest-1.7.0\include;D:\Desktop\cs2103aug2013-t10-3c\TaskBuddy;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -61,7 +61,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)TaskBuddy\gtest-1.7.0\msvc\TaskBuddy\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>D:\Desktop\cs2103aug2013-t10-3c\TaskBuddy\gtest-1.7.0\msvc\TaskBuddy\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>gtestd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -101,6 +101,14 @@
     <ClInclude Include="TaskLinkedListTest.h" />
     <ClInclude Include="TaskTest.h" />
     <ClInclude Include="UserInterfaceTest.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TaskBuddy\gtest-1.7.0\msvc\gtest.vcxproj">
+      <Project>{c8f6c172-56f2-4e76-b5fa-c3b423b31be7}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\TaskBuddy_as_lib\TaskBuddy_as_lib.vcxproj">
+      <Project>{9fc07f3a-a770-445a-9769-f5e30a5fb7ba}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

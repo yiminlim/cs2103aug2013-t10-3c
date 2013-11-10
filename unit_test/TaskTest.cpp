@@ -1,7 +1,7 @@
-#include <gtest\gtest.h>
 #include "TaskTest.h"
 
-TEST(TaskTest, FormatFloatingTaskStringWithLocation) {
+
+TEST_F(TaskTest, FormatFloatingTaskStringWithLocation) {
 	std::string action = "action";
 	std::string location = "location";
 	Date startingDate;
