@@ -587,59 +587,6 @@ bool Parse::isEmptyDate(Date date) {
 }
 
 /* 
-	Purpose: Checks if date value is valid. 
-	Pre-condition: Date value has been initialised.
-	Post-condition: Returns true if date is valid and false otherwise. 
-*/
-bool Parse::isValidDate(Date date) {
-	return isValidDay(date._day) && isValidMonth(date._month) && isValidYear(date._year);
-}
-
-/* 
-	Purpose: Checks if day value of year is valid. 
-	Pre-condition: Day value has been initialised.
-	Post-condition: Returns true if day value of date is valid and false otherwise. 
-	Equivalence Partitions: < 1, 1-31, > 31
-	Boundary values: 0, 1, 2, 30, 31, 32
-*/
-bool Parse::isValidDay(int day) {
-	return day >= 1 && day <= 31;
-}
-
-/* 
-	Purpose: Checks if month value of date is valid. 
-	Pre-condition: Month value has been initialised.
-	Post-condition: Returns true if month value of date is valid and false otherwise. 
-	Equivalence Partitions: < 1, 1-12, > 12
-	Boundary values: 0, 1, 2, 11, 12, 13
-*/
-bool Parse::isValidMonth(int month) {
-	return month >= 1 && month <= 12;
-}
-
-/* 
-	Purpose: Checks if year value of date is valid. 
-	Pre-condition: Year value has been initialised.
-	Post-condition: Returns true if year value of date is valid and false otherwise. 
-	Equivalence Partitions: < 1, >= 1
-	Boundary values:  0, 1, 2
-*/
-bool Parse::isValidYear(int year) {
-	return year > 0;
-}
-
-/* 
-	Purpose: Checks if time value is empty i.e. -1. 
-	Pre-condition: Time value has been initialised.
-	Post-condition: Returns true if time is empty (i.e. -1) and false otherwise. 
-	Equivalence Partitions: -1, any positive integer
-	Boundary values: -1, 1
-*/
-bool Parse::isEmptyTime(int time) {
-	return time == -1;
-}
-
-/* 
 	Purpose: Checks if time value is valid. 
 	Pre-condition: Time value has been initialised.
 	Post-condition: Returns true if time is valid and false otherwise. 
@@ -689,15 +636,6 @@ bool Parse::isValidEndDate(Date startingDate, Date endingDate) {
 		return false;
 	}
 	return true;
-}
-
-/* 
-	Purpose: Checks if dates are equal. 
-	Pre-condition: Dates are valid.
-	Post-condition: Returns true if  dates have same value and false otherwise. 
-*/
-bool Parse::isSameDate(Date firstDate, Date secondDate) {
-	return firstDate._year == secondDate._year && firstDate._month == secondDate._month && firstDate._day == secondDate._day;
 }
 
 /* 
