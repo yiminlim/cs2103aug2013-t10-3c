@@ -87,7 +87,7 @@ public:
 //-----EDIT TASK---------------------------------------------------------------------------------------------
 
 	//edit a task from the list at the index given
-	void edit(std::string, std::string, bool, std::vector<std::string>&, std::string);
+	void edit(std::string, std::string, bool, std::vector<std::string>&, std::string&);
 
 	std::string removeBlockoff(std::string);
 

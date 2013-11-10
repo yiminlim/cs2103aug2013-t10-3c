@@ -336,7 +336,7 @@ std::vector<std::string> TaskLogic::processSearchOutputVector(std::vector<std::s
 	Equivalence Partition: Empty strings, Invalid strings, Valid strings
 	Boundary: Empty strings, Any valid strings, Any invalid strings
 */
-void TaskLogic::edit(std::string taskString, std::string editString, bool isBlock, std::vector<std::string>& clashTasks, std::string editedTask){
+void TaskLogic::edit(std::string taskString, std::string editString, bool isBlock, std::vector<std::string>& clashTasks, std::string& editedTask){
 	std::string newTask, newAction = "", newLocation = "", currentAction = "", currentLocation = "";
 	std::vector<Date> newStartingDate, newEndingDate, newDeadlineDate, currentStartingDate, currentEndingDate, currentDeadlineDate;
 	std::vector<int> newStartingTime, newEndingTime, newDeadlineTime, currentStartingTime, currentEndingTime, currentDeadlineTime; 
@@ -435,9 +435,10 @@ void TaskLogic::editBlock(const std::string newTaskActionLocation, std::vector<s
 
 	//addExistingTask(blockTaskVector[blockTaskVector.size()-1]); // assert??
 	try{
-	for(unsigned int i = 0; i < blockTaskVector.size(); i++)
+		for(unsigned int i = 0; i < blockTaskVector.size(); i++){
 		edit( blockTaskVector[i], newTaskActionLocation, isClashDummy, dummyVector, editedTaskString);
 		editCount++;
+		}
 	}
 	catch(...){
 		throw;
