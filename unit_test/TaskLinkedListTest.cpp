@@ -239,14 +239,14 @@ TEST(TaskLinkedListTest, RetrieveMinorFunction3){
 	EXPECT_EQ(task1.getTask() + "31/12/201301/01/201401/02/2014", taskList.compareAndIncludeRange(task1.getTask(), &tempDate1._day, &tempDate1._month, &tempDate1._year, &tempDate2._day, &tempDate2._month, &tempDate2._year));
 }
 
-/*TEST(TaskLinkedListTest, RetrieveMinorFunction3){
+TEST(TaskLinkedListTest, RetrieveMinorFunction4){
 	TaskLinkedList taskList;
 	Date tempDate1(1,2,2013), tempDate2(3,2,2013), nullDate;
 	Task task1("lunch with mum", "deck", tempDate1, 1200, nullDate, -1, nullDate, -1, false);
 	Task task2("lunch with mum", "techno", tempDate1, 1400, tempDate2, 1000, nullDate, -1, false);
 	Task task3("lunch with dad", "YIH", nullDate, -1, nullDate, -1, tempDate2, 1800, false);
 	bool isClash = false;
-	std::vector<std::string> clashTasks, keywords,taskList;
+	std::vector<std::string> clashTasks, keywords, retrieveTasks;
 
 	taskList.insert(task1, isClash, clashTasks);
 	taskList.insert(task2, isClash, clashTasks);
@@ -255,6 +255,19 @@ TEST(TaskLinkedListTest, RetrieveMinorFunction3){
 	keywords.push_back("lunch");
 	keywords.push_back("with");
 	keywords.push_back("mum");
+	EXPECT_EQ(true, taskList.retrieve(keywords, retrieveTasks));
+	EXPECT_EQ(task1.getTask(), retrieveTasks[0]);
+	EXPECT_EQ(task2.getTask(), retrieveTasks[1]);
+	EXPECT_EQ(2, retrieveTasks.size());
 
-	bool TaskLinkedList::retrieve(const std::vector<std::string> keywords, std::vector<std::string> & taskList){
-}*/
+	keywords.clear();
+	retrieveTasks.clear();
+	keywords.push_back("02/02/2013");
+	EXPECT_EQ(true, taskList.retrieve(keywords, retrieveTasks));
+	EXPECT_EQ(task2.getTask(), retrieveTasks[0]);
+	EXPECT_EQ(1, retrieveTasks.size());
+
+	retrieveTasks.clear();
+	keywords.push_back("dad");
+	EXPECT_EQ(false, taskList.retrieve(keywords, retrieveTasks));
+}
