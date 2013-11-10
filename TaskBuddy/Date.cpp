@@ -7,7 +7,7 @@
 	Pre-conditions: N/A
 	Post-conditions: Date object is constructed with all values initialised to 0. (empty date) 
 */
-Date::Date() {
+Date::Date(){
 	_day = 0;
 	_month = 0;
 	_year = 0;
@@ -18,7 +18,7 @@ Date::Date() {
 	Pre-conditions: All values should be integers.
 	Post-conditions: Date object is constructed with values initialised as specified. 
 */
-Date::Date(int day, int month, int year) {
+Date::Date(int day, int month, int year){
 	_day = day;
 	_month = month;
 	_year = year;
@@ -32,7 +32,7 @@ Date::Date(int day, int month, int year) {
 	Post-condition: Returns true if date is empty (i.e. 0/0/0) and false otherwise.
 */
 bool Date::isEmptyDate(){
-	return _day == 0 && _month == 0 && _year == 0;
+	return (_day == 0 && _month == 0 && _year == 0);
 }
 
 /*
@@ -41,7 +41,7 @@ bool Date::isEmptyDate(){
 	Post-condition: Returns true if dates are of the same value and false if otherwise.
 */
 bool Date::isSameDate(Date checkDate){
-	return _year == checkDate._year && _month == checkDate._month && _day == checkDate._day;
+	return (_year == checkDate._year && _month == checkDate._month && _day == checkDate._day);
 }
 
 /* 
@@ -50,16 +50,13 @@ bool Date::isSameDate(Date checkDate){
 	Post-condition: Returns true if checkDate is after 'this' date and false otherwise. 
 */
 bool Date::isLaterDate(Date checkDate){
-	if (_year > checkDate._year) {
+	if (_year > checkDate._year){
 		return false;
-	}
-	else if ((_year == checkDate._year) && (_month > checkDate._month)) {
+	}else if ((_year == checkDate._year) && (_month > checkDate._month)){
 		return  false; 
-	}
-	else if ((_month == checkDate._month) && (_day > checkDate._day)) {
+	}else if ((_month == checkDate._month) && (_day > checkDate._day)){
 		return false;
-	}
-	else if (_day == checkDate._day) {
+	}else if (_day == checkDate._day){
 		return false;
 	}
 	return true;
@@ -71,7 +68,7 @@ bool Date::isLaterDate(Date checkDate){
 	Post-condition: Returns true if date is valid and false otherwise. 
 */
 bool Date::isValidDate(){
-	return isValidDay() && isValidMonth() && isValidYear();
+	return (isValidDay() && isValidMonth() && isValidYear());
 }
 
 /* 
@@ -80,7 +77,7 @@ bool Date::isValidDate(){
 	Post-condition: Returns true if day value of date is valid and false otherwise. 
 */
 bool Date::isValidDay(){
-	return _day >= 1 && _day <= 31;
+	return (_day >= 1 && _day <= 31);
 }
 
 /* 
@@ -89,7 +86,7 @@ bool Date::isValidDay(){
 	Post-condition: Returns true if month value of date is valid and false otherwise. 
 */
 bool Date::isValidMonth(){
-	return _month >= 1 && _month <= 12;
+	return (_month >= 1 && _month <= 12);
 }
 
 /* 
@@ -98,5 +95,5 @@ bool Date::isValidMonth(){
 	Post-condition: Returns true if year value of date is valid and false otherwise. 
 */
 bool Date::isValidYear(){
-	return _year > 0;
+	return (_year > 0);
 }
