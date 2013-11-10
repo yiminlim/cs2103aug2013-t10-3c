@@ -151,7 +151,8 @@ void UserInterface::commandUI(){
 				if (option > searchTaskVector.size()){
 					throw std::runtime_error(ERROR_OUT_OF_VECTOR_RANGE);
 				}
-				else if (tbLogic.edit(searchTaskVector[option-1], readTask(COMMAND_EDIT, KEYWORD_EMPTY_STRING), isClash, clashVector, feedback)){
+				else{ 
+					tbLogic.edit(searchTaskVector[option-1], readTask(COMMAND_EDIT, KEYWORD_EMPTY_STRING), isClash, clashVector, feedback);
 					displaySuccessfulMessage(command);
 					if (isClash){
 						SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY);	
@@ -159,9 +160,6 @@ void UserInterface::commandUI(){
 						displayInformationInVector(clashVector);
 					}
 					tbLogic.save();
-				}
-				else{
-					displayFailMessage(command);
 				}
 				searchTaskVector.clear();
 				clashVector.clear();
@@ -184,13 +182,11 @@ void UserInterface::commandUI(){
 					if (option > searchTaskVector.size()){
 						throw std::runtime_error(ERROR_OUT_OF_VECTOR_RANGE);
 					}
-					else if (tbLogic.markDone(searchTaskVector[option-1])){
+					else{
+						tbLogic.markDone(searchTaskVector[option-1]);
 						tbLogic.save();
 						tbLogic.saveDone();
 						displaySuccessfulMessage(command);
-					}
-					else{
-						displayFailMessage(command);
 					}
 				}
 				searchTaskVector.clear();
@@ -318,12 +314,11 @@ void UserInterface::editBlockUI(const std::string stringToEditBlock){
 	std::vector<std::string> clashVector;
 	std::vector<std::string> feedbackVector;
 
-	if (tbLogic.getBlock(originalTaskString, taskActionLocation, blockTaskVector)){
-		std::cout << MESSAGE_AVAILABLE_BLOCKS << std::endl;
-		displayInformationInVector(blockTaskVector);
-		std::cout << std::endl;
-	}
-
+	tbLogic.getBlock(originalTaskString, taskActionLocation, blockTaskVector);
+	std::cout << MESSAGE_AVAILABLE_BLOCKS << std::endl;
+	displayInformationInVector(blockTaskVector);
+	std::cout << std::endl;
+	
 	do{
 		try{
 			std::cout << MESSAGE_COMMAND;
@@ -344,14 +339,11 @@ void UserInterface::editBlockUI(const std::string stringToEditBlock){
 				contEditBlock = false;
 			}
 			else if (command == COMMAND_EDITALL){
-				if (tbLogic.editBlock(readTask(command, KEYWORD_EMPTY_STRING), blockTaskVector)){
-					tbLogic.save();
-					displaySuccessfulMessage(command);
-					contEditBlock = false;
-				}		
-				else{
-					displayFailMessage(command);
-				}
+				tbLogic.editBlock(readTask(command, KEYWORD_EMPTY_STRING), blockTaskVector);
+				tbLogic.save();
+				displaySuccessfulMessage(command);
+				contEditBlock = false;
+
 			}
 			else if (command == COMMAND_DELETE){
 				command = COMMAND_DELETEBLOCK;
