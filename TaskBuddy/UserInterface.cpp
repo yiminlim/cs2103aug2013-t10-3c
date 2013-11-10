@@ -35,7 +35,7 @@ const std::string UserInterface::MESSAGE_CLASH = "Task added clashes with the fo
 const std::string UserInterface::MESSAGE_DELETE = " has been deleted";
 const std::string UserInterface::MESSAGE_EDIT = "has been edited to";
 const std::string UserInterface::MESSAGE_AVAILABLE_BLOCKS = "Available Blocks: ";
-const std::string UserInterface::MESSAGE_EDITALL = "Tasks' action and location in the all blocked slots have been edited";
+const std::string UserInterface::MESSAGE_EDITALL = "Task's action and location of all blocked slots have been edited to ";
 const std::string UserInterface::MESSAGE_FINALISE = " has been finalised";
 const std::string UserInterface::MESSAGE_MARKDONE = " has been marked done";
 const std::string UserInterface::MESSAGE_UNDO = "Previous command is undone";
@@ -89,6 +89,7 @@ void UserInterface::commandUI(){
 	std::vector<std::string> clashVector;
 	std::vector<std::string> feedbackVector;
 	std::vector<std::string> displayUser;
+	std::vector<std::string> emptyVector;
 	
 	do{
 		try{
@@ -116,7 +117,7 @@ void UserInterface::commandUI(){
 				if (isClash){
 					SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY);	
 					std::cout << std::endl << MESSAGE_CLASH << std::endl;
-					displayInformationInVector(clashVector, displayUser);
+					displayInformationInVector(clashVector, displayUser, emptyVector);
 				}
 				tbLogic.save();
 				searchTaskVector.clear();
@@ -128,7 +129,7 @@ void UserInterface::commandUI(){
 				searchTaskVector.clear();
 				displayUser.clear();
 				tbLogic.generalSearch(readTask(command, KEYWORD_EMPTY_STRING), searchTaskVector, searchDateVector);
-				displayInformationInVector(searchTaskVector, displayUser);
+				displayInformationInVector(searchTaskVector, displayUser, searchDateVector);
 			}
 			else if (command == COMMAND_DELETE){
 				std::stringstream ss(readTask(command, KEYWORD_EMPTY_STRING));
@@ -153,7 +154,7 @@ void UserInterface::commandUI(){
 				if (isClash){
 					SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY);	
 					std::cout << std::endl << MESSAGE_CLASH << std::endl;
-					displayInformationInVector(clashVector, displayUser);
+					displayInformationInVector(clashVector, displayUser, emptyVector);
 				}
 				tbLogic.save();
 				searchTaskVector.clear();
@@ -194,7 +195,7 @@ void UserInterface::commandUI(){
 				}
 
 				if (tbLogic.retrieveDoneList(searchOtherTaskVector)){
-					displayInformationInVector(searchOtherTaskVector, displayUser);
+					displayInformationInVector(searchOtherTaskVector, displayUser, emptyVector);
 				}
 				else{
 					displayFailMessage(command);
@@ -209,7 +210,7 @@ void UserInterface::commandUI(){
 				}
 
 				if (tbLogic.retrieveOverdueList(searchOtherTaskVector)){
-					displayInformationInVector(searchOtherTaskVector, displayUser);
+					displayInformationInVector(searchOtherTaskVector, displayUser, emptyVector);
 				}
 				else{
 					displayFailMessage(command);
@@ -307,17 +308,18 @@ void UserInterface::editBlockUI(const std::string stringToEditBlock){
 	bool isClash = false;
 	bool contEditBlock = true;
 	std::string command;
-	std::string taskString;
+	std::string taskString; 
 	std::string taskActionLocation;
 	std::string originalTaskString = stringToEditBlock;
 	std::vector<std::string> blockTaskVector;
 	std::vector<std::string> clashVector;
 	std::vector<std::string> feedbackVector;
 	std::vector<std::string> displayUser;
+	std::vector<std::string> emptyVector;
 
 	tbLogic.getBlock(originalTaskString, taskActionLocation, blockTaskVector);
 	std::cout << MESSAGE_AVAILABLE_BLOCKS << std::endl;
-	displayInformationInVector(blockTaskVector, displayUser);
+	displayInformationInVector(blockTaskVector, displayUser, emptyVector);
 	std::cout << std::endl;
 
 	do{
@@ -335,16 +337,17 @@ void UserInterface::editBlockUI(const std::string stringToEditBlock){
 				if (isClash){
 					SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY);	
 					std::cout << std::endl << MESSAGE_CLASH << std::endl;
-					displayInformationInVector(clashVector, displayUser);
+					displayInformationInVector(clashVector, displayUser, emptyVector);
 				}			
 				clashVector.clear();
 				displayUser.clear();
 				contEditBlock = false;
 			}
 			else if (command == COMMAND_EDITALL){
-				tbLogic.editBlock(readTask(command, KEYWORD_EMPTY_STRING), blockTaskVector);
+				taskString = readTask(command, KEYWORD_EMPTY_STRING);
+				tbLogic.editBlock(taskString, displayUser);
 				tbLogic.save();
-				displaySuccessfulMessage(command); // !!!
+				displayFeedback(command, taskString, KEYWORD_EMPTY_STRING, feedbackVector);
 				contEditBlock = false;			
 			}
 			else if (command == COMMAND_DELETE){
@@ -418,7 +421,7 @@ void UserInterface::displayTodayTask(){
 	try{
 		tbLogic.generalSearch(KEYWORD_TODAY, todayTask, searchDateVector);
 		std::cout << MESSAGE_TODAY_TASK << std::endl;
-		displayInformationInVector(todayTask, displayUser);
+		displayInformationInVector(todayTask, displayUser, searchDateVector);
 	}
 	catch (std::runtime_error &error){
 		std::cout << error.what() << std::endl;
@@ -427,9 +430,14 @@ void UserInterface::displayTodayTask(){
 }
 
 //To display all information in a vector
-void UserInterface::displayInformationInVector(std::vector<std::string> vec, std::vector<std::string>& displayUser){
+void UserInterface::displayInformationInVector(std::vector<std::string> vec, std::vector<std::string>& displayUser, std::vector<std::string> searchDateVector){
 	int alternate = 1;
 	int countEmptyString = 0;
+
+	if (!searchDateVector.empty()){																	/////
+		SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+		std::cout << searchDateVector[countEmptyString] << std::endl << std::endl;
+	}
 
 	for (unsigned int i = 0; i < vec.size(); i++){
 		if (vec[i] != KEYWORD_EMPTY_STRING){
@@ -448,6 +456,8 @@ void UserInterface::displayInformationInVector(std::vector<std::string> vec, std
 		else{
 			std::cout << vec[i] << std::endl;
 			countEmptyString++;
+			SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+			std::cout << searchDateVector[countEmptyString] << std::endl << std::endl;
 			alternate++;
 		}
 	}
@@ -469,6 +479,9 @@ void UserInterface::displayFeedback(std::string command, std::string oldTask, st
 				  << MESSAGE_EDIT << std::endl
 				  << KEYWORD_QUOTE << newTask << KEYWORD_QUOTE;
 	}
+	else if (command == COMMAND_EDITALL){
+		std::cout << MESSAGE_EDITALL << KEYWORD_QUOTE << oldTask << KEYWORD_QUOTE;
+	}
 	else if (command == COMMAND_FINALISE || command == COMMAND_FINALIZE){
 		std::cout << KEYWORD_QUOTE << oldTask << KEYWORD_QUOTE << MESSAGE_FINALISE; 
 	}
@@ -478,6 +491,7 @@ void UserInterface::displayFeedback(std::string command, std::string oldTask, st
 	else if (command == COMMAND_CLEAROVERDUE){
 		std::cout << MESSAGE_CLEAROVERDUE;
 	}
+
 	if (command != COMMAND_ADD || command != COMMAND_ADDBLOCK){
 		std::cout << std::endl;
 	}
@@ -487,9 +501,6 @@ void UserInterface::displayFeedback(std::string command, std::string oldTask, st
 void UserInterface::displaySuccessfulMessage(const std::string command){
 	if (command == COMMAND_UNDO){
 		std::cout << MESSAGE_UNDO;
-	}
-	else if (command == COMMAND_EDITALL){
-		std::cout << MESSAGE_EDITALL;
 	}
 	else if (command == COMMAND_EXIT){
 		std::cout << MESSAGE_EXIT;
