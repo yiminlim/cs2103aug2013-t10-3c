@@ -90,7 +90,7 @@ void Parse::processTaskStringFromUI(std::string taskString, std::string & action
 
 	for (unsigned int i = 0; i < taskDetails.size(); i++){ 
 		if (isKeyword(taskDetails[i])){
-			keyword = taskDetails[i];
+			keyword = convertToLowercase(taskDetails[i]);
 			if (keyword == KEYWORD_BLOCK){
 				block = true;
 			}
@@ -232,7 +232,7 @@ void Parse::processTaskStringFromUI(std::string taskString, std::string & action
 	Pre-conditions: Default values ("" for string, empty values for date & time, false for block) have been initialised for parameters.
 	Post-conditions: Parameters are updated by reference based on task string. 
 */
-void Parse::processTaskStringFromFile(std::string taskString, std::string & action, std::string & location, std::vector<Date> & startingDate, std::vector<int> & startingTime, std::vector<Date> & endingDate, std::vector<int> & endingTime, std::vector<Date> & deadlineDate, std::vector<int> & deadlineTime, bool & block, std::vector<std::string> & dateVector){
+void Parse::processTaskStringFromFile(std::string taskString, std::string & action, std::string & location, std::vector<Date> & startingDate, std::vector<int> & startingTime, std::vector<Date> & endingDate, std::vector<int> & endingTime, std::vector<Date> & deadlineDate, std::vector<int> & deadlineTime, bool & block){
 	std::istringstream fileTask(taskString);
 	std::string word;
 	std::vector<std::string> taskDetails;
@@ -516,6 +516,7 @@ std::string Parse::convertToLowercase(std::string word){
 	Equivalence Partitions: valid keyword, invalid keyword
 */
 bool Parse::isKeyword(std::string word){
+	word = convertToLowercase(word);
 	return (word == KEYWORD_DEADLINE || word == KEYWORD_ENDING || word == KEYWORD_LOCATION || word == KEYWORD_STARTING || word == KEYWORD_BLOCK);
 }
 

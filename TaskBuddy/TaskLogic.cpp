@@ -598,7 +598,7 @@ void TaskLogic::stringParse(const std::string taskString, const std::string form
 			taskParse.processTaskStringFromUI(taskString,action,location,startingDateVector,startingTimeVector,endingDateVector,endingTimeVector,deadlineDateVector,deadlineTimeVector,isBlock,dateVector);
 		}
 		else if(format == PROCESSED_FORMAT){
-			taskParse.processTaskStringFromFile(taskString,action,location,startingDateVector,startingTimeVector,endingDateVector,endingTimeVector,deadlineDateVector,deadlineTimeVector,isBlock,dateVector);
+			taskParse.processTaskStringFromFile(taskString,action,location,startingDateVector,startingTimeVector,endingDateVector,endingTimeVector,deadlineDateVector,deadlineTimeVector,isBlock);
 		}
 	}
 	catch(...){
@@ -712,7 +712,7 @@ std::string TaskLogic::getActionLocation(std::string taskString){
 	std::vector<Date> startingDateVector, endingDateVector, deadlineDateVector; 
 	std::vector<int> startingTimeVector, endingTimeVector, deadlineTimeVector; //check if we really want to set it as -1
 	bool isBlock = false;
-	taskParse.processTaskStringFromFile(taskString,action,location,startingDateVector,startingTimeVector,endingDateVector,endingTimeVector,deadlineDateVector,deadlineTimeVector,isBlock,dateVector);
+	taskParse.processTaskStringFromFile(taskString,action,location,startingDateVector,startingTimeVector,endingDateVector,endingTimeVector,deadlineDateVector,deadlineTimeVector,isBlock);
 	
 	std::string taskActionLocation = action;
 	if(location != "")
