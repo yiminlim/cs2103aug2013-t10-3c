@@ -18,6 +18,7 @@ const std::string TaskLogic::UI_FORMAT = "ui_format";
 const std::string TaskLogic::PROCESSED_FORMAT = "processed_format";
 const std::string TaskLogic::BLOCK_OFF = "(blockoff)";
 const std::string TaskLogic::FLOATING_TASK = "Floating Task";
+const std::string TaskLogic::THROW_MESSAGE_MISSING_INPUT = "Missing input";
 const std::string TaskLogic::THROW_MESSAGE_MISSING_ACTION = "Missing action input";
 const std::string TaskLogic::THROW_MESSAGE_TASK = "Task \"";
 const std::string TaskLogic::THROW_MESSAGE_ADD_FAILURE = "\" cannot be added sucessfully";
@@ -165,6 +166,9 @@ void TaskLogic::add(const std::string taskString, bool& isClash, std::vector<std
 	std::vector<Task> taskObjectVector;
 	bool clash;
 	int addCount = 0;
+
+	if(taskString.empty())
+		throw (std::runtime_error(THROW_MESSAGE_MISSING_INPUT));
 	assert(clashTasks.empty());
 
     try{
@@ -650,6 +654,7 @@ void TaskLogic::undo(std::string& command, std::vector<std::string>& undoTask1, 
 
 //method 1 : User Input ; Method 2 : Pre-Existing Task in file
 void TaskLogic::stringParse(const std::string taskString, const std::string format, std::string &action, std::string &location, std::vector<Date> &startingDateVector, std::vector<int> &startingTimeVector, std::vector<Date> &endingDateVector, std::vector<int> &endingTimeVector, std::vector<Date> &deadlineDateVector, std::vector<int> &deadlineTimeVector, bool &isBlock){
+	assert(!taskString.empty());
 	assert(format == UI_FORMAT || format == PROCESSED_FORMAT);
 	try{	
 		if(format == UI_FORMAT)
