@@ -1,9 +1,5 @@
 //@author A0004661R
 #include "TaskLogic.h"
-#include <typeinfo>
-#include <exception>
-#include <iostream>
-#include <ctime>
 
 const std::string TaskLogic::COMMAND_ADD = "add";
 const std::string TaskLogic::COMMAND_DELETE = "delete";
