@@ -1,6 +1,5 @@
 //@ author A0103481R
 #include "TaskLinkedList.h"
-#include <assert.h>
 
 const std::string TaskLinkedList::KEYWORD_EMPTY_STRING = "";
 const std::string TaskLinkedList::KEYWORD_BLOCKOFF = "blockoff";

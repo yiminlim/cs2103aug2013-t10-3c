@@ -1,6 +1,5 @@
 //@ author A0103481R
 #include "OverdueLinkedList.h"
-#include <assert.h>
 
 const std::string OverdueLinkedList::KEYWORD_EMPTY_STRING = "";
 

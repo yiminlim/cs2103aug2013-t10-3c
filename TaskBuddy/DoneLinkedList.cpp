@@ -1,6 +1,5 @@
 //@ author A0103481R
 #include "DoneLinkedList.h"
-#include <assert.h>
 
 const std::string DoneLinkedList::KEYWORD_EMPTY_STRING = "";
 

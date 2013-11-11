@@ -3,7 +3,6 @@
 #include <string>
 #include <vector>
 #include <sstream>
-#include <assert.h>
 #include "Date.h"
 
 
