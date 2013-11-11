@@ -1,0 +1,328 @@
+#include <gtest\gtest.h>
+#include "TaskLinkedListTest.h"
+
+/****************************
+ TEST FOR INSERT FUNCTION
+****************************/
+
+//Check to see if the function copies the date from one Date class to another Date class correctly.
+TEST(TaskLinkedListTest, InsertMinorFunction1){
+	TaskLinkedList taskList;
+	Date inputDate(1, 2, 2013);
+	Date date;
+
+	taskList.obtainDateSeparately(&inputDate, &date);
+
+	EXPECT_EQ(1, date._day);
+	EXPECT_EQ(2, date._month);
+	EXPECT_EQ(2013, date._year);
+}
+
+//Check to see if the function obtains the right date and time (either starting or deadline) and updates the ending date and time accordingly.
+TEST(TaskLinkedListTest, InsertMinorFunction2){
+	TaskLinkedList taskList;
+	Date tempDate1(1,2,2013), tempDate2(3,4,2013), tempDate3(5,6,2013), nullDate;
+	Task task1("lunch with mum", "techno", tempDate1, 1200, nullDate, -1, nullDate, -1, false);
+	Task task2("lunch with mum", "techno", tempDate1, 1200, tempDate2, 1300, nullDate, -1, false);
+	Task task3("lunch with mum", "techno", nullDate, -1, nullDate, -1, tempDate3, 1400, false);
+	Date date, endDate;
+	int time, endTime;
+
+
+	taskList.obtainDateAndTime(task1, &date, &time, &endDate, &endTime);
+	EXPECT_EQ(1, date._day);
+	EXPECT_EQ(1200, time);
+	EXPECT_EQ(0, endDate._day);
+	EXPECT_EQ(-1, endTime);
+	
+	taskList.obtainDateAndTime(task3, &date, &time, &endDate, &endTime);
+	EXPECT_EQ(5, date._day);
+	EXPECT_EQ(1400, time);
+	EXPECT_EQ(0, endDate._day);
+	EXPECT_EQ(-1, endTime);
+
+	taskList.obtainDateAndTime(task2, &date, &time, &endDate, &endTime);
+	EXPECT_EQ(1, date._day);
+	EXPECT_EQ(1200, time);
+	EXPECT_EQ(3, endDate._day);
+	EXPECT_EQ(1300, endTime);
+}	
+
+//Check to see if the comparing of 2 dates give the correct result (true if cur is earlier than list).
+TEST(TaskLinkedListTest, InsertMinorFunction3){
+	TaskLinkedList taskList;
+	Date curDate(1,2,2013), listDate(3,4,2013);
+	bool check = false;
+	
+	EXPECT_EQ(true, taskList.compareDates(&curDate, &listDate, &check));
+	EXPECT_EQ(false, check);
+
+	EXPECT_EQ(false, taskList.compareDates(&listDate, &curDate, &check));
+	EXPECT_EQ(false, check);
+
+	EXPECT_EQ(false, taskList.compareDates(&curDate, &curDate, &check));
+	EXPECT_EQ(true, check);
+}
+
+//Check to see if the comaring of 2 tasks give the correct result (meaning which task should be sorted in front of which task accordingly to date and time).
+TEST(TaskLinkedListTest, InsertMinorFunction4){
+	TaskLinkedList taskList;
+	Date tempDate1(1,2,2013), tempDate2(3,4,2013), tempDate3(5,6,2013), nullDate;
+	Task task1("lunch with mum", "techno", tempDate1, 1200, nullDate, -1, nullDate, -1, false);
+	Task task2("lunch with mum", "techno", tempDate2, 1200, tempDate2, 1300, nullDate, -1, false);
+	Task task3("lunch with mum", "techno", nullDate, -1, nullDate, -1, tempDate3, 1400, false);
+	Task task4("lunch with mum", "techno", tempDate2, 1200, tempDate2, 1000, nullDate, -1, false);
+	bool isClash = false;
+	std::vector<std::string> clashTasks;
+
+	EXPECT_EQ(true, taskList.compareDateAndTime(task1, task2, isClash, clashTasks));
+	EXPECT_EQ(false, taskList.compareDateAndTime(task2, task1, isClash, clashTasks));
+	EXPECT_EQ(true, taskList.compareDateAndTime(task1, task3, isClash, clashTasks));
+	EXPECT_EQ(false, taskList.compareDateAndTime(task2, task4, isClash, clashTasks));
+}
+
+//Check to see if function returns the correct index pointing to the task that is passed over.
+TEST(TaskLinkedListTest, InsertMinorFunction5){
+	TaskLinkedList taskList;
+	Date tempDate1(1,2,2013), nullDate;
+	Task task1("lunch with mum", "techno", tempDate1, 1200, nullDate, -1, nullDate, -1, false);	
+	bool isClash = false;
+	std::vector<std::string> clashTasks;
+
+	EXPECT_EQ(1, taskList.getInsertIndex(task1, isClash, clashTasks));
+}
+
+//Check to see if the function inserts a task properly, sorted according to date and time.
+TEST(TaskLinkedListTest, InsertFunction){
+	TaskLinkedList taskList;
+	Date tempDate1(1,2,2013), tempDate2(3,4,2013), nullDate;
+	Task task1("lunch with mum", "techno", tempDate2, 1200, nullDate, -1, nullDate, -1, false);
+	Task task2("dance lessons", "dance studio", tempDate1, 1500, tempDate1, 1800, nullDate, -1, false);
+	Task task3("homework assignment 2", "", nullDate, -1, nullDate, -1, tempDate2, 2359, false);
+	bool isClash = false;
+	std::vector<std::string> clashTasks, listOfTasks;
+
+	EXPECT_EQ(true, taskList.insert(task1, isClash, clashTasks));
+	taskList.insert(task2, isClash, clashTasks);
+	isClash = false;
+	taskList.insert(task3, isClash, clashTasks);
+
+	taskList.updateStorageVector(listOfTasks);
+	EXPECT_EQ(task2.getTask(), listOfTasks[0]);
+	EXPECT_EQ(task1.getTask(), listOfTasks[1]);
+	EXPECT_EQ(task3.getTask(), listOfTasks[2]);
+}
+
+//Check to see if function is able to detect clashes in time properly or not.
+TEST(TaskLinkedListTest, CheckForClashesInInsert){
+	TaskLinkedList taskList;
+	Date tempDate1(1,2,2013), nullDate;
+	Task task1("lunch with mum", "techno", tempDate1, 1200, nullDate, -1, nullDate, -1, false);
+	Task task2("dance lessons", "dance studio", tempDate1, 1000, tempDate1, 1400, nullDate, -1, false);
+	Task task3("homework assignment 2", "", nullDate, -1, nullDate, -1, tempDate1, 1200, false);
+	Task task4("meeting friends", "marina square", tempDate1, 1700, nullDate, -1, nullDate, -1, false);
+	bool isClash = false;
+	std::vector<std::string> clashTasks;
+
+	taskList.insert(task1, isClash, clashTasks);
+	EXPECT_EQ(false, isClash);
+	EXPECT_EQ(0, clashTasks.size());
+	
+	isClash = false;
+	clashTasks.clear();
+	taskList.insert(task2, isClash, clashTasks);
+	EXPECT_EQ(true, isClash);
+	EXPECT_EQ(task1.getTask(), clashTasks[0]);
+	EXPECT_EQ(1, clashTasks.size());
+
+	isClash = false;
+	clashTasks.clear();
+	taskList.insert(task4, isClash, clashTasks);
+	EXPECT_EQ(false, isClash);
+	EXPECT_EQ(0, clashTasks.size());
+
+	isClash = false;
+	clashTasks.clear();
+	taskList.insert(task3, isClash, clashTasks);
+	EXPECT_EQ(true, isClash);
+	EXPECT_EQ(task2.getTask(), clashTasks[0]);
+	EXPECT_EQ(task1.getTask(), clashTasks[1]);
+	EXPECT_EQ(2, clashTasks.size());
+}
+
+/****************************
+ TEST FOR REMOVE FUNCTION
+****************************/
+
+//Check to see if the function returns the correct index for the task to be removed.
+TEST(TaskLinkedListTest, RemoveMinorFunction1){
+	TaskLinkedList taskList;
+	Date tempDate1(1,2,2013), nullDate;
+	Task task1("lunch with mum", "techno", tempDate1, 1200, nullDate, -1, nullDate, -1, false);
+	Task task2("dance lessons", "dance studio", tempDate1, 1000, tempDate1, 1400, nullDate, -1, false);
+	Task task3("homework assignment 2", "", nullDate, -1, nullDate, -1, tempDate1, 1200, false);
+	bool isClash = false;
+	std::vector<std::string> clashTasks;
+	int index = 1;
+
+	taskList.insert(task1, isClash, clashTasks);
+	taskList.insert(task2, isClash, clashTasks);
+	isClash = false;
+	taskList.insert(task3, isClash, clashTasks);
+	EXPECT_EQ(true, taskList.getRemoveIndex(task3.getTask(), &index));
+	EXPECT_EQ(3, index);
+}
+
+//Check the function if it splits a sentence into a vector of keywords properly.
+TEST(TaskLinkedListTest, RemoveMinorFunction2){
+	TaskLinkedList taskList;
+	std::vector<std::string> keywords;
+	
+	taskList.splitIntoKeywords("lunch with mum", keywords);
+	EXPECT_EQ("lunch", keywords[0]);
+	EXPECT_EQ("with", keywords[1]);
+	EXPECT_EQ("mum", keywords[2]);
+	EXPECT_EQ(3, keywords.size());
+}
+
+//Check to see if the function unblocks a task when the task is found to be the last remaining blockoff one.
+TEST(TaskLinkedListTest, CheckLastBlockOffInRemove){
+	TaskLinkedList taskList;
+	Date tempDate1(1,2,2013), nullDate;
+	Task task1("lunch with mum", "techno", tempDate1, 1200, nullDate, -1, nullDate, -1, true);
+	Task task2("lunch with mum", "techno", tempDate1, 1400, nullDate, -1, nullDate, -1, true);
+	Task task3("dance lessons", "dance studio", tempDate1, 1700, nullDate, -1, nullDate, -1, true);
+	bool isClash = false;
+	std::vector<std::string> clashTasks;
+
+	taskList.insert(task1, isClash, clashTasks);
+	taskList.insert(task2, isClash, clashTasks);
+	taskList.insert(task3, isClash, clashTasks);
+
+	taskList.checkIfRemainingBlockTask("dance lesson at dance studio");
+	EXPECT_EQ(false, taskList.getBlockStatus(3));
+
+	taskList.checkIfRemainingBlockTask("lunch with mum at techno");
+	EXPECT_EQ(true, taskList.getBlockStatus(1));
+	EXPECT_EQ(true, taskList.getBlockStatus(2));
+}
+	
+//Check to see if the function removes a task from the linked list properly.
+TEST(TaskLinkedListTest, RemoveFunction){
+	TaskLinkedList taskList;
+	Date tempDate1(1,2,2013), nullDate;
+	Task task1("lunch with mum", "techno", tempDate1, 1200, nullDate, -1, nullDate, -1, false);
+	Task task2("lunch with mum", "techno", tempDate1, 1400, nullDate, -1, nullDate, -1, false);
+	Task task3("dance lessons", "dance studio", tempDate1, 1700, nullDate, -1, nullDate, -1, false);
+	bool isClash = false;
+	std::vector<std::string> clashTasks, listOfTasks;
+
+	taskList.insert(task1, isClash, clashTasks);
+	taskList.insert(task2, isClash, clashTasks);
+	taskList.insert(task3, isClash, clashTasks);
+
+	EXPECT_EQ(true, taskList.remove(task1.getTask(), "lunch with mum at techno"));
+	taskList.updateStorageVector(listOfTasks);
+	EXPECT_EQ(task2.getTask(), listOfTasks[0]);
+	EXPECT_EQ(task3.getTask(), listOfTasks[1]);
+	EXPECT_EQ(2, listOfTasks.size());
+}
+
+/****************************
+ TEST FOR RETRIEVE FUNCTION
+****************************/
+
+//Check to see if the function converts the line to lowercase.
+TEST(TaskLinkedListTest, RetrieveMinorFunction1){
+	TaskLinkedList taskList;
+	EXPECT_EQ("abcdef", taskList.toLowerCase("AbCDeF"));
+}
+
+//Check to see if the function strings up the integers into a string date in the dd/mm/yyyy format.
+TEST(TaskLinkedListTest, RetrieveMinorFunction2){
+	TaskLinkedList taskList;
+	EXPECT_EQ("01/02/2013", taskList.getStringDate(1,2,2013));
+	EXPECT_EQ("10/12/2013", taskList.getStringDate(10,12,2013));
+}
+
+//Check to see if the function pushes in the range of dates correctly.
+TEST(TaskLinkedListTest, RetrieveMinorFunction3){
+	TaskLinkedList taskList;
+	Date tempDate1(31,12,2013), tempDate2(1,2,2014), nullDate;
+	Task task1("lunch with mum", "techno", tempDate1, 1200, tempDate2, 1500, nullDate, -1, false);
+	EXPECT_EQ(task1.getTask() + "31/12/201301/01/201401/02/2014", taskList.compareAndIncludeRange(task1.getTask(), &tempDate1._day, &tempDate1._month, &tempDate1._year, &tempDate2._day, &tempDate2._month, &tempDate2._year));
+}
+
+//Check to see if the function is able to retrieve tasks that contains the keywords.
+TEST(TaskLinkedListTest, RetrieveFunction){
+	TaskLinkedList taskList;
+	Date tempDate1(1,2,2013), tempDate2(3,2,2013), nullDate;
+	Task task1("lunch with mum", "deck", tempDate1, 1200, nullDate, -1, nullDate, -1, false);
+	Task task2("lunch with mum", "techno", tempDate1, 1400, tempDate2, 1000, nullDate, -1, false);
+	Task task3("lunch with dad", "YIH", nullDate, -1, nullDate, -1, tempDate2, 1800, false);
+	bool isClash = false;
+	std::vector<std::string> clashTasks, keywords, retrieveTasks;
+
+	taskList.insert(task1, isClash, clashTasks);
+	taskList.insert(task2, isClash, clashTasks);
+	taskList.insert(task3, isClash, clashTasks);
+
+	keywords.push_back("lunch");
+	keywords.push_back("with");
+	keywords.push_back("mum");
+	EXPECT_EQ(true, taskList.retrieve(keywords, retrieveTasks));
+	EXPECT_EQ(task1.getTask(), retrieveTasks[0]);
+	EXPECT_EQ(task2.getTask(), retrieveTasks[1]);
+	EXPECT_EQ(2, retrieveTasks.size());
+
+	keywords.clear();
+	retrieveTasks.clear();
+	keywords.push_back("02/02/2013");
+	EXPECT_EQ(true, taskList.retrieve(keywords, retrieveTasks));
+	EXPECT_EQ(task2.getTask(), retrieveTasks[0]);
+	EXPECT_EQ(1, retrieveTasks.size());
+
+	retrieveTasks.clear();
+	keywords.push_back("dad");
+	EXPECT_EQ(false, taskList.retrieve(keywords, retrieveTasks));
+}
+
+/****************************************
+ TEST FOR UPDATING OVERDUELIST FUNCTION
+*****************************************/
+
+//Check to see if the function compares the date properly and push those task that are overdued into a vector.
+TEST(TaskLinkedListTest, UpdateMinorFunction1){
+	TaskLinkedList taskList;
+	Date today(10,11,2013), beforeDate(9,11,2013), afterDate(11,11,2013);
+	std::vector<std::string> overdueList;
+	std::string task1 = "lunch with mum", task2 = "lunch with dad", task3 = "lunch with sis";
+
+	taskList.compareWithToday(today, today, task1, overdueList);
+	EXPECT_EQ(0, overdueList.size());
+	taskList.compareWithToday(today, beforeDate, task2, overdueList);
+	EXPECT_EQ(task2, overdueList[0]);
+	EXPECT_EQ(1, overdueList.size());
+	taskList.compareWithToday(today, afterDate, task3, overdueList);
+	EXPECT_EQ(task2, overdueList[0]);
+	EXPECT_EQ(1, overdueList.size());
+}
+
+//Check to see if the function is able to update properly by removing overdued items.
+TEST(TaskLinkedListTest, UpdateFunction){
+	TaskLinkedList taskList;
+	Date tempDate1(1,2,2013), tempDate2(3,2,2013), nullDate, today(2,2,2013);
+	Task task1("lunch with mum", "deck", tempDate1, 1200, nullDate, -1, nullDate, -1, false);
+	Task task2("lunch with mum", "techno", tempDate1, 1400, tempDate2, 1000, nullDate, -1, false);
+	Task task3("lunch with dad", "YIH", nullDate, -1, nullDate, -1, tempDate2, 1800, false);
+	bool isClash = false;
+	std::vector<std::string> clashTasks, overdueList;
+
+	taskList.insert(task1, isClash, clashTasks);
+	taskList.insert(task2, isClash, clashTasks);
+	taskList.insert(task3, isClash, clashTasks);
+
+	taskList.getOverdueList(today, overdueList);
+	EXPECT_EQ(1, overdueList.size());
+	EXPECT_EQ(task1.getTask(), overdueList[0]);
+}
