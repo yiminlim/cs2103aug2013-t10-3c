@@ -39,9 +39,9 @@ TaskLogic::~TaskLogic(){
 //-----INITIALISATION, SAVE & EXIT-------------------------------------------------------------------------------
 
 /*
-	Purpose: 
-	Pre-condtion:
-	Post-conditions:
+	Purpose: Initialises important components in Tasklogic. Takes in tasks and stores them into linkedlists for both 
+	tbDoneLinkedList and tbLinkedList. tbDoneLinkedList is updated to remove all all done items before current date
+	Post-conditions: All task stored in files are added into tbLinkedList and tbDoneLinkedList
 */
 void TaskLogic::initLogic(){
 	std::vector<std::string> tbVector;
@@ -70,6 +70,7 @@ void TaskLogic::initLogic(){
 
 /*
 	Purpose: Initialises all dates within the next week into dateVector
+	Post-condition: dateVector updated with dates for the coming week.
 */
 void TaskLogic::initDate(){
    int i = 1;
@@ -108,8 +109,10 @@ void TaskLogic::initDate(){
    return;
 }
 
-//The list must be drawn from the file first before drawing from linkedlist
-//Initialise tbOverdueLinkedList
+/*
+	Purpose: Inititalise tbOverdueLinkedList by getting task from overdue file storage
+	Note: The list must be drawn from the file first before drawing from linkedlist
+*/
 void TaskLogic::initOverdue(){
 	std::vector<std::string> tbOverdueVector;
 	Date today = taskParse.convertToDate(dateVector[0]);
@@ -126,14 +129,11 @@ void TaskLogic::initOverdue(){
 		del(tbOverdueVector[i], false);
 		addOverdueTask(tbOverdueVector[i]);
 	}
-	//initialisation of tbLinkedList must be done first.
 }
 
 /*
 	Purpose: Get task in string format from TaskLinkedList and saves them into a storage file.
 	Post-Conditions: Task are saved into storage file in sorted order and in proper string format.
-	Equivalence Partition: Empty Vector, Non-empty Vector
-	Boundary: Empty Vector, Any non-empty vector
 */
 void TaskLogic::save(){
     std::vector<std::string> tbVector;
@@ -142,7 +142,7 @@ void TaskLogic::save(){
 }
 
 /*
-Save all task inside task tbDoneLinkedList into external file
+	Purpose: Save all task inside task tbDoneLinkedList into external file
 */
 void TaskLogic::saveDone(){
     std::vector<std::string> tbDoneVector;
@@ -151,7 +151,7 @@ void TaskLogic::saveDone(){
 }
 
 /*
-Save all task inside task tbOverdueLinkedList into external file
+	Purpose: Save all task inside task tbOverdueLinkedList into external file
 */
 void TaskLogic::saveOverdue(){
     std::vector<std::string> tbOverdueVector;
@@ -164,10 +164,9 @@ void TaskLogic::saveOverdue(){
 
 /*
 	Purpose: Converts a task input string into a Task and adds it into tbLinkedList and indicates to UI if there's clashes
+	Note: Updates counter after adding (used for undo)
 	Pre-conditions: taskString is not empty and should not contain the command word
-	Post-conditions: true is returned only if task is added successfully, given that the input given by user is valid
-	Equivalence Partition: Empty string, Invalid string, Valid string
-	Boundary: Empty string, Any valid string, Any invalid string
+	Post-conditions: task is added successfully, otherwise, exceptions would be thrown if adding is invalid
 */
 void TaskLogic::add(const std::string taskString, bool& isClash, std::vector<std::string>& clashTasks, std::vector<std::string>& addedTask){
 	std::vector<Task> taskObjectVector;
@@ -211,23 +210,23 @@ void TaskLogic::add(const std::string taskString, bool& isClash, std::vector<std
 /*
 	Purpose: Converts a task input string from storage file into a Task and adds it into tbLinkedList
 	Pre-conditions: taskString is not empty and is in the proper format
-	Post-conditions: true is returned only if task is added successfully, given that the input is in proper format
-	Equivalence Partition: Empty string, Invalid string, Valid string
-	Boundary: Empty string, Any valid string, Any invalid string
+	Post-conditions: task is added successfully, otherwise assertion is thrown
 */
 void TaskLogic::addExistingTask(const std::string taskString){
 	std::vector<Task> taskObjectVector;
 	std::vector<std::string> dummyVector;
-	bool isClash = false;
+	bool dummyIsClash = false;
     
 	taskObjectVector = createTask(taskString, PROCESSED_FORMAT); 
 	assert(taskObjectVector.size() == 1);
 	
-	assert(tbLinkedList.insert(taskObjectVector[0], isClash, dummyVector));  //there is no need to check if isClashed since these are pre-existing task.
+	assert(tbLinkedList.insert(taskObjectVector[0], dummyIsClash, dummyVector));
 }
 
 /*
-
+	Purpose: Converts a task input string from storage file into a Task and adds it into tbDoneLinkedList
+	Pre-conditions: taskString is not empty and is in the proper format
+	Post-conditions: task is added successfully, otherwise assertion is thrown
 */
 void TaskLogic::addExistingDoneTask(const std::string taskString){
 	std::vector<Task> taskObjectVector;
@@ -239,7 +238,9 @@ void TaskLogic::addExistingDoneTask(const std::string taskString){
 }
 
 /*
-
+	Purpose: Converts a task input string from storage file into a Task and adds it into tbOverdueLinkedList
+	Pre-conditions: taskString is not empty and is in the proper format
+	Post-conditions: task is added successfully, otherwise assertion is thrown
 */
 void TaskLogic::addOverdueTask(const std::string taskString){
 	std::vector<Task> taskObjectVector;
@@ -251,7 +252,9 @@ void TaskLogic::addOverdueTask(const std::string taskString){
 }
 
 /*
-method 1 : User Input ; Method 2 : Pre-Existing Task in file
+	Purpose: Create tasks from a given taskString. Format indicates the way the taskString is formatted.
+	Pre-conditions: taskString is not empty and is in the proper format, Format is either of PROCESSED_FORMAT or UI_FORMAT
+	Post-conditions: Tasks are created and returned in a vector 
 */
 std::vector<Task> TaskLogic::createTask(std::string taskString, std::string format){
 	std::string task = "";
@@ -275,12 +278,10 @@ std::vector<Task> TaskLogic::createTask(std::string taskString, std::string form
 		isBlock = true;
 
 	std::vector<Task> taskObjectVector;
-
 	assert(startingDateVector.size() == endingDateVector.size());
 
 	Date nullDate;
 	int nullTime = -1;
-	
 	// true if floating type
 	if(startingDateVector.size()==1 && startingDateVector[0].isEmptyDate() && deadlineDateVector.size()==1 && deadlineDateVector[0].isEmptyDate()){
 		Task taskObject(action,location,nullDate,nullTime,nullDate,nullTime,nullDate,nullTime,isBlock);
@@ -305,10 +306,10 @@ std::vector<Task> TaskLogic::createTask(std::string taskString, std::string form
 /*
 	Purpose: Search for a Task with the taskString and delete it from tbLinkedList.
 			 isUndoDel indicates if it was a delete function call from undo, thus no updating required.
+	Note: update counter after deleted
 	Pre-conditions: taskString is not empty and should be in the proper format
-	Post-conditions: true is returned only if the task is found successfully and removed from tbLinkedList
-	Equivalence Partition: Empty string, Invalid string, Valid string
-	Boundary: Empty string, Any valid string, Any invalid string
+	Post-conditions: delete task if found
+
 */
 void TaskLogic::del(const std::string taskString, bool isUndoDel){
 	assert(!taskString.empty());
@@ -325,15 +326,13 @@ void TaskLogic::del(const std::string taskString, bool isUndoDel){
 	}
 }
 
-
 //-----SEARCH TASK--------------------------------------------------------------------------------------------------
 
 /*
 	Purpose: Search for all task in the list that contains keyword and place these tasks into vector parameter
-	Pre-conditions: userInput is not empty
-	Post-conditions: true is returned only if task(s) can be found, given that all input given by user is valid
-	Equivalence Partition: Empty string, Invalid string, Valid string
-	Boundary: Empty string, Any valid string, Any invalid string
+			dates is to be returned back to UI to indicate all disntinctive dates of tasks found
+	Pre-conditions: userInput is not empty, dates and vectorOutput must be empty
+	Post-conditions: updates the vectorOutput and dates.
 */
 void TaskLogic::generalSearch(std::string userInput, std::vector<std::string>& vectorOutput, std::vector<std::string>& dates){
 	assert(vectorOutput.empty());
@@ -366,7 +365,9 @@ void TaskLogic::generalSearch(std::string userInput, std::vector<std::string>& v
 }
 
 /*
-Edits search output vector by adding in spaces between tasks with different dates
+	Purpose: Edits search output vector by adding in spaces between tasks with different dates
+	Pre-condition: vectorOutput is not empty and dates is empty
+	Post-condition: returns newVectorOutput which is processed. Should contain spaces between different dates.
 */
 std::vector<std::string> TaskLogic::processSearchOutputVector(std::vector<std::string> vectorOutput, std::vector<std::string>& dates){
 	assert(!vectorOutput.empty());
@@ -388,7 +389,9 @@ std::vector<std::string> TaskLogic::processSearchOutputVector(std::vector<std::s
 }
 
 /*
-Returns dates of all search output in a vector
+	Purpose: Returns dates of all search output in a vector
+	Pre-conditon: vectorOutput is not empty
+	Post-condition: all dates in outputDateVector should be valid
 */
 std::vector<Date> TaskLogic::getSearchOutputDateVector(std::vector<std::string> vectorOutput){
 	assert(!vectorOutput.empty());
@@ -414,17 +417,13 @@ std::vector<Date> TaskLogic::getSearchOutputDateVector(std::vector<std::string> 
 	return outputDateVector;
 }
 
-
-
 //-----EDIT TASK-----------------------------------------------------------------------------------------------------
 
 /*
 	Purpose: Edit a task by breaking down and comparing the intial taskString and the editString. The initial task is 
-			 removed from tbLinkedList and the edited task is added in.
+			 removed from tbLinkedList and the edited task is added in. 
 	Pre-conditions: taskString is not-empty and is in proper format. editString is non-empty and is valid user input.
-	Post-conditions: true is returned only if intial task(s) is found and edited, given that all inputs are valid
-	Equivalence Partition: Empty strings, Invalid strings, Valid strings
-	Boundary: Empty strings, Any valid strings, Any invalid strings
+	Post-conditions: editedTask being updated should not be empty and should be in the process format
 */
 void TaskLogic::edit(std::string taskString, std::string editString, bool isBlock, std::vector<std::string>& clashTasks, std::string& editedTask){
 	std::string newTask;
@@ -447,6 +446,10 @@ void TaskLogic::edit(std::string taskString, std::string editString, bool isBloc
 	bool newIsBlock = false;
 	bool isClashDummy = false;  
 
+	assert(!taskString.empty());
+	if(editString.empty())
+		throw (std::runtime_error(THROW_MESSAGE_MISSING_INPUT));
+
 	try{
 		stringParse(taskString,PROCESSED_FORMAT,currentAction,currentLocation,currentStartingDate,currentStartingTime,currentEndingDate,currentEndingTime,currentDeadlineDate,currentDeadlineTime, isBlock);
 		stringParse(editString,UI_FORMAT,newAction,newLocation,newStartingDate,newStartingTime,newEndingDate,newEndingTime,newDeadlineDate,newDeadlineTime, newIsBlock);  
@@ -467,7 +470,8 @@ void TaskLogic::edit(std::string taskString, std::string editString, bool isBloc
 		editDateCurrentIntoNew(newStartingDate[0],currentStartingDate[0],newEndingDate[0],currentEndingDate[0],newDeadlineDate[0],currentDeadlineDate[0]);
 		editTimeCurrentIntoNew(newStartingTime[0],currentStartingTime[0],newEndingTime[0],currentEndingTime[0],newDeadlineTime[0],currentDeadlineTime[0]);
 	}
-	
+
+	checkValidParseOutput(newStartingDate[0],newStartingTime[0],newEndingDate[0],newEndingTime[0],newDeadlineDate[0],newDeadlineTime[0]);
 	Task taskObject(newAction,newLocation,newStartingDate[0],newStartingTime[0],newEndingDate[0],newEndingTime[0],newDeadlineDate[0],newDeadlineTime[0],newIsBlock);
 	
 	std::string editedString = removeBlockoff(taskString);
@@ -484,7 +488,9 @@ void TaskLogic::edit(std::string taskString, std::string editString, bool isBloc
 }
 
 /*
-Edit all new date to take the value of the old date
+	Purpose: Edit all new date to take the value of the old date
+	Pre-condition: Dates are valid
+	Post-conditions: Dates updated are valid.
 */
 void TaskLogic::editDateCurrentIntoNew(Date& newStartingDate, Date currentStartingDate, Date& newEndingDate, Date currentEndingDate, Date& newDeadlineDate, Date currentDeadlineDate){
 	newStartingDate = currentStartingDate;
@@ -493,7 +499,9 @@ void TaskLogic::editDateCurrentIntoNew(Date& newStartingDate, Date currentStarti
 }
 
 /*
-Edit all new timeto take the value of the old time
+	Purpose: Edit all new time to take the value of the old time
+	Pre-condition: Timing are valid
+	Post-conditions: Timing updated are valid.
 */
 void TaskLogic::editTimeCurrentIntoNew(int& newStartingTime, int currentStartingTime, int& newEndingTime, int currentEndingTime, int& newDeadlineTime, int currentDeadlineTime){
 	newStartingTime = currentStartingTime;
@@ -506,11 +514,8 @@ void TaskLogic::editTimeCurrentIntoNew(int& newStartingTime, int currentStarting
 /*
 	Purpose: Search for all task that is blocked together with the task and input strings into blockTaskVector and
 			 taskActionLocation (action + " at " + location)
-	Pre-conditions: taskString is not-empty and is in proper format
-	Post-conditions: true is returned only if task(s) is found, given that the input is valid
-					 
-	Equivalence Partition: Empty string, Invalid string, Valid string
-	Boundary: Empty string, Any valid string, Any invalid string
+	Pre-conditions: taskString is not-empty and is in proper format, blockTaskVector and dates should be empty
+	Post-conditions: blockTaskVector and dates should not be empty.
 */
 void TaskLogic::getBlock(std::string& taskString, std::string& taskActionLocation, std::vector<std::string>& blockTaskVector, std::vector<std::string>& dates){	
 	assert(!taskString.empty());
@@ -528,10 +533,7 @@ void TaskLogic::getBlock(std::string& taskString, std::string& taskActionLocatio
 	Purpose: edit the action and location of all task in the block to the newTaskActionLocation
 	Pre-conditions: newTaskActionLocation is not empty and is valid
 					blockTaskVector is not-empty and is in proper format
-	Post-conditions: true is returned only if all tasks are edited correctly, given that all inputs are valid
-					 
-	Equivalence Partition: Empty string, Invalid string, Valid string, empty vector, invalid vector strings, valid vector strings
-	Boundary: Empty string, Any valid string, Any invalid string, empty vector, any invalid vector strings, any valid vector strings
+	Post-conditions: tasks in LinkedList are updated
 */
 void TaskLogic::editBlock(const std::string newTaskActionLocation, std::vector<std::string>& blockTaskVector){
 	bool isValidEdit = true;
@@ -540,6 +542,9 @@ void TaskLogic::editBlock(const std::string newTaskActionLocation, std::vector<s
 	std::string editedTaskString;
 	std::vector<std::string> dummyVector;
 	
+	assert(!blockTaskVector.empty());
+	if(!newTaskActionLocation.empty())
+		throw (std::runtime_error(THROW_MESSAGE_MISSING_INPUT));
 	if(!isOnlyActionLocation(newTaskActionLocation))
 		throw (std::runtime_error(THROW_MESSAGE_ONLY_ACTION_LOCATION));
 
@@ -558,6 +563,11 @@ void TaskLogic::editBlock(const std::string newTaskActionLocation, std::vector<s
 	countStackHistory.push(editCount);
 }
 
+/*
+	Purpose: Remve the word (blockoff) at the end of a taskString if present
+	Pre-condition: taskString is not empty
+	Post-condition: taskString does not contain (blockoff)
+*/
 std::string TaskLogic::removeBlockoff(std::string taskString){
 	assert(!taskString.empty());
 	
@@ -570,14 +580,12 @@ std::string TaskLogic::removeBlockoff(std::string taskString){
 
 /*
 	Purpose: Adds in all new tasks into tbLinkedList and also mark the original task as blocked if not already blocked.
-	Pre-conditions: taskString is not empty and is valid (contains key word such as "blockoff"
-	Post-conditions: true is returned only if all tasks are added successfully, given that all inputs are valid
-	Equivalence Partition: Empty strings, Invalid strings, Valid strings
-	Boundary: Empty strings, Any valid strings, Any invalid strings
+	Pre-conditions: taskString and original taskStringis should not be empty
+	Post-conditions: updates if clashTask found
 */
-// first string is the action and location of original taskString, 2nd string is the original taskString
 void TaskLogic::addBlock(const std::string taskString, const std::string originalTaskString, bool isClash, std::vector<std::string>& clashTasks, std::vector<std::string>& addedTask){
 	assert(!taskString.empty());
+	assert(!originalTaskString.empty());
 	
 	tbLinkedList.setBlock(originalTaskString);   
 	add(taskString, isClash, clashTasks, addedTask);
@@ -586,10 +594,7 @@ void TaskLogic::addBlock(const std::string taskString, const std::string origina
 /*
 	Purpose: Finalise blocking to only one task by removing all others. Del ensures that the sole task remaining is not marked
 			 as blocked anymore
-	Pre-conditions: all strings in blockTaskVector is of proper format. delIndex is withing the range of blockTaskVector
-	Post-conditions: true is returned only if block is finalised, given that all inputs are valid
-	Equivalence Partition: valid int index, invalid int index, empty vector, empty strings, valid strings, invalid strings
-	Boundary: index 0, index 1, index size-1, any invalid index, Empty vector, Empty strings, Any valid strings, Any invalid strings
+	Pre-conditions: all strings in blockTaskVector is of proper format. blockTaskVector is not empty. delIndex is withing the range of blockTaskVector
 */
 void TaskLogic::finaliseBlock(int delIndex, std::vector<std::string>& blockTaskVector){
 	assert(!blockTaskVector.empty());
@@ -614,7 +619,7 @@ void TaskLogic::finaliseBlock(int delIndex, std::vector<std::string>& blockTaskV
 //-----UNDO--------------------------------------------------------------------------------------------------------
 
 /*
-
+	Purpose: Checks if undo is even possible
 */
 bool TaskLogic::checkUndoStackEmpty(){
 	return (commandStackHistory.empty() || taskStackHistory.empty());
@@ -624,8 +629,6 @@ bool TaskLogic::checkUndoStackEmpty(){
 	Purpose: Keeps track of commands made by pushing command keywords into stack commandStackHistory and pushing the
 			 taskString into taskStackHistory
 	Pre-conditions: command string is a valid command, newTask and oldTask are in the proper processed format needed
-	Equivalence Partition: command == COMMAND_EDIT, command == COMMAND_ADD, command == COMMAND_DELETE
-	Boundary: any invalid command, command == COMMAND_EDIT, command == COMMAND_ADD, command == COMMAND_DELETE
 */
 void TaskLogic::update(std::string command, std::string newTask, std::string oldTask){
 
@@ -642,14 +645,18 @@ void TaskLogic::update(std::string command, std::string newTask, std::string old
 }
 
 /*
-Update counter for number of actions performed in a command
+	Purpose: Update counter for number of actions performed in a command
+	Pre-condition: Positive Integer;
 */
 void TaskLogic::updateCount(int count){
+	assert(count > 0);
 	countStackHistory.push(count);
 }
 
 /*
-Undo previous edit
+	Purpose: Undo previous edit
+	Pre-condition: taskStackHistory and commandStackHistory are not empty.
+	Post-condition: taskStackHistory and commandStackHistory are updated.
 */
 void TaskLogic::undoEdit(std::vector<std::string>& undoTask1, std::vector<std::string>& undoTask2){
 	undoTask2.push_back(taskStackHistory.top());
@@ -664,7 +671,9 @@ void TaskLogic::undoEdit(std::vector<std::string>& undoTask1, std::vector<std::s
 }
 
 /*
-
+	Purpose: undo previous add
+	Pre-condition: taskStackHistory and commandStackHistory are not empty.
+	Post-condition: taskStackHistory and commandStackHistory are updated.
 */
 void TaskLogic::undoAdd(std::vector<std::string>& undoTask){
 	undoTask.push_back(taskStackHistory.top());
@@ -675,7 +684,9 @@ void TaskLogic::undoAdd(std::vector<std::string>& undoTask){
 }
 
 /*
-
+	Purpose: undo previous add
+	Pre-condition: taskStackHistory and commandStackHistory are not empty.
+	Post-condition: taskStackHistory and commandStackHistory are updated.
 */
 void TaskLogic::undoDelete(std::vector<std::string>& undoTask){
 	undoTask.push_back(taskStackHistory.top());
@@ -686,7 +697,9 @@ void TaskLogic::undoDelete(std::vector<std::string>& undoTask){
 }
 
 /*
-
+	Purpose: Undo previous mark done
+	Pre-condition: taskStackHistory and commandStackHistory are not empty.
+	Post-condition: taskStackHistory and commandStackHistory are updated.
 */
 void TaskLogic::undoMarkDone(std::vector<std::string>& undoTask){
 	undoTask.push_back(taskStackHistory.top());
@@ -700,12 +713,9 @@ void TaskLogic::undoMarkDone(std::vector<std::string>& undoTask){
 }
 
 /*
-	Purpose: Undo the last previous command stored at the top of commandStackHistory
+	Purpose: Undo the countStackHistory.top() count number of previous command stored at the top of commandStackHistory
 	Pre-conditions: commandStackHistory is not empty, and taskStackHistory is not empty and contains sufficient tasks
 					to undo the command.
-	Post-condition: returns true if undo is successful.
-	Equivalence Partition: empty commandStackHistory, empty taskStackHistory, insufficient taskStackHistory, invalid command, command == COMMAND_EDIT, command == COMMAND_ADD, command == COMMAND_DELETE
-	Boundary: empty commandStackHistory, empty taskStackHistory, insufficient taskStackHistory, invalid command, command == COMMAND_EDIT, command == COMMAND_ADD, command == COMMAND_DELETE
 */
 void TaskLogic::undo(std::string& command, std::vector<std::string>& undoTask1, std::vector<std::string>& undoTask2){
 	assert(!checkUndoStackEmpty());
@@ -737,12 +747,14 @@ void TaskLogic::undo(std::string& command, std::vector<std::string>& undoTask1, 
 //-----MARK DONE----------------------------------------------------------------------------------------------------------
 
 /*
-Remove a task from tbLinkedList and Adds it to tbDoneLinkedList
+	Purpose: Remove a task from tbLinkedList and Adds it to tbDoneLinkedList
+	Pre-conditions: taskString is not empty.
+	Post-condition: commandStackHistory is updated
 */
 void TaskLogic::markDone(std::string taskString){
 	assert(!taskString.empty());
 
-	del(taskString,false); 
+	del(taskString,true); 
 	std::vector<Task> taskObjectVector;
 	
 	taskObjectVector = createTask(taskString, PROCESSED_FORMAT);
@@ -754,7 +766,7 @@ void TaskLogic::markDone(std::string taskString){
 }
 
 /*
-Retrieve tasks from tbDoneLinkedList
+	Purpose: Retrieve tasks from tbDoneLinkedList
 */
 bool TaskLogic::retrieveDoneList(std::vector<std::string>& tbDoneVector){
 	tbDoneLinkedList.updateStorageVector(tbDoneVector);
@@ -768,7 +780,8 @@ bool TaskLogic::retrieveDoneList(std::vector<std::string>& tbDoneVector){
 //-----OVERDUE------------------------------------------------------------------------------------------------------------
 
 /*
-Clear all task in tbOverdueLinkedList
+	Clear all task in tbOverdueLinkedList
+	Post-condition: empty linkedlist
 */
 void TaskLogic::clearOverdueList(){
 	tbOverdueLinkedList.clear();
@@ -776,7 +789,7 @@ void TaskLogic::clearOverdueList(){
 }
 
 /*
-Retrieve tasks from tbOverdueLinkedList
+	Purpose: Retrieve tasks from tbOverdueLinkedList
 */
 bool TaskLogic::retrieveOverdueList(std::vector<std::string>& tbOverdueVector){
 	tbOverdueLinkedList.updateStorageVector(tbOverdueVector);
@@ -789,8 +802,8 @@ bool TaskLogic::retrieveOverdueList(std::vector<std::string>& tbOverdueVector){
 //-----HELPER FUNCTIONS---------------------------------------------------------------------------------------------
 
 /*
-	Converts Userinput string into various components in a task 
-	method 1 : User Input ; Method 2 : Pre-Existing Task in file
+	Purpose: Converts Userinput string into various components in a task using 2 different types based on the string format
+	Pre-condition: stringParse should not be empty and format should be eitehr UI_FORMAT or PROCESSED_FORMAT
 */
 void TaskLogic::stringParse(const std::string taskString, const std::string format, std::string &action, std::string &location, std::vector<Date> &startingDateVector, std::vector<int> &startingTimeVector, std::vector<Date> &endingDateVector, std::vector<int> &endingTimeVector, std::vector<Date> &deadlineDateVector, std::vector<int> &deadlineTimeVector, bool &isBlock){
 	if(taskString.empty())
@@ -809,7 +822,7 @@ void TaskLogic::stringParse(const std::string taskString, const std::string form
 }
 
 /*
-	Check if string is a day 
+	Purpose: Check if string is a day 
 */
 bool TaskLogic::isSingleDigit(int num){
 	assert(num > 0);
@@ -820,7 +833,7 @@ bool TaskLogic::isSingleDigit(int num){
 }
 
 /*
-Check if string is a day
+	Purpose: Check if string is a day
 */
 bool TaskLogic::isDay(std::string& keyword){
 	std::string possibleDay[20] = {"today","tmr","tomorrow","mon","monday","tue","tues","tuesday","wed","wednesday","thu","thur","thurs","thursday","fri","friday","sat","saturday","sun","sunday"};
@@ -837,7 +850,7 @@ bool TaskLogic::isDay(std::string& keyword){
 }
 	
 /*
-Checks if 2 dates are equal
+	Purpose: Checks if 2 dates are equal
 */
 bool TaskLogic::checkSameDate(Date earlierDate, Date laterDate){
 	assert(earlierDate.isEmptyDate() || earlierDate.isValidDate());
@@ -847,7 +860,8 @@ bool TaskLogic::checkSameDate(Date earlierDate, Date laterDate){
 }
 
 /*
-	Converts date into numerical form
+	Purpose: Converts date into numerical form
+	Pre-condition: String is form system ctime
 */
 std::string TaskLogic::extractDate(std::string currentDateTime){
 	std::ostringstream oss;
@@ -870,10 +884,12 @@ std::string TaskLogic::extractDate(std::string currentDateTime){
 }   
 
 /*
-	Covert a Date object to date string
+	Purpose: Convert a Date object to date string
 */
 std::string TaskLogic::convertToDateString(Date date){
+	assert(date.isEmptyDate() || date.isValidDate());
 	std::ostringstream oss;
+	
 	if(!date.isEmptyDate())
 		oss << date._day << "/" << date._month << "/" << date._year;
 	else
@@ -882,7 +898,9 @@ std::string TaskLogic::convertToDateString(Date date){
 }
 
 /*
-	Retrieve action & location in a task string
+	Purpose: Retrieve action & location in a task string
+	Pre-condition: taskString is not empty
+	Post-condtition: taskActionLocation is not empty
 */
 std::string TaskLogic::getActionLocation(std::string taskString){
 	std::string task = "";
@@ -906,7 +924,8 @@ std::string TaskLogic::getActionLocation(std::string taskString){
 }
 
 /*
-	Checks if the string only contains action and location
+	Purpose: Checks if the string only contains action and location
+	Pre-condition: newTaskActionLocation is not empty
 */
 bool TaskLogic::isOnlyActionLocation(std::string newTaskActionLocation){
 	newTaskActionLocation = taskParse.convertToLowercase(newTaskActionLocation);
@@ -921,9 +940,8 @@ bool TaskLogic::isOnlyActionLocation(std::string newTaskActionLocation){
 	return noDate;
 }
 
-
 /*
-	Perform test for valid task 
+	Purpose: Perform test for valid task 
 */
 void TaskLogic::checkValidTask(Task task){
 	if(task.isDeadlineType()){
@@ -950,5 +968,33 @@ void TaskLogic::checkValidTask(Task task){
 		assert(task.getStartingTime() == -1);
 		assert(task.getEndingTime() == -1);
 		assert(task.getDeadlineTime() == -1);
+	}
+
+}
+
+/*
+	Purpose: Checks if output from Parse give valid parse ouotput
+*/
+void TaskLogic::checkValidParseOutput(Date startingDate, int startingTime, Date endingDate, int endingTime, Date deadlineDate, int deadlineTime){
+	assert(startingDate.isEmptyDate() || startingDate.isValidDate());
+	assert(startingTime == -1 || taskParse.isValidTime(startingTime));
+	assert(endingDate.isEmptyDate() || endingDate.isValidDate());
+	assert(endingTime == -1 || taskParse.isValidTime(endingTime));
+	assert(deadlineDate.isEmptyDate() || deadlineDate.isValidDate());
+	assert(deadlineTime == -1 || taskParse.isValidTime(deadlineTime));
+	if (endingDate.isValidDate()){
+		(startingDate.isValidDate());
+	}
+	if (taskParse.isValidTime(startingTime)){
+		assert(startingDate.isValidDate());
+	}
+	if (taskParse.isValidTime(endingTime)){
+		assert(endingDate.isValidDate());
+	}
+	if (startingDate.isValidDate() && endingDate.isValidDate() && taskParse.isValidTime(startingTime)){
+		assert(taskParse.isValidTime(endingTime));
+	}
+	if (startingDate.isValidDate() && endingDate.isValidDate() && startingTime == -1){
+		assert(endingTime == -1);
 	}
 }

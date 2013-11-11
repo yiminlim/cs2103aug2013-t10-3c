@@ -25,10 +25,7 @@ protected:
 	}
  
 	virtual void SetUp() {
-		std::string action = "", location ="";
-		std::vector<Date> startingDateVector, endingDateVector, deadlineDateVector; 
-		std::vector<int> startingTimeVector, endingTimeVector, deadlineTimeVector; 
-		bool isBlock = false;
+	
 	}
 
 	virtual void TearDown(){
@@ -36,6 +33,7 @@ protected:
 	}
 
 	TaskLogic taskLogic;
+	void LogicTest::clearParse(std::string &, std::string &, std::vector<Date> &, std::vector<int> &, std::vector<Date> &, std::vector<int> &, std::vector<Date> &, std::vector<int> &, bool &);
 
 
 };

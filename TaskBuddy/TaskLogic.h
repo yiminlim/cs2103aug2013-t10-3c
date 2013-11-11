@@ -209,4 +209,7 @@ public:
 
 	//Perform test for valid task 
 	void checkValidTask(Task);
+
+	//Checks if Output from Parse will give valid Task
+	void checkValidParseOutput(Date, int, Date, int, Date, int);
 };
