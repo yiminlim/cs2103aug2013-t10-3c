@@ -8,16 +8,20 @@ const std::string TaskLogic::COMMAND_ADD = "add";
 const std::string TaskLogic::COMMAND_DELETE = "delete";
 const std::string TaskLogic::COMMAND_EDIT = "edit";
 const std::string TaskLogic::COMMAND_MARKDONE = "markdone";
+
 const std::string TaskLogic::KEYWORD_FROM = "from";
 const std::string TaskLogic::KEYWORD_TO = "to";
 const std::string TaskLogic::KEYWORD_BY = "by";
+
 const std::string TaskLogic::FILENAME_TB_STORAGE = "taskBuddyStorage.txt";
 const std::string TaskLogic::FILENAME_TB_DONE_STORAGE = "taskBuddyDoneStorage.txt";
 const std::string TaskLogic::FILENAME_TB_OVERDUE_STORAGE = "taskBuddyOverdueStorage.txt";
+
 const std::string TaskLogic::UI_FORMAT = "ui_format";
 const std::string TaskLogic::PROCESSED_FORMAT = "processed_format";
 const std::string TaskLogic::BLOCK_OFF = "(blockoff)";
 const std::string TaskLogic::FLOATING_TASK = "Floating Task";
+
 const std::string TaskLogic::THROW_MESSAGE_MISSING_INPUT = "Missing input";
 const std::string TaskLogic::THROW_MESSAGE_MISSING_ACTION = "Missing action input";
 const std::string TaskLogic::THROW_MESSAGE_TASK = "Task \"";
