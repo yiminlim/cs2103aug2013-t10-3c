@@ -580,16 +580,6 @@ bool Parse::isValidDayFormat(std::string dayString){
 bool Parse::isValidTimeFormat(std::string timeString){
 	return (timeString.size() == 4);
 }
-/* 
-	Purpose: Checks if date value is empty i.e. 0/0/0. 
-	Pre-condition: Date value has been initialised.
-	Post-condition: Returns true if date is empty (i.e. 0/0/0) and false otherwise.
-	Equivalence Partitions: day/month/year = 0, valid integer values.
-	Boundary values: 0, 1
-*/
-bool Parse::isEmptyDate(Date date){
-	return (date._day == 0 && date._month == 0 && date._year == 0);
-}
 
 /* 
 	Purpose: Checks if time value is valid. 
@@ -641,17 +631,4 @@ bool Parse::isLaterTime(int time1, int time2){
 */
 bool Parse::isSameTime(int time1, int time2){
 	return (time1 == time2);
-}
-/////////////////////////////////////////////////////////////////////////////////////////
-bool Parse::isValidEndDate(Date startingDate, Date endingDate) {
-	if (startingDate._year > endingDate._year) {
-		return false;
-	}
-	else if ((startingDate._year == endingDate._year) && (startingDate._month > endingDate._month)) {
-		return  false; 
-	}
-	else if ((startingDate._month == endingDate._month) && (startingDate._day > endingDate._day)) {
-		return false;
-	}
-	return true;
 }
