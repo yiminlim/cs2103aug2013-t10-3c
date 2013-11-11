@@ -42,12 +42,15 @@ const std::string UserInterface::MESSAGE_FINALISE = " has been finalised";
 const std::string UserInterface::MESSAGE_MARKDONE = " has been marked done";
 const std::string UserInterface::MESSAGE_UNDONE = " has been marked undone";
 const std::string UserInterface::MESSAGE_CLEAROVERDUE = "Overdue list is cleared";
+const std::string UserInterface::MESSAGE_CLEAR = "Display screen is cleared";
 const std::string UserInterface::MESSAGE_EXIT = "Thank you for using Task Buddy!";
 
 const std::string UserInterface::ERROR_INVALID_COMMAND = "Invalid command";
 const std::string UserInterface::ERROR_SEARCH_BEFORE = "Please search for the task before attempting to delete/ edit/ markdone/ editall";
 const std::string UserInterface::ERROR_OUT_OF_VECTOR_RANGE = "Please input a number within the range of the search";
 const std::string UserInterface::ERROR_UNDO_INITIALISE = "No existing commands to undo";
+const std::string UserInterface::ERROR_INVALID_OPTION = "Please enter a valid number";
+const std::string UserInterface::ERROR_REPEATED_OPTION = "Repeated option is found";
 
 const std::string UserInterface::MESSAGE_INVALID_DONE = "No tasks that are marked done is found";
 const std::string UserInterface::MESSAGE_INVALID_OVERDUE = "No tasks that are overdue is found";
@@ -83,6 +86,7 @@ void UserInterface::commandUI(){
 	char space;
 	bool contProgram = true;
 	bool isClash;
+	bool flag;
 	std::string command;
 	std::string undoCommand;
 	std::string feedback;
@@ -101,7 +105,8 @@ void UserInterface::commandUI(){
 			std::cin >> command;
 			isClash = false;
 			space = getchar();
-
+			flag = true;
+			
 			// throw exception if user did not search before delete/ edit/ mark done/ edit block
 			if ((command == COMMAND_DELETE || command == COMMAND_EDIT || command == COMMAND_MARKDONE || command == COMMAND_EDITBLOCK) &&
 				(searchTaskVector.size() == 0)){
@@ -138,30 +143,57 @@ void UserInterface::commandUI(){
 			}
 			else if (command == COMMAND_DELETE){
 				std::stringstream ss(readTask(command, KEYWORD_EMPTY_STRING));
+				std::vector<int> compareOption;
+
 				while (!ss.eof() && ss >> option){
+					flag = false;
 					if (option > displayUser.size()){
 						throw std::runtime_error(ERROR_OUT_OF_VECTOR_RANGE);
 					}
+					for (unsigned int i = 0; i < compareOption.size(); i++){
+						if (option == compareOption[i]){
+							throw std::runtime_error(ERROR_REPEATED_OPTION);
+						}
+					}
+					compareOption.push_back(option);
 					tbLogic.del(displayUser[option-1], false);
 					tbLogic.save();
 					displayFeedback(command, displayUser[option-1], KEYWORD_EMPTY_STRING, feedbackOldVector);
 				}
+				if (flag){
+					throw std::runtime_error(ERROR_INVALID_OPTION);
+				}
 				searchTaskVector.clear();
+				searchDateVector.clear();
 				feedbackOldVector.clear();
 				displayUser.clear();
 			}
 			else if (command == COMMAND_EDIT){
-				std::cin >> option;
-				if (option > displayUser.size()){
-					throw std::runtime_error(ERROR_OUT_OF_VECTOR_RANGE);
+				std::stringstream ss(readTask(command, KEYWORD_EMPTY_STRING));
+				std::string task;
+				std::string word;
+				if (!ss.eof() && ss >> option){
+					flag = false;
+					if (option > displayUser.size()){
+						throw std::runtime_error(ERROR_OUT_OF_VECTOR_RANGE);
+					}
 				}
-				tbLogic.edit(displayUser[option-1], readTask(COMMAND_EDIT, KEYWORD_EMPTY_STRING), isClash, clashVector, feedback);
+				if (flag){
+					throw std::runtime_error(ERROR_INVALID_OPTION);
+				}
+				while (ss >> word){
+					task = task + word + KEYWORD_SPACE;
+				}
+				if (task != KEYWORD_EMPTY_STRING){
+					task = task.substr(0, task.length()-1);
+				}
+				tbLogic.edit(displayUser[option-1], task, isClash, clashVector, feedback);
 				displayFeedback(command, displayUser[option-1], feedback, feedbackOldVector);
 				if (isClash){
 					SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY);	
 					std::cout << std::endl << MESSAGE_CLASH << std::endl;
 					displayInformationInVector(clashVector, displayUser, searchDateVector);
-				}
+				}				
 				tbLogic.save();
 				searchTaskVector.clear();
 				searchDateVector.clear();
@@ -170,21 +202,28 @@ void UserInterface::commandUI(){
 				clashVector.clear();
 			}
 			else if (command == COMMAND_EDITBLOCK){
-				std::cin >> option;
-
-				if (option > displayUser.size()){
-					throw std::runtime_error(ERROR_OUT_OF_VECTOR_RANGE);
+				std::stringstream ss(readTask(command, KEYWORD_EMPTY_STRING));
+				while (!ss.eof() && ss >> option){
+					flag = false;
+					if (option > displayUser.size()){
+						throw std::runtime_error(ERROR_OUT_OF_VECTOR_RANGE);
+					}
 				}
-				
+				if (flag){
+					throw std::runtime_error(ERROR_INVALID_OPTION);
+				}
+
 				system("CLS");
 				editBlockUI(displayUser[option-1]);
 				searchTaskVector.clear();
+				searchDateVector.clear();
 				displayUser.clear();
 				displayWelcomeMessage();
 			}
 			else if (command == COMMAND_MARKDONE){
 				std::stringstream ss(readTask(command, KEYWORD_EMPTY_STRING));
 				while (!ss.eof() && ss >> option){
+					flag = false;
 					if (option > displayUser.size()){
 						throw std::runtime_error(ERROR_OUT_OF_VECTOR_RANGE);
 					}
@@ -193,9 +232,13 @@ void UserInterface::commandUI(){
 					tbLogic.saveDone();
 					displayFeedback(command, displayUser[option-1], KEYWORD_EMPTY_STRING, feedbackOldVector);
 				}
+				if (flag){
+					throw std::runtime_error(ERROR_INVALID_OPTION);
+				}
 				searchTaskVector.clear();
 				feedbackOldVector.clear();
 				displayUser.clear();
+				searchDateVector.clear();
 			}
 			else if (command == COMMAND_DONE){
 				if (space == ' '){
@@ -212,6 +255,8 @@ void UserInterface::commandUI(){
 				searchOtherTaskVector.clear();
 				searchDateVector.clear();
 				displayUser.clear();
+				searchTaskVector.clear();
+				searchDateVector.clear();
 			}
 			else if (command == COMMAND_OVERDUE){
 				if (space == ' '){
@@ -228,6 +273,8 @@ void UserInterface::commandUI(){
 				searchOtherTaskVector.clear();
 				searchDateVector.clear();
 				displayUser.clear();
+				searchTaskVector.clear();
+				searchDateVector.clear();
 			}
 			else if (command == COMMAND_CLEAROVERDUE){
 				if (space == ' '){
@@ -237,6 +284,9 @@ void UserInterface::commandUI(){
 				tbLogic.clearOverdueList();
 				tbLogic.saveOverdue();
 				displaySuccessfulMessage(command);
+				feedbackOldVector.clear();
+				searchTaskVector.clear();
+				searchDateVector.clear();
 			}
 			else if (command == COMMAND_UNDO){
 				if (space == ' '){
@@ -250,11 +300,18 @@ void UserInterface::commandUI(){
 				feedbackOldVector.clear();
 				feedbackNewVector.clear();
 				searchTaskVector.clear();
+				searchDateVector.clear();
 				displayUser.clear();
 			}
 			else if (command == COMMAND_CLEAR){
+				if (space == ' '){
+					std::cin.clear();
+					std::cin.ignore(INT_MAX, '\n');
+				}
 				system("CLS");
+				displaySuccessfulMessage(command);
 				searchTaskVector.clear();
+				searchDateVector.clear();
 				displayUser.clear();
 			}
 			else if (command == COMMAND_HELP){
@@ -320,6 +377,7 @@ void UserInterface::editBlockUI(const std::string stringToEditBlock){
 	unsigned int option;
 	bool isClash = false;
 	bool contEditBlock = true;
+	bool flag = true;
 	std::string command;
 	std::string taskString; 
 	std::string taskActionLocation;
@@ -367,20 +425,36 @@ void UserInterface::editBlockUI(const std::string stringToEditBlock){
 			else if (command == COMMAND_DELETE){
 				command = COMMAND_DELETEBLOCK;
 				std::stringstream ss(readTask(command, KEYWORD_EMPTY_STRING));
+				std::vector<int> compareOption;
+
 				while (!ss.eof() && ss >> option){
+					flag = false;
 					if (option > displayUser.size()){
 						throw std::runtime_error(ERROR_OUT_OF_VECTOR_RANGE);
 					}
+					for (unsigned int i = 0; i < compareOption.size(); i++){
+						if (option == compareOption[i]){
+							contEditBlock = false;
+							throw std::runtime_error(ERROR_REPEATED_OPTION);
+						}
+					}
+					compareOption.push_back(option);
 					tbLogic.del(displayUser[option-1], false);
 					tbLogic.save();
 					displayFeedback(command, displayUser[option-1], KEYWORD_EMPTY_STRING, feedbackVector);
-					contEditBlock = false;
 				}
+				contEditBlock = false;
 			}
 			else if (command == COMMAND_FINALISE || command == COMMAND_FINALIZE){
-				std::cin >> option;
-				if (option > displayUser.size()){
+				std::stringstream ss(readTask(command, KEYWORD_EMPTY_STRING));
+				if (!ss.eof() && ss >> option){
+					flag = false;
+					if (option > displayUser.size()){
 						throw std::runtime_error(ERROR_OUT_OF_VECTOR_RANGE);
+					}
+				}
+				if (flag){
+					throw std::runtime_error(ERROR_INVALID_OPTION);
 				}
 				tbLogic.finaliseBlock(option, displayUser);
 				tbLogic.save();
@@ -398,6 +472,7 @@ void UserInterface::editBlockUI(const std::string stringToEditBlock){
 			}
 		}
 		catch (std::runtime_error &error){
+			SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_INTENSITY);
 			std::cout << error.what() << std::endl;
 		}
 		std::cout << std::endl;
@@ -507,14 +582,24 @@ void UserInterface::displayFeedback(std::string command, std::string oldTask, st
 		std::cout << MESSAGE_CLEAROVERDUE;
 	}
 
-	if (command != COMMAND_ADD || command != COMMAND_ADDBLOCK){
+	if (command != COMMAND_ADD && command != COMMAND_ADDBLOCK){
 		std::cout << std::endl;
 	}
 }
 
 //To display messages when commands are executed successfully
 void UserInterface::displaySuccessfulMessage(const std::string command){
-	if (command == COMMAND_EXIT){
+	if (command != COMMAND_EXIT){
+		SetConsoleTextAttribute(hConsole, FOREGROUND_GREEN | FOREGROUND_INTENSITY);
+	}
+
+	if (command == COMMAND_CLEAROVERDUE){
+		std::cout << MESSAGE_CLEAROVERDUE;
+	}
+	else if (command == COMMAND_CLEAR){
+		std::cout << MESSAGE_CLEAR;
+	}
+	else if (command == COMMAND_EXIT){
 		std::cout << MESSAGE_EXIT;
 	}
 	std::cout << std::endl;
@@ -538,7 +623,7 @@ void UserInterface::displayUndoFeedback(std::string undoCommand, std::vector<std
 	SetConsoleTextAttribute(hConsole, FOREGROUND_GREEN | FOREGROUND_INTENSITY);
 	if (undoCommand == COMMAND_ADD){
 		for (unsigned int i = 0; i < feedbackOldVector.size(); i++){
-			std::cout << KEYWORD_QUOTE << feedbackOldVector[i] << KEYWORD_QUOTE << MESSAGE_DELETE;
+			std::cout << KEYWORD_QUOTE << feedbackOldVector[i] << KEYWORD_QUOTE << MESSAGE_DELETE << std::endl;
 		}
 	}
 	else if (undoCommand == COMMAND_DELETE){
@@ -550,7 +635,7 @@ void UserInterface::displayUndoFeedback(std::string undoCommand, std::vector<std
 		for (unsigned int i = 0; i < feedbackOldVector.size(); i++){
 			std::cout << KEYWORD_QUOTE << feedbackNewVector[i] << KEYWORD_QUOTE << std::endl
 					  << MESSAGE_EDIT << std::endl
-					  << KEYWORD_QUOTE << feedbackOldVector[i] << KEYWORD_QUOTE;
+					  << KEYWORD_QUOTE << feedbackOldVector[i] << KEYWORD_QUOTE << std::endl;
 		}
 	}
 	else if (undoCommand == COMMAND_MARKDONE){
