@@ -39,9 +39,9 @@ TaskLogic::~TaskLogic(){
 //-----INITIALISATION, SAVE & EXIT-------------------------------------------------------------------------------
 
 /*
-	Purpose: Tasks are saved into tbLinkedList
-	Equivalence Partition: Empty Vector, Non-empty Vector
-	Boundary: Empty Vector, Any Non-empty Vector
+	Purpose: 
+	Pre-condtion:
+	Post-conditions:
 */
 void TaskLogic::initLogic(){
 	std::vector<std::string> tbVector;
@@ -77,10 +77,10 @@ void TaskLogic::initDate(){
    std::string currentDateTime;
    std::string today;
    std::string dateArray[9];
-   std::istringstream iss(currentDateTime);
    std::string dayArray[8] = {" ","Mon","Tue","Wed","Thu","Fri","Sat","Sun"};
 
    currentDateTime = ctime(&current);
+   std::istringstream iss(currentDateTime);
 
    iss >> today;
    while(today != dayArray[i])
@@ -109,6 +109,7 @@ void TaskLogic::initDate(){
 }
 
 //The list must be drawn from the file first before drawing from linkedlist
+//Initialise tbOverdueLinkedList
 void TaskLogic::initOverdue(){
 	std::vector<std::string> tbOverdueVector;
 	Date today = taskParse.convertToDate(dateVector[0]);
@@ -140,12 +141,18 @@ void TaskLogic::save(){
 	tbStorage.saveTasksIntoFile(tbVector);
 }
 
+/*
+Save all task inside task tbDoneLinkedList into external file
+*/
 void TaskLogic::saveDone(){
     std::vector<std::string> tbDoneVector;
 	tbDoneLinkedList.updateStorageVector(tbDoneVector);
 	tbDoneStorage.saveTasksIntoFile(tbDoneVector);
 }
 
+/*
+Save all task inside task tbOverdueLinkedList into external file
+*/
 void TaskLogic::saveOverdue(){
     std::vector<std::string> tbOverdueVector;
 	tbOverdueLinkedList.updateStorageVector(tbOverdueVector);
@@ -219,6 +226,9 @@ void TaskLogic::addExistingTask(const std::string taskString){
 	assert(tbLinkedList.insert(taskObjectVector[0], isClash, dummyVector));  //there is no need to check if isClashed since these are pre-existing task.
 }
 
+/*
+
+*/
 void TaskLogic::addExistingDoneTask(const std::string taskString){
 	std::vector<Task> taskObjectVector;
     
@@ -228,6 +238,9 @@ void TaskLogic::addExistingDoneTask(const std::string taskString){
 	assert(tbDoneLinkedList.insert(taskObjectVector[0]));  
 }
 
+/*
+
+*/
 void TaskLogic::addOverdueTask(const std::string taskString){
 	std::vector<Task> taskObjectVector;
     
@@ -235,6 +248,55 @@ void TaskLogic::addOverdueTask(const std::string taskString){
 	assert(taskObjectVector.size() == 1);
 
 	assert(tbOverdueLinkedList.insert(taskObjectVector[0]));  
+}
+
+/*
+method 1 : User Input ; Method 2 : Pre-Existing Task in file
+*/
+std::vector<Task> TaskLogic::createTask(std::string taskString, std::string format){
+	std::string task = "";
+	std::string	action = "";
+	std::string	location ="";
+	std::vector<Date> startingDateVector;
+	std::vector<Date> endingDateVector;
+	std::vector<Date> deadlineDateVector; 
+	std::vector<int> startingTimeVector;
+	std::vector<int> endingTimeVector; 
+	std::vector<int> deadlineTimeVector; 
+	bool isBlock = false;
+	
+	try{
+		stringParse(taskString,format,action,location,startingDateVector,startingTimeVector,endingDateVector,endingTimeVector,deadlineDateVector,deadlineTimeVector,isBlock);   
+	}
+	catch(...){
+		throw;
+	}
+	if(startingDateVector.size() > 1 || endingDateVector.size() > 1 || deadlineDateVector.size() > 1)
+		isBlock = true;
+
+	std::vector<Task> taskObjectVector;
+
+	assert(startingDateVector.size() == endingDateVector.size());
+
+	Date nullDate;
+	int nullTime = -1;
+	
+	// true if floating type
+	if(startingDateVector.size()==1 && startingDateVector[0].isEmptyDate() && deadlineDateVector.size()==1 && deadlineDateVector[0].isEmptyDate()){
+		Task taskObject(action,location,nullDate,nullTime,nullDate,nullTime,nullDate,nullTime,isBlock);
+		taskObjectVector.push_back(taskObject);
+	}
+	else{
+		for(unsigned int i = 0 ; i < startingDateVector.size() && !startingDateVector[i].isEmptyDate(); i++){
+			Task taskObject(action,location,startingDateVector[i],startingTimeVector[i],endingDateVector[i],endingTimeVector[i],nullDate,nullTime,isBlock);
+			taskObjectVector.push_back(taskObject);
+		}
+		for(unsigned int i = 0 ; i < deadlineDateVector.size() && !deadlineDateVector[i].isEmptyDate() ; i++){
+			Task taskObject(action,location,nullDate,nullTime,nullDate,nullTime,deadlineDateVector[i],deadlineTimeVector[i],isBlock);
+			taskObjectVector.push_back(taskObject);
+		}
+	}
+	return taskObjectVector;
 }
 
 
@@ -303,6 +365,9 @@ void TaskLogic::generalSearch(std::string userInput, std::vector<std::string>& v
 		vectorOutput = processSearchOutputVector(vectorOutput, dates);
 }
 
+/*
+Edits search output vector by adding in spaces between tasks with different dates
+*/
 std::vector<std::string> TaskLogic::processSearchOutputVector(std::vector<std::string> vectorOutput, std::vector<std::string>& dates){
 	assert(!vectorOutput.empty());
 	assert(dates.empty());
@@ -322,6 +387,9 @@ std::vector<std::string> TaskLogic::processSearchOutputVector(std::vector<std::s
 	return newVectorOutput;
 }
 
+/*
+Returns dates of all search output in a vector
+*/
 std::vector<Date> TaskLogic::getSearchOutputDateVector(std::vector<std::string> vectorOutput){
 	assert(!vectorOutput.empty());
 	std::vector<Date> outputDateVector;
@@ -395,9 +463,9 @@ void TaskLogic::edit(std::string taskString, std::string editString, bool isBloc
 	newIsBlock = isBlock;
 
 	//true if date has been edited
-	if(!newDeadlineDate[0].isEmptyDate() || !newStartingDate[0].isEmptyDate() || !newEndingDate[0].isEmptyDate() ){
-		changeDateCurrentIntoNew(newStartingDate[0],currentStartingDate[0],newEndingDate[0],currentEndingDate[0],newDeadlineDate[0],currentDeadlineDate[0]);
-		changeTimeCurrentIntoNew(newStartingTime[0],currentStartingTime[0],newEndingTime[0],currentEndingTime[0],newDeadlineTime[0],currentDeadlineTime[0]);
+	if(newDeadlineDate[0].isEmptyDate() && newStartingDate[0].isEmptyDate() && newEndingDate[0].isEmptyDate() ){
+		editDateCurrentIntoNew(newStartingDate[0],currentStartingDate[0],newEndingDate[0],currentEndingDate[0],newDeadlineDate[0],currentDeadlineDate[0]);
+		editTimeCurrentIntoNew(newStartingTime[0],currentStartingTime[0],newEndingTime[0],currentEndingTime[0],newDeadlineTime[0],currentDeadlineTime[0]);
 	}
 	
 	Task taskObject(newAction,newLocation,newStartingDate[0],newStartingTime[0],newEndingDate[0],newEndingTime[0],newDeadlineDate[0],newDeadlineTime[0],newIsBlock);
@@ -415,13 +483,19 @@ void TaskLogic::edit(std::string taskString, std::string editString, bool isBloc
 	updateCount(1);
 }
 
-void TaskLogic::changeDateCurrentIntoNew(Date& newStartingDate, Date currentStartingDate, Date& newEndingDate, Date currentEndingDate, Date& newDeadlineDate, Date currentDeadlineDate){
+/*
+Edit all new date to take the value of the old date
+*/
+void TaskLogic::editDateCurrentIntoNew(Date& newStartingDate, Date currentStartingDate, Date& newEndingDate, Date currentEndingDate, Date& newDeadlineDate, Date currentDeadlineDate){
 	newStartingDate = currentStartingDate;
 	newEndingDate = currentEndingDate;
 	newDeadlineDate = currentDeadlineDate;
 }
 
-void TaskLogic::changeTimeCurrentIntoNew(int& newStartingTime, int currentStartingTime, int& newEndingTime, int currentEndingTime, int& newDeadlineTime, int currentDeadlineTime){
+/*
+Edit all new timeto take the value of the old time
+*/
+void TaskLogic::editTimeCurrentIntoNew(int& newStartingTime, int currentStartingTime, int& newEndingTime, int currentEndingTime, int& newDeadlineTime, int currentDeadlineTime){
 	newStartingTime = currentStartingTime;
 	newEndingTime = currentEndingTime;
 	newDeadlineTime = currentDeadlineTime;
@@ -484,19 +558,6 @@ void TaskLogic::editBlock(const std::string newTaskActionLocation, std::vector<s
 	countStackHistory.push(editCount);
 }
 
-bool TaskLogic::isOnlyActionLocation(std::string newTaskActionLocation){
-	newTaskActionLocation = taskParse.convertToLowercase(newTaskActionLocation);
-	std::istringstream iss(newTaskActionLocation);
-	std::string word;
-	bool noDate = true;
-	
-	while(iss >> word && noDate == true){
-		if(word == KEYWORD_FROM || word == KEYWORD_TO || word == KEYWORD_BY)
-			noDate = false;
-	}
-	return noDate;
-}
-
 std::string TaskLogic::removeBlockoff(std::string taskString){
 	assert(!taskString.empty());
 	
@@ -514,6 +575,7 @@ std::string TaskLogic::removeBlockoff(std::string taskString){
 	Equivalence Partition: Empty strings, Invalid strings, Valid strings
 	Boundary: Empty strings, Any valid strings, Any invalid strings
 */
+// first string is the action and location of original taskString, 2nd string is the original taskString
 void TaskLogic::addBlock(const std::string taskString, const std::string originalTaskString, bool isClash, std::vector<std::string>& clashTasks, std::vector<std::string>& addedTask){
 	assert(!taskString.empty());
 	
@@ -552,6 +614,13 @@ void TaskLogic::finaliseBlock(int delIndex, std::vector<std::string>& blockTaskV
 //-----UNDO--------------------------------------------------------------------------------------------------------
 
 /*
+
+*/
+bool TaskLogic::checkUndoStackEmpty(){
+	return (commandStackHistory.empty() || taskStackHistory.empty());
+}
+
+/*
 	Purpose: Keeps track of commands made by pushing command keywords into stack commandStackHistory and pushing the
 			 taskString into taskStackHistory
 	Pre-conditions: command string is a valid command, newTask and oldTask are in the proper processed format needed
@@ -572,22 +641,31 @@ void TaskLogic::update(std::string command, std::string newTask, std::string old
 	}
 }
 
+/*
+Update counter for number of actions performed in a command
+*/
 void TaskLogic::updateCount(int count){
 	countStackHistory.push(count);
 }
 
+/*
+Undo previous edit
+*/
 void TaskLogic::undoEdit(std::vector<std::string>& undoTask1, std::vector<std::string>& undoTask2){
 	undoTask2.push_back(taskStackHistory.top());
 	del(taskStackHistory.top(),true);
-	taskStackHistory.pop();   //if delete fails we should still remove the task to be done from the system?
+	taskStackHistory.pop(); 
 			
 	undoTask1.push_back(taskStackHistory.top());
 	addExistingTask(taskStackHistory.top());
 	taskStackHistory.pop();
 	
-	commandStackHistory.pop();  //whether result true or not, let the command be popped out cos otherwise it can never be done	
+	commandStackHistory.pop();
 }
 
+/*
+
+*/
 void TaskLogic::undoAdd(std::vector<std::string>& undoTask){
 	undoTask.push_back(taskStackHistory.top());
 	del(taskStackHistory.top(),true);
@@ -596,6 +674,9 @@ void TaskLogic::undoAdd(std::vector<std::string>& undoTask){
 	commandStackHistory.pop();
 }
 
+/*
+
+*/
 void TaskLogic::undoDelete(std::vector<std::string>& undoTask){
 	undoTask.push_back(taskStackHistory.top());
 	addExistingTask(taskStackHistory.top());
@@ -604,6 +685,9 @@ void TaskLogic::undoDelete(std::vector<std::string>& undoTask){
 	commandStackHistory.pop();
 }
 
+/*
+
+*/
 void TaskLogic::undoMarkDone(std::vector<std::string>& undoTask){
 	undoTask.push_back(taskStackHistory.top());
 	tbDoneLinkedList.removeTask(taskStackHistory.top());
@@ -614,7 +698,6 @@ void TaskLogic::undoMarkDone(std::vector<std::string>& undoTask){
 
 	commandStackHistory.pop();  //whether result true or not, let the command be popped out cos otherwise it can never be done
 }
-
 
 /*
 	Purpose: Undo the last previous command stored at the top of commandStackHistory
@@ -650,11 +733,68 @@ void TaskLogic::undo(std::string& command, std::vector<std::string>& undoTask1, 
 	countStackHistory.pop();
 }
 
+
+//-----MARK DONE----------------------------------------------------------------------------------------------------------
+
+/*
+Remove a task from tbLinkedList and Adds it to tbDoneLinkedList
+*/
+void TaskLogic::markDone(std::string taskString){
+	assert(!taskString.empty());
+
+	del(taskString,false); 
+	std::vector<Task> taskObjectVector;
+	
+	taskObjectVector = createTask(taskString, PROCESSED_FORMAT);
+	assert(taskObjectVector.size() == 1);
+
+	assert(tbDoneLinkedList.insert(taskObjectVector[0]));
+	update(COMMAND_MARKDONE,taskString,taskString);
+	updateCount(1);
+}
+
+/*
+Retrieve tasks from tbDoneLinkedList
+*/
+bool TaskLogic::retrieveDoneList(std::vector<std::string>& tbDoneVector){
+	tbDoneLinkedList.updateStorageVector(tbDoneVector);
+	if(tbDoneVector.empty())
+		return false;
+	else
+		return true;
+}
+
+
+//-----OVERDUE------------------------------------------------------------------------------------------------------------
+
+/*
+Clear all task in tbOverdueLinkedList
+*/
+void TaskLogic::clearOverdueList(){
+	tbOverdueLinkedList.clear();
+	assert(tbOverdueLinkedList.isEmpty());
+}
+
+/*
+Retrieve tasks from tbOverdueLinkedList
+*/
+bool TaskLogic::retrieveOverdueList(std::vector<std::string>& tbOverdueVector){
+	tbOverdueLinkedList.updateStorageVector(tbOverdueVector);
+	if(tbOverdueVector.empty())
+		return false;
+	else
+		return true;
+}
+
 //-----HELPER FUNCTIONS---------------------------------------------------------------------------------------------
 
-//method 1 : User Input ; Method 2 : Pre-Existing Task in file
+/*
+	Converts Userinput string into various components in a task 
+	method 1 : User Input ; Method 2 : Pre-Existing Task in file
+*/
 void TaskLogic::stringParse(const std::string taskString, const std::string format, std::string &action, std::string &location, std::vector<Date> &startingDateVector, std::vector<int> &startingTimeVector, std::vector<Date> &endingDateVector, std::vector<int> &endingTimeVector, std::vector<Date> &deadlineDateVector, std::vector<int> &deadlineTimeVector, bool &isBlock){
-	assert(!taskString.empty());
+	if(taskString.empty())
+		throw (std::runtime_error(THROW_MESSAGE_MISSING_INPUT));
 	assert(format == UI_FORMAT || format == PROCESSED_FORMAT);
 	try{	
 		if(format == UI_FORMAT)
@@ -668,53 +808,20 @@ void TaskLogic::stringParse(const std::string taskString, const std::string form
 	return;
 }
 
-//method 1 : User Input ; Method 2 : Pre-Existing Task in file
-std::vector<Task> TaskLogic::createTask(std::string taskString, std::string format){
-	std::string task = "";
-	std::string	action = "";
-	std::string	location ="";
-	std::vector<Date> startingDateVector;
-	std::vector<Date> endingDateVector;
-	std::vector<Date> deadlineDateVector; 
-	std::vector<int> startingTimeVector;
-	std::vector<int> endingTimeVector; 
-	std::vector<int> deadlineTimeVector; 
-	bool isBlock = false;
-	
-	try{
-		stringParse(taskString,format,action,location,startingDateVector,startingTimeVector,endingDateVector,endingTimeVector,deadlineDateVector,deadlineTimeVector,isBlock);   
-	}
-	catch(...){
-		throw;
-	}
-	if(startingDateVector.size() > 1 || endingDateVector.size() > 1 || deadlineDateVector.size() > 1)
-		isBlock = true;
-
-	std::vector<Task> taskObjectVector;
-
-	assert(startingDateVector.size() == endingDateVector.size());
-
-	Date nullDate;
-	int nullTime = -1;
-	
-	// true if floating type
-	if(startingDateVector.size()==1 && startingDateVector[0].isEmptyDate() && deadlineDateVector.size()==1 && deadlineDateVector[0].isEmptyDate()){
-		Task taskObject(action,location,nullDate,nullTime,nullDate,nullTime,nullDate,nullTime,isBlock);
-		taskObjectVector.push_back(taskObject);
-	}
-	else{
-		for(unsigned int i = 0 ; i < startingDateVector.size() && !startingDateVector[i].isEmptyDate(); i++){
-			Task taskObject(action,location,startingDateVector[i],startingTimeVector[i],endingDateVector[i],endingTimeVector[i],nullDate,nullTime,isBlock);
-			taskObjectVector.push_back(taskObject);
-		}
-		for(unsigned int i = 0 ; i < deadlineDateVector.size() && !deadlineDateVector[i].isEmptyDate() ; i++){
-			Task taskObject(action,location,nullDate,nullTime,nullDate,nullTime,deadlineDateVector[i],deadlineTimeVector[i],isBlock);
-			taskObjectVector.push_back(taskObject);
-		}
-	}
-	return taskObjectVector;
+/*
+	Check if string is a day 
+*/
+bool TaskLogic::isSingleDigit(int num){
+	assert(num > 0);
+	if(num/10)
+		return false;
+	else
+		return true;
 }
 
+/*
+Check if string is a day
+*/
 bool TaskLogic::isDay(std::string& keyword){
 	std::string possibleDay[20] = {"today","tmr","tomorrow","mon","monday","tue","tues","tuesday","wed","wednesday","thu","thur","thurs","thursday","fri","friday","sat","saturday","sun","sunday"};
 	bool keyWordIsDay = false;
@@ -729,6 +836,19 @@ bool TaskLogic::isDay(std::string& keyword){
 	return keyWordIsDay;
 }
 	
+/*
+Checks if 2 dates are equal
+*/
+bool TaskLogic::checkSameDate(Date earlierDate, Date laterDate){
+	assert(earlierDate.isEmptyDate() || earlierDate.isValidDate());
+	assert(laterDate.isEmptyDate() || laterDate.isValidDate());
+	
+	return(earlierDate._year == laterDate._year) && (earlierDate._month == laterDate._month) && (earlierDate._day == laterDate._day);
+}
+
+/*
+	Converts date into numerical form
+*/
 std::string TaskLogic::extractDate(std::string currentDateTime){
 	std::ostringstream oss;
 	std::istringstream iss(currentDateTime);
@@ -749,14 +869,9 @@ std::string TaskLogic::extractDate(std::string currentDateTime){
 	return oss.str();
 }   
 
-bool TaskLogic::isSingleDigit(int num){
-	assert(num > 0);
-	if(num/10)
-		return false;
-	else
-		return true;
-}
-
+/*
+	Covert a Date object to date string
+*/
 std::string TaskLogic::convertToDateString(Date date){
 	std::ostringstream oss;
 	if(!date.isEmptyDate())
@@ -766,6 +881,9 @@ std::string TaskLogic::convertToDateString(Date date){
 	return oss.str();
 }
 
+/*
+	Retrieve action & location in a task string
+*/
 std::string TaskLogic::getActionLocation(std::string taskString){
 	std::string task = "";
 	std::string	action = "";
@@ -787,10 +905,26 @@ std::string TaskLogic::getActionLocation(std::string taskString){
 	return taskActionLocation;
 }
 
-bool TaskLogic::checkUndoStackEmpty(){
-	return (commandStackHistory.empty() || taskStackHistory.empty());
+/*
+	Checks if the string only contains action and location
+*/
+bool TaskLogic::isOnlyActionLocation(std::string newTaskActionLocation){
+	newTaskActionLocation = taskParse.convertToLowercase(newTaskActionLocation);
+	std::istringstream iss(newTaskActionLocation);
+	std::string word;
+	bool noDate = true;
+	
+	while(iss >> word && noDate == true){
+		if(word == KEYWORD_FROM || word == KEYWORD_TO || word == KEYWORD_BY)
+			noDate = false;
+	}
+	return noDate;
 }
 
+
+/*
+	Perform test for valid task 
+*/
 void TaskLogic::checkValidTask(Task task){
 	if(task.isDeadlineType()){
 		assert(task.getStartingDate().isEmptyDate());
@@ -817,50 +951,4 @@ void TaskLogic::checkValidTask(Task task){
 		assert(task.getEndingTime() == -1);
 		assert(task.getDeadlineTime() == -1);
 	}
-}
-	
-bool TaskLogic::checkSameDate(Date earlierDate, Date laterDate){
-	assert(earlierDate.isEmptyDate() || earlierDate.isValidDate());
-	assert(laterDate.isEmptyDate() || laterDate.isValidDate());
-	
-	return(earlierDate._year == laterDate._year) && (earlierDate._month == laterDate._month) && (earlierDate._day == laterDate._day);
-}
-
-//-----MARK DONE----------------------------------------------------------------------------------------------------------
-void TaskLogic::markDone(std::string taskString){
-	assert(!taskString.empty());
-
-	del(taskString,false); 
-	std::vector<Task> taskObjectVector;
-	
-	taskObjectVector = createTask(taskString, PROCESSED_FORMAT);
-	assert(taskObjectVector.size() == 1);
-
-	assert(tbDoneLinkedList.insert(taskObjectVector[0]));
-	update(COMMAND_MARKDONE,taskString,taskString);
-	updateCount(1);
-}
-
-bool TaskLogic::retrieveDoneList(std::vector<std::string>& tbDoneVector){
-	tbDoneLinkedList.updateStorageVector(tbDoneVector);
-	if(tbDoneVector.empty())
-		return false;
-	else
-		return true;
-}
-
-
-//-----OVERDUE------------------------------------------------------------------------------------------------------------
-
-void TaskLogic::clearOverdueList(){
-	tbOverdueLinkedList.clear();
-	assert(tbOverdueLinkedList.isEmpty());
-}
-
-bool TaskLogic::retrieveOverdueList(std::vector<std::string>& tbOverdueVector){
-	tbOverdueLinkedList.updateStorageVector(tbOverdueVector);
-	if(tbOverdueVector.empty())
-		return false;
-	else
-		return true;
 }
