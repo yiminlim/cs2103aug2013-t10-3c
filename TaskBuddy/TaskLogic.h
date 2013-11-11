@@ -58,119 +58,155 @@ public:
 
 	~TaskLogic();
 
-//-----INITIALISATION, SAVING & EXIT------------------------------------------------------------------------
-	//Takes in filename and takes all existing tasks inside file into tbLinkedList
+//-----INITIALISATION & SAVING------------------------------------------------------------------------
+	
+	//Initialise all main components inside Logic class required at start of program  
 	void initLogic();
 
+	//Initialise the dates within the next week into dateVector
 	void initDate();
 
+	//Initialise tbOverdueLinkedList
 	void initOverdue();
-
-	//Takes in filename and stores all tasks inside tbLinkedList into the file to prepare for exit.
+	
+	//Save all task inside task tbLinkedList into external file
 	void save();
 	
+	//Save all task inside task tbDoneLinkedList into external file
 	void saveDone();
 
+	//Save all task inside task tbOverdueLinkedList into external file
 	void saveOverdue();
 
 //-----ADD TASK----------------------------------------------------------------------------------------------
 
+	//Add UI format taskString into tbLinkedList
 	void add(const std::string, bool&, std::vector<std::string>&, std::vector<std::string>&);
 
-	//add a new task to the list (search for correct index first)
-	void addExistingTask(const std::string); //for initLogic use only
+	//Add Processed format taskString into tbLinkedList
+	void addExistingTask(const std::string);
 
-	void addExistingDoneTask(const std::string); //for initLogic use only
+	//Add Processed format taskString into tbDoneLinkedList
+	void addExistingDoneTask(const std::string);
 
-	void addOverdueTask(const std::string); //for initLogic use only
+	//Add Processed format taskString into tbOverdueLinkedList
+	void addOverdueTask(const std::string);
+
+	//Creates a task from a string in UI format or processed format	
+	std::vector<Task> createTask(std::string, std::string);
 
 //-----DELETE TASK-------------------------------------------------------------------------------------------
 
-	//delete a task from the list at the index given
+	//Delete a task from the tbLinkedList
 	void del(const std::string, bool);
 
 //-----SEARCH TASK-------------------------------------------------------------------------------------------
 
-	//return all tasks in the list that contains keyword and copy these tasks into vector parameter
+	//Search all tasks in the list that contains keyword
 	void generalSearch(std::string, std::vector<std::string> &, std::vector<std::string> &);
 
+	//Edits search output vector by adding in spaces between tasks with different dates
 	std::vector<std::string> processSearchOutputVector(std::vector<std::string>, std::vector<std::string> & );
 
+	//Returns dates of all search output in a vector
 	std::vector<Date> getSearchOutputDateVector(std::vector<std::string> );
 	
 //-----EDIT TASK---------------------------------------------------------------------------------------------
 
-	//edit a task from the list at the index given
+	//Edit a task from the tbLinkedList at the index given
 	void edit(std::string, std::string, bool, std::vector<std::string>&, std::string&);
 
-	void changeDateCurrentIntoNew(Date&, Date, Date&, Date, Date&, Date);
-	void changeTimeCurrentIntoNew(int&, int, int&, int, int&, int);
-
-	std::string removeBlockoff(std::string);
+	//Edit all new date to take the value of the old date
+	void editDateCurrentIntoNew(Date&, Date, Date&, Date, Date&, Date);
+	
+	//Edit all new timeto take the value of the old time
+	void editTimeCurrentIntoNew(int&, int, int&, int, int&, int);
 
 //-----EDIT BLOCK--------------------------------------------------------------------------------------------
 
-	//gives back entire block of taskStrings and also a string that contains the task (action + " at " location )
+	//Updates the block of taskStrings and string that contains the action and location of the task
 	void getBlock(std::string &, std::string &, std::vector<std::string> &, std::vector<std::string> &);
 	
-	//for editing location, action of all blocked item.
+	//Edit location, action of all blocked item.
 	void editBlock(const std::string, std::vector<std::string> &);
 
-	bool isOnlyActionLocation(std::string);
-
-	//for adding in new blocks, const string contains action + location while vector string contains timings and dates
+	//Add additional blocks for an existing tasks.
 	void addBlock(const std::string, const std::string, bool, std::vector<std::string>&, std::vector<std::string>&);
-	// first string is the action and location of original taskString, 2nd string is the original taskString
 
-	//delete all the blocks of the string given
-	//finaliseBlock is the same as deleteBlock. Just give in all those that is meant to be deleted. If only one left, send in isBloack = false
+	//Finalise a partiular timing for blocked tasks.
 	void finaliseBlock(int, std::vector<std::string>&);
 
+	//Remove the word "(blockoff)" if present in the word
+	std::string removeBlockoff(std::string);
+
 //-----UNDO---------------------------------------------------------------------------------------------------
-
-	//To update taskVector with new command and task by user
-	void update(std::string, std::string, std::string);
-
-	void updateCount(int);
-
-	void undoEdit(std::vector<std::string>&, std::vector<std::string>&);
-	void undoAdd(std::vector<std::string>&);
-	void undoDelete(std::vector<std::string>&);
-	void undoMarkDone(std::vector<std::string>&);
-	//To undo the most recent command made by user
-	void undo(std::string&, std::vector<std::string>&, std::vector<std::string>&);
-	
-//-----HELPER FUNCTIONS---------------------------------------------------------------------------------------
-	
-	void stringParse(const std::string, const std::string, std::string &, std::string &, std::vector<Date> &, std::vector<int> &, std::vector<Date> &, std::vector<int> &, std::vector<Date> &, std::vector<int> &, bool &);
-	//converts userInput String into various components from existing
 		
-	std::vector<Task> createTask(std::string, std::string);
-
-	bool isDay(std::string &);
-
-	std::string extractDate(std::string);
-	
-	bool isSingleDigit(int);
-
-	std::string convertToDateString(Date);
-
-	std::string getActionLocation(std::string);
-
+	//Check if any of the stack histories are empty 
 	bool checkUndoStackEmpty();
 
-	void checkValidTask(Task);
+	//Update commandStackHistory and taskStackHisory with new command and task respectively
+	void update(std::string, std::string, std::string);
 
-	bool checkSameDate(Date, Date);
+	//Update counter for number of actions performed in a command
+	void updateCount(int);
+
+	//Undo previous edit
+	void undoEdit(std::vector<std::string>&, std::vector<std::string>&);
+	
+	//Undo previous add
+	void undoAdd(std::vector<std::string>&);
+	
+	//Undo previous delete
+	void undoDelete(std::vector<std::string>&);
+
+	//Undo previous mark done
+	void undoMarkDone(std::vector<std::string>&);
+
+	//To undo the most recent command from by user
+	void undo(std::string&, std::vector<std::string>&, std::vector<std::string>&);
 
 //-----MARK DONE------------------------------------------------------------------------------------------------
+	
+	//Remove a task from tbLinkedList and Adds it to tbDoneLinkedList
 	void markDone(std::string taskString); 
 
+	//Retrieve tasks from tbDoneLinkedList
 	bool retrieveDoneList(std::vector<std::string> &);
 
 //-----OVERDUE--------------------------------------------------------------------------------------------------
 
+	//Clear all task in tbOverdueLinkedList
 	void clearOverdueList();
 
+	//Retrieve tasks from tbOverdueLinkedList
 	bool retrieveOverdueList(std::vector<std::string> &);
+	
+//-----HELPER FUNCTIONS---------------------------------------------------------------------------------------
+	
+	//Converts Userinput string into various components in a task 
+	void stringParse(const std::string, const std::string, std::string &, std::string &, std::vector<Date> &, std::vector<int> &, std::vector<Date> &, std::vector<int> &, std::vector<Date> &, std::vector<int> &, bool &);
+
+	//Check if number is a single digit
+	bool isSingleDigit(int);
+
+	//Check if string is a day 
+	bool isDay(std::string &);
+
+	//Checks if 2 dates are equal
+	bool checkSameDate(Date, Date);
+
+	//Converts date into numerical form
+	std::string extractDate(std::string);
+
+	//Covert a Date object to date string
+	std::string convertToDateString(Date);
+
+	//Retrieve action & location in a task string
+	std::string getActionLocation(std::string);
+
+	//Checks if the string only contains action and location
+	bool isOnlyActionLocation(std::string);
+
+	//Perform test for valid task 
+	void checkValidTask(Task);
 };
