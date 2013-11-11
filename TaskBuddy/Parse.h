@@ -132,8 +132,4 @@ public:
 
 	//Checks if times are equal
 	bool isSameTime(int, int);
-
-	bool isValidEndDate(Date, Date); //in date*******
-
-	bool isEmptyDate(Date); //in date*****************
 };
