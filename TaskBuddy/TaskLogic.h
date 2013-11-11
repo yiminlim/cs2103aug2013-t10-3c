@@ -31,12 +31,25 @@ private:
 	static const std::string COMMAND_DELETE;
 	static const std::string COMMAND_EDIT;
 	static const std::string COMMAND_MARKDONE;
+	static const std::string KEYWORD_FROM;
+	static const std::string KEYWORD_TO;
+	static const std::string KEYWORD_BY;
 	static const std::string FILENAME_TB_STORAGE;
 	static const std::string FILENAME_TB_DONE_STORAGE;
 	static const std::string FILENAME_TB_OVERDUE_STORAGE;
 	static const std::string UI_FORMAT;
 	static const std::string PROCESSED_FORMAT;
 	static const std::string BLOCK_OFF;
+	static const std::string FLOATING_TASK;
+	static const std::string THROW_MESSAGE_MISSING_ACTION;
+	static const std::string THROW_MESSAGE_TASK;
+	static const std::string THROW_MESSAGE_ADD_FAILURE;
+	static const std::string THROW_MESSAGE_NO_TASK_FOR;
+	static const std::string THROW_MESSAGE_NO_TASK_WITH;
+	static const std::string THROW_MESSAGE_FOUND;
+	static const std::string THROW_MESSAGE_ONLY_ACTION_LOCATION;
+	static const std::string THROW_MESSAGE_DATE_PASSED;
+
 
 public:
 
@@ -64,9 +77,9 @@ public:
 	void add(const std::string, bool&, std::vector<std::string>&, std::vector<std::string>&);
 
 	//add a new task to the list (search for correct index first)
-	bool addExistingTask(const std::string); //for initLogic use only
+	void addExistingTask(const std::string); //for initLogic use only
 
-	bool addExistingDoneTask(const std::string); //for initLogic use only
+	void addExistingDoneTask(const std::string); //for initLogic use only
 
 	void addOverdueTask(const std::string); //for initLogic use only
 
@@ -89,6 +102,9 @@ public:
 	//edit a task from the list at the index given
 	void edit(std::string, std::string, bool, std::vector<std::string>&, std::string&);
 
+	void changeDateCurrentIntoNew(Date&, Date, Date&, Date, Date&, Date);
+	void changeTimeCurrentIntoNew(int&, int, int&, int, int&, int);
+
 	std::string removeBlockoff(std::string);
 
 //-----EDIT BLOCK--------------------------------------------------------------------------------------------
@@ -99,13 +115,15 @@ public:
 	//for editing location, action of all blocked item.
 	void editBlock(const std::string, std::vector<std::string> &);
 
+	bool isOnlyActionLocation(std::string);
+
 	//for adding in new blocks, const string contains action + location while vector string contains timings and dates
 	void addBlock(const std::string, const std::string, bool, std::vector<std::string>&, std::vector<std::string>&);
 	// first string is the action and location of original taskString, 2nd string is the original taskString
 
 	//delete all the blocks of the string given
 	//finaliseBlock is the same as deleteBlock. Just give in all those that is meant to be deleted. If only one left, send in isBloack = false
-	void finaliseBlock(int, std::vector<std::string> &);
+	void finaliseBlock(int, std::vector<std::string>&);
 
 //-----UNDO---------------------------------------------------------------------------------------------------
 
@@ -114,8 +132,12 @@ public:
 
 	void updateCount(int);
 
+	void undoEdit(std::vector<std::string>&, std::vector<std::string>&);
+	void undoAdd(std::vector<std::string>&);
+	void undoDelete(std::vector<std::string>&);
+	void undoMarkDone(std::vector<std::string>&);
 	//To undo the most recent command made by user
-	void undo(std::string&, std::vector<std::string>&, std::vector<std::string>& );
+	void undo(std::string&, std::vector<std::string>&, std::vector<std::string>&);
 	
 //-----HELPER FUNCTIONS---------------------------------------------------------------------------------------
 	

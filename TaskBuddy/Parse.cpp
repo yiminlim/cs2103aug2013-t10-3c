@@ -232,7 +232,7 @@ void Parse::processTaskStringFromUI(std::string taskString, std::string & action
 	Pre-conditions: Default values ("" for string, empty values for date & time, false for block) have been initialised for parameters.
 	Post-conditions: Parameters are updated by reference based on task string. 
 */
-void Parse::processTaskStringFromFile(std::string taskString, std::string & action, std::string & location, std::vector<Date> & startingDate, std::vector<int> & startingTime, std::vector<Date> & endingDate, std::vector<int> & endingTime, std::vector<Date> & deadlineDate, std::vector<int> & deadlineTime, bool & block, std::vector<std::string> & dateVector){
+void Parse::processTaskStringFromFile(std::string taskString, std::string & action, std::string & location, std::vector<Date> & startingDate, std::vector<int> & startingTime, std::vector<Date> & endingDate, std::vector<int> & endingTime, std::vector<Date> & deadlineDate, std::vector<int> & deadlineTime, bool & block){
 	std::istringstream fileTask(taskString);
 	std::string word;
 	std::vector<std::string> taskDetails;
