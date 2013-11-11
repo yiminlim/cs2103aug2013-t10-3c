@@ -41,6 +41,7 @@ private:
 	static const std::string PROCESSED_FORMAT;
 	static const std::string BLOCK_OFF;
 	static const std::string FLOATING_TASK;
+	static const std::string THROW_MESSAGE_MISSING_INPUT;
 	static const std::string THROW_MESSAGE_MISSING_ACTION;
 	static const std::string THROW_MESSAGE_TASK;
 	static const std::string THROW_MESSAGE_ADD_FAILURE;
