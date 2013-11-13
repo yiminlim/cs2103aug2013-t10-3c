@@ -1,4 +1,4 @@
-//@ author A0103481R
+//@author A0103481R
 #include "OverdueLinkedList.h"
 
 const std::string OverdueLinkedList::KEYWORD_EMPTY_STRING = "";

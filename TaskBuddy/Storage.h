@@ -1,3 +1,4 @@
+//@author A0004661R
 #pragma once
 
 #include <string>

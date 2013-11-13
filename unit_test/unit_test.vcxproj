@@ -89,20 +89,16 @@
     <ClCompile Include="LogicTest.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="ParseTest.cpp" />
-    <ClCompile Include="StorageTest.cpp" />
     <ClCompile Include="TaskLinkedListTest.cpp" />
     <ClCompile Include="TaskTest.cpp" />
-    <ClCompile Include="UserInterfaceTest.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DateTest.h" />
     <ClInclude Include="DoneLinkedListTest.h" />
     <ClInclude Include="LogicTest.h" />
     <ClInclude Include="ParseTest.h" />
-    <ClInclude Include="StorageTest.h" />
     <ClInclude Include="TaskLinkedListTest.h" />
     <ClInclude Include="TaskTest.h" />
-    <ClInclude Include="UserInterfaceTest.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TaskBuddy\gtest-1.7.0\msvc\gtest.vcxproj">

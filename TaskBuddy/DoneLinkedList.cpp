@@ -1,4 +1,4 @@
-//@ author A0103481R
+//@author A0103481R
 #include "DoneLinkedList.h"
 
 const std::string DoneLinkedList::KEYWORD_EMPTY_STRING = "";
