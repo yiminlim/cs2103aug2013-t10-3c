@@ -1439,6 +1439,36 @@ TEST_F(DateTest, CheckForComparingDates){
 
 
 	/**
+	 * origin: C:\Users\Weiyuan\Desktop\CS2103 Project Remote\unit_test\DateTest.h
+	 */
+
+#include <gtest\gtest.h>
+#include <Date.h>
+
+class DateTest : public ::testing::Test {
+protected:
+	virtual void SetUp(){
+		date1._day = 11;
+		date1._month = 11;
+		date1._year = 2013;
+		date2._day = 27;
+		date2._month = 11;
+		date2._year = 2013;
+		date3._day = 11;
+		date3._month = 11;
+		date3._year = 2013;
+	}
+	Date date1;
+	Date date2;
+	Date date3;
+};
+	// End of segment: C:\Users\Weiyuan\Desktop\CS2103 Project Remote\unit_test\DateTest.h
+
+
+
+
+
+	/**
 	 * origin: C:\Users\Weiyuan\Desktop\CS2103 Project Remote\unit_test\ParseTest.cpp
 	 */
 
@@ -2091,6 +2121,31 @@ TEST_F(ParseTest, CheckForValidTime){
 
 
 	/**
+	 * origin: C:\Users\Weiyuan\Desktop\CS2103 Project Remote\unit_test\ParseTest.h
+	 */
+
+#include <gtest\gtest.h>
+#include <Parse.h>
+#include <Task.h>
+#include <Date.h>
+#include <sstream>
+
+class ParseTest : public ::testing::Test {
+protected:
+	virtual void SetUp(){
+	static const int EMPTY_TIME = -1;
+	}
+
+	Parse taskParse;
+
+};
+	// End of segment: C:\Users\Weiyuan\Desktop\CS2103 Project Remote\unit_test\ParseTest.h
+
+
+
+
+
+	/**
 	 * origin: C:\Users\Weiyuan\Desktop\CS2103 Project Remote\unit_test\TaskTest.cpp
 	 */
 
@@ -2277,6 +2332,37 @@ TEST(TaskTest, EditingBlock){
 	EXPECT_EQ(newExpectedOutputString, task.formatTaskOutputString());
 }
 	// End of segment: C:\Users\Weiyuan\Desktop\CS2103 Project Remote\unit_test\TaskTest.cpp
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Weiyuan\Desktop\CS2103 Project Remote\unit_test\TaskTest.h
+	 */
+
+#include <gtest\gtest.h>
+#include <Task.h>
+#include <Date.h>
+
+class TaskTest : public ::testing::Test {
+protected:
+	TaskTest(){
+	}
+
+	virtual ~TaskTest(){
+	}
+	
+
+	virtual void SetUp(){
+	
+	}
+
+	Task task;
+};
+
+
+	// End of segment: C:\Users\Weiyuan\Desktop\CS2103 Project Remote\unit_test\TaskTest.h
 
 
 

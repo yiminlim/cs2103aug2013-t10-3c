@@ -30,13 +30,7 @@
     <ClCompile Include="TaskTest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="UserInterfaceTest.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="DoneLinkedListTest.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="StorageTest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="DateTest.cpp">
@@ -56,13 +50,7 @@
     <ClInclude Include="TaskTest.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="UserInterfaceTest.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="DoneLinkedListTest.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="StorageTest.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DateTest.h">

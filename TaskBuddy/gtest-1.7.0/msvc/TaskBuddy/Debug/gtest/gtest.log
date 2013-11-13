@@ -1,15 +1,15 @@
-﻿Build started 11/11/2013 10:06:52 PM.
-     1>Project "D:\Desktop\cs2103aug2013-t10-3c\TaskBuddy\gtest-1.7.0\msvc\gtest.vcxproj" on node 2 (Build target(s)).
+﻿Build started 11/11/2013 10:48:09 PM.
+     1>Project "C:\Users\Weiyuan\Desktop\CS2103 Project Remote\TaskBuddy\gtest-1.7.0\msvc\gtest.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
          C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /I.. /I..\include /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _LIB /D _VARIADIC_MAX=10 /D _MBCS /Gm /EHsc /RTC1 /MTd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"TaskBuddy/Debug\gtest\\" /Fd"TaskBuddy/Debug\gtest\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt "..\src\gtest-all.cc"
          gtest-all.cc
-     1>C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V110\Microsoft.CppBuild.targets(1299,5): warning MSB8012: TargetPath(D:\Desktop\cs2103aug2013-t10-3c\TaskBuddy\gtest-1.7.0\msvc\TaskBuddy/Debug\gtest.lib) does not match the Library's OutputFile property value (D:\Desktop\cs2103aug2013-t10-3c\TaskBuddy\gtest-1.7.0\msvc\TaskBuddy\Debug\gtestd.lib). This may cause your project to build incorrectly. To correct this, please make sure that $(OutDir), $(TargetName) and $(TargetExt) property values match the value specified in %(Lib.OutputFile).
+     1>C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V110\Microsoft.CppBuild.targets(1299,5): warning MSB8012: TargetPath(C:\Users\Weiyuan\Desktop\CS2103 Project Remote\TaskBuddy\gtest-1.7.0\msvc\TaskBuddy/Debug\gtest.lib) does not match the Library's OutputFile property value (C:\Users\Weiyuan\Desktop\CS2103 Project Remote\TaskBuddy\gtest-1.7.0\msvc\TaskBuddy\Debug\gtestd.lib). This may cause your project to build incorrectly. To correct this, please make sure that $(OutDir), $(TargetName) and $(TargetExt) property values match the value specified in %(Lib.OutputFile).
      1>C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V110\Microsoft.CppBuild.targets(1301,5): warning MSB8012: TargetName(gtest) does not match the Library's OutputFile property value (gtestd). This may cause your project to build incorrectly. To correct this, please make sure that $(OutDir), $(TargetName) and $(TargetExt) property values match the value specified in %(Lib.OutputFile).
        Lib:
          C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\Lib.exe /OUT:"TaskBuddy/Debug\gtestd.lib" /NOLOGO "TaskBuddy/Debug\gtest\gtest-all.obj"
-         gtest.vcxproj -> D:\Desktop\cs2103aug2013-t10-3c\TaskBuddy\gtest-1.7.0\msvc\TaskBuddy/Debug\gtest.lib
-     1>Done Building Project "D:\Desktop\cs2103aug2013-t10-3c\TaskBuddy\gtest-1.7.0\msvc\gtest.vcxproj" (Build target(s)).
+         gtest.vcxproj -> C:\Users\Weiyuan\Desktop\CS2103 Project Remote\TaskBuddy\gtest-1.7.0\msvc\TaskBuddy/Debug\gtest.lib
+     1>Done Building Project "C:\Users\Weiyuan\Desktop\CS2103 Project Remote\TaskBuddy\gtest-1.7.0\msvc\gtest.vcxproj" (Build target(s)).
 
 Build succeeded.
 
-Time Elapsed 00:00:26.95
+Time Elapsed 00:00:06.73
