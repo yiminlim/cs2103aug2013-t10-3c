@@ -111,30 +111,4 @@ public:
 	//Checks if task is floating type
 	bool isFloatingType();
 	
-	//Checks if date value is empty i.e. 0/0/0
-	bool isEmptyDate(Date);
-
-	//Checks if date value is valid
-	bool isValidDate(Date);
-
-	//Checks if day value of date is valid
-	bool isValidDay(int);
-
-	//Checks if month value of date is valid
-	bool isValidMonth(int);
-
-	//Checks if year value of date is valid
-	bool isValidYear(int);
-
-	//Checks if time value is empty i.e. -1
-	bool isEmptyTime(int);
-
-	//Checks if time value is valid 
-	bool isValidTime(int);
-
-	//Checks if hour value of time is valid i.e. between 0-23
-	bool isValidHour(int);
-
-	//Checks if minutes value of time is valid i.e. between 0-59
-	bool isValidMins(int);
 };
